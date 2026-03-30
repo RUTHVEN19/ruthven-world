@@ -1,6 +1,6 @@
 export default function NFTPreview({ nft }) {
   const imageUrl = nft.image_cid
-    ? `https://gateway.pinata.cloud/ipfs/${nft.image_cid}`
+    ? `https://moccasin-legislative-falcon-246.mypinata.cloud/ipfs/${nft.image_cid}`
     : nft.image_path
       ? `/uploads/${nft.image_path}`
       : null;

@@ -25,7 +25,7 @@ export default function NFTGalleryCard({
   const weatherEffect = useMemo(() => getWeatherEffect(nft.traits), [nft.traits]);
 
   const imageUrl = nft.image_cid
-    ? `https://gateway.pinata.cloud/ipfs/${nft.image_cid}`
+    ? `https://moccasin-legislative-falcon-246.mypinata.cloud/ipfs/${nft.image_cid}`
     : nft.image_path
       ? `http://localhost:5001/uploads/${nft.image_path}`
       : null;
