@@ -157,12 +157,6 @@ export default function RuthvenWorld() {
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                   OpenSea
                 </a>
-                <a href="https://sepolia.etherscan.io" target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-xs transition-colors hover:text-white"
-                  style={{ color: 'rgba(255,255,255,0.3)' }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                  Etherscan
-                </a>
               </div>
             </div>
           </div>

@@ -28,10 +28,11 @@ backend/uploads/sources/*
 backend/uploads/videos/*
 !backend/uploads/.gitkeep
 
-# Large video files (too big for GitHub — upload separately)
-frontend/public/artist/hero.mp4
+# Large video files
 frontend/public/ruthven-bg-video.mp4
 *.mp4
+# Allow compressed hero video (54MB — within GitHub limit)
+!frontend/public/artist/hero.mp4
 
 # OS
 .DS_Store
