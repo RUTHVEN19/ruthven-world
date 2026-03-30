@@ -222,7 +222,7 @@ export default function MintPage() {
   const heroNft = nfts.length > 0 ? nfts[0] : null;
   const heroUrl = heroNft
     ? heroNft.image_cid
-      ? `https://gateway.pinata.cloud/ipfs/${heroNft.image_cid}`
+      ? `https://ipfs.io/ipfs/${heroNft.image_cid}`
       : heroNft.image_path
         ? `http://localhost:5001/uploads/${heroNft.image_path}`
         : null
@@ -613,7 +613,7 @@ export default function MintPage() {
                 }}>
                 <div className="aspect-video overflow-hidden relative">
                   <img
-                    src={nft.image_cid ? `https://gateway.pinata.cloud/ipfs/${nft.image_cid}` : `http://localhost:5001/uploads/${nft.image_path}`}
+                    src={nft.image_cid ? `https://ipfs.io/ipfs/${nft.image_cid}` : `http://localhost:5001/uploads/${nft.image_path}`}
                     alt={nft.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     loading="lazy"
@@ -769,7 +769,7 @@ export default function MintPage() {
               <div key={nft.id} className="rounded-xl overflow-hidden" style={{ border: `1px solid ${isRuthven ? 'rgba(255,255,255,0.1)' : 'rgba(31,41,55,1)'}`, backgroundColor: isRuthven ? 'rgba(0,0,0,0.3)' : 'rgba(17,24,39,1)' }}>
                 {(nft.image_cid || nft.image_path) && (
                   <img
-                    src={nft.image_cid ? `https://gateway.pinata.cloud/ipfs/${nft.image_cid}` : `http://localhost:5001/uploads/${nft.image_path}`}
+                    src={nft.image_cid ? `https://ipfs.io/ipfs/${nft.image_cid}` : `http://localhost:5001/uploads/${nft.image_path}`}
                     alt={nft.name}
                     className="w-full object-cover"
                     style={{ aspectRatio: isRuthven ? '16/9' : '1/1' }}
