@@ -183,7 +183,7 @@ def get_token_metadata(token_id):
     image_url = (
         f"ipfs://{nft.image_cid}"
         if nft.image_cid
-        else f"https://ruthven-api.railway.app/uploads/{nft.image_path}"
+        else f"https://ruthven-world-production.up.railway.app/uploads/{nft.image_path}"
         if nft.image_path
         else ""
     )

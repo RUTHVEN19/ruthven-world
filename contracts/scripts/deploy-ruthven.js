@@ -18,7 +18,7 @@ const hre = require("hardhat");
 
 // Token metadata is served by the Railway backend.
 // The contract appends the token ID: baseURI + "1", baseURI + "2", etc.
-const BASE_URI = "https://ruthven-api.railway.app/api/nfts/metadata/";
+const BASE_URI = "https://ruthven-world-production.up.railway.app/api/nfts/metadata/";
 
 // Collection settings
 const NAME       = "FIRST LIGHT";

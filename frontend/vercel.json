@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://ruthven-api.railway.app/api/:path*"
+      "destination": "https://ruthven-world-production.up.railway.app/api/:path*"
     },
     {
       "source": "/uploads/:path*",
-      "destination": "https://ruthven-api.railway.app/uploads/:path*"
+      "destination": "https://ruthven-world-production.up.railway.app/uploads/:path*"
     },
     {
       "source": "/(.*)",
