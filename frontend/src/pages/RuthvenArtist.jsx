@@ -106,7 +106,7 @@ function HeroVideo({ src }) {
 const DETAILS = [
   ['Location', 'Scottish Highlands'],
   ['Medium', 'AI-trained on own oil paintings + hand drawing'],
-  ['Influences', 'Peter Doig, Joan Eardley, the weather'],
+  ['Scottish Weather', 'Peter Doig, Joan Eardley, the weather'],
   ['Drink', 'Ruthven Single Malt'],
   ['Companions', 'Two Highland hounds'],
   ['Tools', 'AI Trained Models, Kling, iPad Pro, oil paints'],
