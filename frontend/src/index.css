@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-primary: #ffffff;
+  --brand-secondary: #a0a0a0;
+  --brand-accent: #ffffff;
+  --brand-font: 'Inter';
+}
+
+body {
+  font-family: var(--brand-font), 'Inter', sans-serif;
+}
+
+/* Custom range slider styling for B&W theme */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  border: 2px solid #000;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  border: 2px solid #000;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-white hover:bg-gray-200 text-black font-semibold py-2 px-6 rounded-lg transition-all duration-200 shadow-lg shadow-white/10 hover:shadow-white/20;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg border border-gray-600 transition-all duration-200;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+  }
+
+  .btn-mint {
+    @apply bg-white text-black font-bold py-4 px-8 rounded-xl text-lg transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105;
+  }
+
+  .card {
+    @apply bg-gray-950 border border-gray-800 rounded-xl p-6 hover:border-gray-600 transition-all duration-200;
+  }
+
+  .input {
+    @apply bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-gray-500 w-full;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-gray-400 mb-1;
+  }
+}

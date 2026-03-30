@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "frontend",
+      "runtimeExecutable": "/Users/annalouisesimpson/.nvm/versions/node/v20.20.1/bin/node",
+      "runtimeArgs": ["/Users/annalouisesimpson/NFT GENERATOR/frontend/node_modules/.bin/vite", "--port", "5173"],
+      "port": 5173,
+      "cwd": "/Users/annalouisesimpson/NFT GENERATOR/frontend"
+    },
+    {
+      "name": "currie-routes",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8090"],
+      "port": 8090,
+      "cwd": "/Users/annalouisesimpson/NFT GENERATOR/currie-test-routes"
+    }
+  ]
+}
