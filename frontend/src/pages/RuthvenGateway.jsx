@@ -237,7 +237,7 @@ export default function RuthvenGateway() {
                   style={{ border: '1px solid rgba(0,232,150,0.08)' }}>
                   {(nft.image_cid || nft.image_path) && (
                     <img
-                      src={nft.image_cid ? `https://gateway.pinata.cloud/ipfs/${nft.image_cid}` : `http://localhost:5001/uploads/${nft.image_path}`}
+                      src={nft.image_cid ? `https://moccasin-legislative-falcon-246.mypinata.cloud/ipfs/${nft.image_cid}` : `http://localhost:5001/uploads/${nft.image_path}`}
                       alt={nft.name}
                       className="w-full object-cover"
                       style={{ aspectRatio: '16/9' }}

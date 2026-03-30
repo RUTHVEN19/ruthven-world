@@ -121,7 +121,7 @@ export default function RuthvenArtist() {
   const nfts = data?.nfts || [];
   const bgNft = nfts[3] || nfts[0];
   const bgSrc = bgNft?.image_cid
-    ? `https://gateway.pinata.cloud/ipfs/${bgNft.image_cid}`
+    ? `https://moccasin-legislative-falcon-246.mypinata.cloud/ipfs/${bgNft.image_cid}`
     : bgNft?.image_path
       ? `http://localhost:5001/uploads/${bgNft.image_path}`
       : null;
