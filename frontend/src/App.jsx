@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import BrandManager from './pages/BrandManager';
 import CollectionEditor from './pages/CollectionEditor';
@@ -17,14 +17,14 @@ function Layout({ children }) {
       <nav className="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center space-x-3">
+            <Link to="/admin" className="flex items-center space-x-3">
               <img src="/logo.png" alt="Miss AL Simpson" className="h-10 w-auto" />
               <span className="font-bold text-lg tracking-tight">
                 <span className="text-gray-400">NFT Studio</span>
               </span>
             </Link>
             <div className="flex items-center space-x-4">
-              <Link to="/" className="text-gray-400 hover:text-white transition-colors text-sm">
+              <Link to="/admin" className="text-gray-400 hover:text-white transition-colors text-sm">
                 Dashboard
               </Link>
             </div>
@@ -53,8 +53,11 @@ export default function App() {
       {/* Legacy mint page route (still works) */}
       <Route path="/mint/:brandSlug/:collectionSlug" element={<MintPage />} />
 
-      {/* Dashboard routes with layout */}
-      <Route path="/" element={<Layout><Dashboard /></Layout>} />
+      {/* Root redirects to Ruthven World public site */}
+      <Route path="/" element={<Navigate to="/ruthven" replace />} />
+
+      {/* Admin NFT Studio — accessible at /admin */}
+      <Route path="/admin" element={<Layout><Dashboard /></Layout>} />
       <Route path="/brands/:brandId" element={<Layout><BrandManager /></Layout>} />
       <Route path="/brands/:brandId/collections/:collectionId" element={<Layout><CollectionEditor /></Layout>} />
       <Route path="/brands/:brandId/collections/:collectionId/traits" element={<Layout><TraitMixer /></Layout>} />
