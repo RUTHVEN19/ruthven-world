@@ -104,8 +104,13 @@ function HeroVideo({ src }) {
 
 // ── Details data ──
 const DETAILS = [
-  ['Influences', 'Peter Doig, Joan Eardley, the weather'],
-  ['Scottish Weather', 'Haar, dawn glow, storm fronts — whatever arrives'],
+  ['Location', 'Scottish Highlands'],
+  ['Medium', 'AI-trained on own oil paintings + hand drawing'],
+  ['Influences', 'Scottish Weather'],
+  ['Drink', 'Ruthven Single Malt'],
+  ['Companions', 'Two Highland hounds'],
+  ['Tools', 'AI Trained Models, Kling, iPad Pro, oil paints'],
+  ['Wardrobe', 'Tweed, always tweed'],
 ];
 
 export default function RuthvenArtist() {
