@@ -218,6 +218,15 @@ export default function MintPage() {
   const availableCount = isChooseMode ? nfts.length - mintedTokenIds.size : collection.max_supply - totalSupply;
   const canMint = mintPhase === 'public' || (mintPhase === 'presale' && isAllowlisted);
 
+  // Launch time gate — March 31 2026 17:00 UTC
+  const LAUNCH_TIME = new Date('2026-03-31T17:00:00Z');
+  const isBeforeLaunch = isRuthven && countdownNow < LAUNCH_TIME;
+  const launchDiff = Math.max(0, LAUNCH_TIME - countdownNow);
+  const launchHours = Math.floor(launchDiff / 3600000);
+  const launchMins = Math.floor((launchDiff % 3600000) / 60000);
+  const launchSecs = Math.floor((launchDiff % 60000) / 1000);
+  const launchCountdown = `${String(launchHours).padStart(2,'0')}:${String(launchMins).padStart(2,'0')}:${String(launchSecs).padStart(2,'0')}`;
+
   // Build hero image URL
   const heroNft = nfts.length > 0 ? nfts[0] : null;
   const heroUrl = heroNft
@@ -731,6 +740,8 @@ export default function MintPage() {
               canMint={canMint}
               mintPhase={mintPhase}
               txState={txState}
+              isBeforeLaunch={isBeforeLaunch}
+              launchCountdown={launchCountdown}
               onMint={() => handleMintSpecific(expandedNft)}
               onClose={() => setExpandedNft(null)}
             />
@@ -1015,6 +1026,13 @@ export default function MintPage() {
             <div className="flex items-center gap-3">
               {!isConnected ? (
                 <WalletConnect />
+              ) : isBeforeLaunch ? (
+                <div
+                  className="px-6 py-2.5 rounded-lg text-sm font-mono tracking-wider text-center"
+                  style={{ border: '1px solid rgba(0,232,150,0.35)', color: '#00E896', minWidth: '160px' }}
+                >
+                  Opens in {launchCountdown}
+                </div>
               ) : (
                 <button
                   onClick={() => {

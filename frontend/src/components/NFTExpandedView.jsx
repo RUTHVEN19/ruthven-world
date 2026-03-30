@@ -15,6 +15,8 @@ export default function NFTExpandedView({
   canMint,
   mintPhase,
   txState,
+  isBeforeLaunch = false,
+  launchCountdown = '',
   onMint,
   onClose,
 }) {
@@ -166,6 +168,10 @@ export default function NFTExpandedView({
                 {isMinted ? (
                   <div className="text-center py-3 rounded-lg text-sm" style={{ color: isRuthven ? 'rgba(255,255,255,0.4)' : 'rgba(107,114,128,1)', border: `1px solid ${isRuthven ? 'rgba(255,255,255,0.1)' : 'rgba(31,41,55,1)'}` }}>
                     Minted
+                  </div>
+                ) : isBeforeLaunch ? (
+                  <div className="text-center py-3 rounded-lg text-sm font-mono" style={{ color: '#00E896', border: '1px solid rgba(0,232,150,0.25)' }}>
+                    Opens in {launchCountdown}
                   </div>
                 ) : !isConnected ? (
                   <div className="text-center py-3 rounded-lg text-sm" style={{ color: isRuthven ? 'rgba(255,255,255,0.4)' : 'rgba(107,114,128,1)', border: `1px solid ${isRuthven ? 'rgba(255,255,255,0.1)' : 'rgba(31,41,55,1)'}` }}>
