@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import WalletConnect from '../components/WalletConnect';
 
 const NAV_ITEMS = [
   { path: '/ruthven', label: 'World', end: true },
@@ -73,25 +74,7 @@ export default function RuthvenWorld() {
           </div>
 
           {/* Connect Wallet */}
-          <button
-            className="text-xs font-mono uppercase tracking-wider px-4 py-1.5 rounded transition-all duration-300"
-            style={{
-              border: '1px solid rgba(0,232,150,0.25)',
-              color: 'rgba(0,232,150,0.7)',
-            }}
-            onMouseEnter={e => {
-              e.target.style.borderColor = 'rgba(0,232,150,0.5)';
-              e.target.style.color = '#00E896';
-              e.target.style.backgroundColor = 'rgba(0,232,150,0.05)';
-            }}
-            onMouseLeave={e => {
-              e.target.style.borderColor = 'rgba(0,232,150,0.25)';
-              e.target.style.color = 'rgba(0,232,150,0.7)';
-              e.target.style.backgroundColor = 'transparent';
-            }}
-          >
-            Connect
-          </button>
+          <WalletConnect />
         </div>
       </nav>
 

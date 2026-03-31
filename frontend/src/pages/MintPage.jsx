@@ -11,14 +11,26 @@ import NFTExpandedView from '../components/NFTExpandedView';
 import HighlandMap from '../components/HighlandMap';
 import PriceTierDisplay from '../components/PriceTierDisplay';
 import MintPhaseIndicator from '../components/MintPhaseIndicator';
+import DronesZoneHero from './drones/DronesZoneHero';
 
 export default function MintPage() {
   const params = useParams();
   const location = useLocation();
-  // Support both /mint/:brandSlug/:collectionSlug and /ruthven/first-light (World mode)
-  const isWorldMode = location.pathname.startsWith('/ruthven');
-  const brandSlug = params.brandSlug || (isWorldMode ? 'ruthven' : '');
-  const collectionSlug = params.collectionSlug || (isWorldMode ? 'first-light' : '');
+  // Support /mint/:brandSlug/:collectionSlug, /ruthven/* and /drones/* World modes
+  const isRuthvenWorld = location.pathname.startsWith('/ruthven');
+  const isDronesWorld  = location.pathname.startsWith('/drones');
+
+  const dronesZoneSlug = isDronesWorld
+    ? (location.pathname.split('/drones/')[1] || '').split('?')[0]
+    : '';
+
+  const brandSlug = params.brandSlug
+    || (isRuthvenWorld ? 'ruthven' : '')
+    || (isDronesWorld  ? 'drones-of-suburbia' : '');
+
+  const collectionSlug = params.collectionSlug
+    || (isRuthvenWorld ? 'first-light' : '')
+    || dronesZoneSlug;
   const { account, isConnected } = useWallet();
   const [totalSupply, setTotalSupply] = useState(0);
   const [currentPrice, setCurrentPrice] = useState(null);
@@ -50,10 +62,18 @@ export default function MintPage() {
   const hasAllowlist = !!collection?.merkle_root;
 
   // Brand-specific theming
-  const isDrones = brandSlug === 'the-drones-of-suburbia';
   const isRuthven = brandSlug === 'ruthven';
-  const primaryColor = brand?.theme?.primary_color || '#ffffff';
-  const bgColor = brand?.theme?.bg_color || '#030712';
+  const isDrones  = brandSlug === 'drones-of-suburbia' || isDronesWorld;
+  const isDiamond = isDrones && collectionSlug === 'diamond-shop';
+  const isCinema  = isDrones && collectionSlug === 'cinema';
+  const isGallery = isDrones && collectionSlug === 'gallery';
+
+  const primaryColor = isDrones
+    ? '#ffffff'
+    : brand?.theme?.primary_color || '#ffffff';
+  const bgColor = isDrones
+    ? '#000000'
+    : brand?.theme?.bg_color || '#030712';
 
   const contract = useContract(collection?.contract_address);
 
@@ -261,7 +281,26 @@ export default function MintPage() {
           />
         </div>
       )}
-      {!isRuthven && collection.video_url ? (
+      {/* Drones background — black dot grid */}
+      {isDrones && (
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)',
+              backgroundSize: '40px 40px',
+            }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%)',
+            }}
+          />
+        </div>
+      )}
+
+      {!isRuthven && !isDrones && collection.video_url ? (
         <div className="fixed inset-0 z-0 pointer-events-none">
           <video
             src={collection.video_url}
@@ -274,7 +313,7 @@ export default function MintPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 via-gray-950/30 to-gray-950/90" />
         </div>
-      ) : !isRuthven && heroUrl && (
+      ) : !isRuthven && !isDrones && heroUrl && (
         <div className="fixed inset-0 z-0 pointer-events-none">
           <img
             src={heroUrl}
@@ -341,16 +380,29 @@ export default function MintPage() {
         </>
       )}
 
-      {/* ═══ HERO ═══ */}
-      <div className="relative overflow-hidden z-10">
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            background: `radial-gradient(circle at 30% 50%, ${primaryColor}40, transparent 60%), radial-gradient(circle at 70% 50%, ${brand?.theme?.secondary_color || '#000000'}40, transparent 60%)`,
-          }}
-        />
+      {/* ═══ DRONES ZONE HERO (immersive room scene) ═══ */}
+      {isDrones && (
+        <div className="relative z-10">
+          <DronesZoneHero
+            zone={collectionSlug}
+            collection={collection}
+            nfts={nfts}
+          />
+        </div>
+      )}
 
-        <div className="relative max-w-4xl mx-auto px-4 py-16 text-center">
+      {/* ═══ HERO ═══ */}
+      <div className={`relative overflow-hidden z-10 ${isDrones ? 'py-8' : ''}`}>
+        {!isDrones && (
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              background: `radial-gradient(circle at 30% 50%, ${primaryColor}40, transparent 60%), radial-gradient(circle at 70% 50%, ${brand?.theme?.secondary_color || '#000000'}40, transparent 60%)`,
+            }}
+          />
+        )}
+
+        <div className={`relative ${isDrones ? 'max-w-4xl mx-auto px-4 pb-8 text-center' : 'max-w-4xl mx-auto px-4 py-16 text-center'}`}>
           {/* Brand logo above title */}
           {brand?.logo_url && (
             <div className="mb-8">
@@ -362,6 +414,16 @@ export default function MintPage() {
             </div>
           )}
 
+          {/* Drones zone label (above title) */}
+          {isDrones && (
+            <div className="font-mono text-[10px] uppercase tracking-[0.5em] text-white/25 mb-6">
+              {isDiamond && '◆ Diamond Shop'}
+              {isCinema  && '▶ The Cinema'}
+              {isGallery && '◻ Art Gallery'}
+              {!isDiamond && !isCinema && !isGallery && 'Drones of Suburbia'}
+            </div>
+          )}
+
           {/* Collection title */}
           <h1
             className={`text-7xl sm:text-8xl md:text-[10rem] font-bold mb-6 uppercase tracking-tight leading-[0.85] ${isRuthven ? 'first-light-glow' : ''}`}
@@ -369,10 +431,10 @@ export default function MintPage() {
               fontFamily: isRuthven
                 ? '"Playfair Display", "Georgia", serif'
                 : 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
-              color: isRuthven ? '#ffffff' : undefined,
+              color: '#ffffff',
               fontWeight: isRuthven ? 700 : undefined,
               fontStyle: isRuthven ? 'italic' : undefined,
-              letterSpacing: isRuthven ? '0.02em' : undefined,
+              letterSpacing: isRuthven ? '0.02em' : isDrones ? '0.04em' : undefined,
             }}
           >
             {collection.name}
@@ -386,12 +448,19 @@ export default function MintPage() {
                 fontFamily: isRuthven
                   ? '"Playfair Display", "Georgia", serif'
                   : 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
-                color: isRuthven ? 'rgba(255,255,255,0.7)' : 'rgba(156,163,175,1)',
+                color: isRuthven ? 'rgba(255,255,255,0.7)' : isDrones ? 'rgba(255,255,255,0.35)' : 'rgba(156,163,175,1)',
               }}
             >
-              by {brand?.name || 'the artist'}
+              {isDrones ? 'Drones of Suburbia' : `by ${brand?.name || 'the artist'}`}
             </span>
           </div>
+
+          {/* Cinema soundtrack indicator */}
+          {isCinema && (
+            <div className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.3em] text-white/30 border border-white/10 rounded px-3 py-1.5 mb-6">
+              ♪ Soundtrack Included
+            </div>
+          )}
 
           <p
             className="text-lg max-w-2xl mx-auto mb-8"
@@ -706,7 +775,21 @@ export default function MintPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Perspective gallery wall wrapper — Drones only */}
+          <div style={isDrones ? {
+            perspective: '1400px',
+            perspectiveOrigin: '50% -10%',
+          } : {}}>
+          <div style={isDrones ? {
+            transform: 'rotateX(6deg)',
+            transformOrigin: 'top center',
+            transformStyle: 'preserve-3d',
+          } : {}}>
+
+          <div className={isDrones
+            ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'
+            : 'grid grid-cols-1 md:grid-cols-2 gap-6'
+          }>
             {filteredNfts.map((nft, idx) => (
               <div key={nft.id} className="animate-cardFadeIn" style={{ animationDelay: `${idx * 80}ms` }}>
               <NFTGalleryCard
@@ -724,6 +807,8 @@ export default function MintPage() {
               </div>
             ))}
           </div>
+          </div>{/* /rotateX wrapper */}
+          </div>{/* /perspective wrapper */}
 
           {expandedNft && (
             <NFTExpandedView

@@ -122,6 +122,18 @@ export default function Dashboard() {
         </form>
       )}
 
+      {/* Tools */}
+      <div className="mb-8 flex gap-3">
+        <Link
+          to="/admin/batch-studio"
+          className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 border border-gray-800 hover:border-green-700 rounded-xl text-sm font-medium text-gray-300 hover:text-white transition-colors group"
+        >
+          <span className="text-lg">⬛</span>
+          <span>Batch Studio</span>
+          <span className="text-xs text-gray-600 group-hover:text-gray-400 ml-1">— FAL batch generate + upscale</span>
+        </Link>
+      </div>
+
       {isLoading ? (
         <div className="text-center py-20 text-gray-500">Loading brands...</div>
       ) : brands.length === 0 ? (

@@ -1,5 +1,11 @@
 import os
 import uuid
+import random
+import base64
+import time
+import json
+import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.utils import secure_filename
 from models import db, Collection, NFT, TraitCategory, TraitValue
@@ -670,3 +676,270 @@ def delete_nft(nft_id):
     db.session.delete(nft)
     db.session.commit()
     return jsonify({'message': 'NFT deleted'})
+
+
+@generate_bp.route('/generate/fal-batch', methods=['POST'])
+def generate_fal_batch():
+    """Batch generate images from multiple prompts with optional variations each.
+
+    Input JSON:
+    {
+      "prompts": ["prompt one", "prompt two"],
+      "variations_per_prompt": 2,
+      "model_id": "fal-ai/flux-pro",
+      "width": 1024,
+      "height": 1024,
+      "guidance_scale": 3.5,
+      "num_inference_steps": 28,
+      "loras": []  // optional
+    }
+    """
+    data = request.get_json()
+    if not data or not data.get('prompts'):
+        return jsonify({'error': 'prompts array is required'}), 400
+
+    prompts = data['prompts']
+    if not isinstance(prompts, list) or not prompts:
+        return jsonify({'error': 'prompts must be a non-empty array'}), 400
+
+    variations = max(1, min(4, int(data.get('variations_per_prompt', 1))))
+    model_id = data.get('model_id', 'fal-ai/flux-pro')
+    width = data.get('width', 1024)
+    height = data.get('height', 1024)
+    guidance_scale = data.get('guidance_scale', 3.5)
+    num_inference_steps = data.get('num_inference_steps', 28)
+    loras = data.get('loras')
+
+    from services.fal_service import generate_image
+
+    # Build job list: (prompt_index, prompt, variation_index)
+    jobs = [
+        (pi, prompt, vi)
+        for pi, prompt in enumerate(prompts)
+        for vi in range(variations)
+    ]
+    total = len(jobs)
+
+    app = current_app._get_current_object()
+
+    def run_job(job):
+        pi, prompt, vi = job
+        seed = random.randint(1, 2**31)
+        try:
+            with app.app_context():
+                result = generate_image(
+                    model_id=model_id,
+                    prompt=prompt,
+                    width=width,
+                    height=height,
+                    guidance_scale=guidance_scale,
+                    num_inference_steps=num_inference_steps,
+                    num_images=1,
+                    seed=seed,
+                    loras=loras,
+                )
+            img = result['images'][0]
+            return {
+                'ok': True,
+                'image_path': img['image_path'],
+                'image_url': img['image_url'],
+                'prompt': prompt,
+                'prompt_index': pi,
+                'variation': vi + 1,
+            }
+        except Exception as e:
+            return {'ok': False, 'prompt': prompt, 'prompt_index': pi, 'variation': vi + 1, 'error': str(e)}
+
+    images = []
+    errors = []
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = {executor.submit(run_job, job): job for job in jobs}
+        for future in as_completed(futures):
+            res = future.result()
+            if res['ok']:
+                images.append(res)
+            else:
+                errors.append(res)
+
+    # Sort by prompt_index then variation for predictable ordering
+    images.sort(key=lambda x: (x['prompt_index'], x['variation']))
+
+    # Save batch metadata so Recent Batches can reload it
+    try:
+        batches_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'batches')
+        os.makedirs(batches_dir, exist_ok=True)
+        batch_meta = {
+            'id': uuid.uuid4().hex,
+            'created_at': time.time(),
+            'model_id': model_id,
+            'prompts': prompts,
+            'images': images,
+            'succeeded': len(images),
+            'total': total,
+        }
+        meta_path = os.path.join(batches_dir, f"{batch_meta['id']}.json")
+        with open(meta_path, 'w') as f:
+            json.dump(batch_meta, f)
+    except Exception:
+        pass  # never block the response over metadata
+
+    return jsonify({
+        'images': images,
+        'total': total,
+        'succeeded': len(images),
+        'failed': len(errors),
+        'errors': errors,
+    })
+
+
+@generate_bp.route('/generate/recent-batches', methods=['GET'])
+def recent_batches():
+    """Return the last 20 batch metadata files, newest first."""
+    batches_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'batches')
+    if not os.path.exists(batches_dir):
+        return jsonify({'batches': []})
+    results = []
+    for fname in os.listdir(batches_dir):
+        if not fname.endswith('.json'):
+            continue
+        try:
+            with open(os.path.join(batches_dir, fname)) as f:
+                meta = json.load(f)
+            results.append(meta)
+        except Exception:
+            pass
+    results.sort(key=lambda x: x.get('created_at', 0), reverse=True)
+    return jsonify({'batches': results[:20]})
+
+
+def _upscale_single(image_path, scale, upload_folder, api_key):
+    """Run FAL clarity-upscaler on one image. Returns (image_path, image_url) or raises."""
+    full_path = os.path.join(upload_folder, image_path)
+    if not os.path.exists(full_path):
+        raise FileNotFoundError(f"Image not found: {image_path}")
+
+    with open(full_path, 'rb') as f:
+        b64 = base64.b64encode(f.read()).decode('utf-8')
+    ext = full_path.rsplit('.', 1)[-1].lower()
+    mime = 'image/png' if ext == 'png' else 'image/jpeg'
+    data_uri = f"data:{mime};base64,{b64}"
+
+    headers = {'Authorization': f'Key {api_key}', 'Content-Type': 'application/json'}
+    payload = {
+        'image_url': data_uri,
+        'scale': scale,
+        'enable_safety_checker': False,
+    }
+
+    response = requests.post('https://queue.fal.run/fal-ai/clarity-upscaler', json=payload, headers=headers, timeout=30)
+    response.raise_for_status()
+    result = response.json()
+
+    # Handle sync vs async response
+    if 'image' in result and 'url' in result['image']:
+        upscaled_url = result['image']['url']
+    elif 'request_id' in result:
+        request_id = result['request_id']
+        status_url = f'https://queue.fal.run/fal-ai/clarity-upscaler/requests/{request_id}/status'
+        result_url = f'https://queue.fal.run/fal-ai/clarity-upscaler/requests/{request_id}'
+        start = time.time()
+        while time.time() - start < 300:
+            sr = requests.get(status_url, headers=headers, timeout=10)
+            sd = sr.json()
+            if sd.get('status') == 'COMPLETED':
+                rr = requests.get(result_url, headers=headers, timeout=10)
+                rd = rr.json()
+                upscaled_url = rd['image']['url']
+                break
+            elif sd.get('status') == 'FAILED':
+                raise Exception(f"Upscale failed: {sd.get('error', 'Unknown')}")
+            time.sleep(3)
+        else:
+            raise Exception("Upscale timed out after 300 seconds")
+    else:
+        raise Exception(f"Unexpected FAL response: {result}")
+
+    # Download upscaled image
+    img_resp = requests.get(upscaled_url, timeout=60)
+    img_resp.raise_for_status()
+    save_dir = os.path.join(upload_folder, 'sources')
+    os.makedirs(save_dir, exist_ok=True)
+    filename = f"upscaled_{uuid.uuid4().hex}.png"
+    filepath = os.path.join(save_dir, filename)
+    with open(filepath, 'wb') as f:
+        f.write(img_resp.content)
+
+    rel_path = os.path.join('sources', filename)
+    return rel_path, f'/uploads/{rel_path}'
+
+
+@generate_bp.route('/generate/upscale', methods=['POST'])
+def upscale_image():
+    """Upscale a single image using FAL clarity-upscaler.
+
+    Input JSON: { "image_path": "sources/fal_xxx.png", "scale": 2 }
+    """
+    data = request.get_json()
+    if not data or not data.get('image_path'):
+        return jsonify({'error': 'image_path is required'}), 400
+
+    image_path = data['image_path']
+    scale = int(data.get('scale', 2))
+    api_key = current_app.config.get('FAL_KEY')
+    if not api_key:
+        return jsonify({'error': 'FAL_KEY not configured'}), 500
+
+    try:
+        rel_path, image_url = _upscale_single(image_path, scale, current_app.config['UPLOAD_FOLDER'], api_key)
+        return jsonify({'image_path': rel_path, 'image_url': image_url})
+    except FileNotFoundError as e:
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@generate_bp.route('/generate/upscale-batch', methods=['POST'])
+def upscale_batch():
+    """Upscale multiple images in parallel using FAL clarity-upscaler.
+
+    Input JSON: { "image_paths": ["sources/fal_xxx.png", ...], "scale": 2 }
+    """
+    data = request.get_json()
+    if not data or not data.get('image_paths'):
+        return jsonify({'error': 'image_paths array is required'}), 400
+
+    image_paths = data['image_paths']
+    scale = int(data.get('scale', 2))
+    api_key = current_app.config.get('FAL_KEY')
+    if not api_key:
+        return jsonify({'error': 'FAL_KEY not configured'}), 500
+
+    upload_folder = current_app.config['UPLOAD_FOLDER']
+    app = current_app._get_current_object()
+
+    def run_upscale(image_path):
+        try:
+            with app.app_context():
+                rel_path, image_url = _upscale_single(image_path, scale, upload_folder, api_key)
+            return {'ok': True, 'original_path': image_path, 'image_path': rel_path, 'image_url': image_url}
+        except Exception as e:
+            return {'ok': False, 'original_path': image_path, 'error': str(e)}
+
+    results = []
+    errors = []
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = {executor.submit(run_upscale, p): p for p in image_paths}
+        for future in as_completed(futures):
+            res = future.result()
+            if res['ok']:
+                results.append(res)
+            else:
+                errors.append(res)
+
+    return jsonify({
+        'images': results,
+        'total': len(image_paths),
+        'succeeded': len(results),
+        'failed': len(errors),
+        'errors': errors,
+    })

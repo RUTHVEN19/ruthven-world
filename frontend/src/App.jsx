@@ -10,6 +10,9 @@ import RuthvenGateway from './pages/RuthvenGateway';
 import RuthvenStudio from './pages/RuthvenStudio';
 import RuthvenSignal from './pages/RuthvenSignal';
 import RuthvenArtist from './pages/RuthvenArtist';
+import BatchStudio from './pages/BatchStudio';
+import DronesWorld from './pages/drones/DronesWorld';
+import DronesGateway from './pages/drones/DronesGateway';
 
 function Layout({ children }) {
   return (
@@ -50,6 +53,14 @@ export default function App() {
         <Route path="signal" element={<RuthvenSignal />} />
       </Route>
 
+      {/* ═══ DRONES OF SUBURBIA WORLD ═══ */}
+      <Route path="/drones" element={<DronesWorld />}>
+        <Route index element={<DronesGateway />} />
+        <Route path="diamond-shop" element={<MintPage />} />
+        <Route path="cinema" element={<MintPage />} />
+        <Route path="gallery" element={<MintPage />} />
+      </Route>
+
       {/* Legacy mint page route (still works) */}
       <Route path="/mint/:brandSlug/:collectionSlug" element={<MintPage />} />
 
@@ -62,6 +73,7 @@ export default function App() {
       <Route path="/brands/:brandId/collections/:collectionId" element={<Layout><CollectionEditor /></Layout>} />
       <Route path="/brands/:brandId/collections/:collectionId/traits" element={<Layout><TraitMixer /></Layout>} />
       <Route path="/brands/:brandId/collections/:collectionId/upload" element={<Layout><BulkUpload /></Layout>} />
+      <Route path="/admin/batch-studio" element={<Layout><BatchStudio /></Layout>} />
     </Routes>
   );
 }
