@@ -176,6 +176,7 @@ def get_mint_data(brand_slug, collection_slug):
 # The contract's BASE_URI points here: /api/nfts/metadata/<token_id>
 # Returns OpenSea-compatible JSON so wallets + marketplaces can read the NFT.
 @collections_bp.route('/nfts/metadata/<int:token_id>', methods=['GET'])
+@collections_bp.route('/nfts/metadata/<int:token_id>.json', methods=['GET'])
 def get_token_metadata(token_id):
     """ERC-721 tokenURI endpoint for FIRST LIGHT (collection id=3)."""
     nft = NFT.query.filter_by(collection_id=3, token_id=token_id).first_or_404()
