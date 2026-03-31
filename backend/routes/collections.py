@@ -181,7 +181,7 @@ def get_token_metadata(token_id):
     nft = NFT.query.filter_by(collection_id=3, token_id=token_id).first_or_404()
 
     image_url = (
-        f"ipfs://{nft.image_cid}"
+        f"https://moccasin-legislative-falcon-246.mypinata.cloud/ipfs/{nft.image_cid}"
         if nft.image_cid
         else f"https://ruthven-world-production.up.railway.app/uploads/{nft.image_path}"
         if nft.image_path
