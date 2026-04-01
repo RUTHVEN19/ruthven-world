@@ -159,7 +159,10 @@ export default function DronesGateway() {
       </div>
 
       {/* ── AMBIENT AUDIO ── */}
-      <audio ref={audioRef} src="/drones-hero.mp4" loop style={{ display: 'none' }} />
+      <audio ref={audioRef} loop style={{ display: 'none' }}>
+        <source src="/drones-ambient.m4a" type="audio/mp4" />
+        <source src="/drones-hero.mp4" type="video/mp4" />
+      </audio>
 
       {/* ── AUDIO TOGGLE ── */}
       <button
