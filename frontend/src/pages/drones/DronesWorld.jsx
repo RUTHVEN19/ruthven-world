@@ -73,7 +73,7 @@ export default function DronesWorld() {
           </div>
 
           {/* Wallet Connect */}
-          <WalletConnect />
+          <WalletConnect compact />
         </div>
       </nav>
 
