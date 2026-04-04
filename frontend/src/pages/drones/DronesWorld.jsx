@@ -1,18 +1,21 @@
 import { useState, useEffect } from 'react';
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import WalletConnect from '../../components/WalletConnect';
 
 const NAV_ITEMS = [
-  { path: '/drones', label: 'World', end: true },
-  { path: '/drones/diamond-shop', label: 'Diamond Shop' },
-  { path: '/drones/cinema', label: 'Cinema' },
+  { path: '/drones',         label: 'World',   end: true },
+  { path: '/drones/shop',    label: 'Shop' },
+  { path: '/drones/cinema',  label: 'Cinema' },
   { path: '/drones/gallery', label: 'Gallery' },
+  { path: '/drones/studio',  label: 'Studio' },
 ];
 
 export default function DronesWorld() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [navVisible, setNavVisible] = useState(true);
   const [lastScroll, setLastScroll] = useState(0);
+  const isMintPage = location.pathname === '/drones/mint';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,51 +32,75 @@ export default function DronesWorld() {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#0a0a0a', color: '#ffffff' }}>
 
       {/* ── Navigation Bar ── */}
       <nav
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
         style={{
           transform: navVisible ? 'translateY(0)' : 'translateY(-100%)',
-          backgroundColor: 'rgba(0,0,0,0.9)',
+          backgroundColor: 'rgba(0,0,0,0.92)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+
           {/* Logo */}
-          <NavLink to="/drones" className="flex items-center group">
+          <NavLink to="/drones" style={{ display: 'flex', alignItems: 'center' }}>
             <img
-              src="/DRONE LOGO.png"
+              src="/Translucent Logo.png"
               alt="Drones of Suburbia"
-              className="h-7 object-contain opacity-80 group-hover:opacity-100 transition-opacity"
-              style={{ filter: 'invert(0)' }}
+              style={{ height: '32px', objectFit: 'contain', opacity: 0.7 }}
             />
           </NavLink>
 
-          {/* Nav Links */}
-          <div className="flex items-center gap-1">
+          {/* Zone nav links */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
             {NAV_ITEMS.map(item => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 end={item.end}
-                className={({ isActive }) =>
-                  `px-3 py-1.5 text-xs font-mono uppercase tracking-[0.15em] rounded transition-all duration-300 ${
-                    isActive
-                      ? 'text-white bg-white/10'
-                      : 'text-white/30 hover:text-white/60 hover:bg-white/5'
-                  }`
-                }
+                style={({ isActive }) => ({
+                  padding: '6px 12px',
+                  fontSize: '10px',
+                  fontFamily: 'monospace',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.15em',
+                  borderRadius: '0',
+                  transition: 'all 0.3s',
+                  color: isActive ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)',
+                  background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
+                  textDecoration: 'none',
+                })}
               >
                 {item.label}
               </NavLink>
             ))}
           </div>
 
-          {/* Wallet Connect */}
-          <WalletConnect compact />
+          {/* Right side: Wallet + Mint CTA */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <WalletConnect compact />
+            <button
+              onClick={() => navigate('/drones/mint')}
+              style={{
+                background: isMintPage ? 'rgba(255,255,255,0.15)' : 'transparent',
+                border: '1px solid rgba(255,255,255,0.35)',
+                color: '#fff',
+                padding: '6px 18px',
+                fontSize: '10px', letterSpacing: '0.25em',
+                textTransform: 'uppercase', fontFamily: 'monospace',
+                cursor: 'pointer', transition: 'all 0.3s',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.7)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = isMintPage ? 'rgba(255,255,255,0.15)' : 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)'; }}
+            >
+              ✦ Mint
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -83,67 +110,104 @@ export default function DronesWorld() {
       </div>
 
       {/* ── Footer ── */}
-      <footer
-        className="relative z-10 px-6 py-12"
-        style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
-      >
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 items-start">
+      <footer style={{
+        borderTop: '1px solid rgba(255,255,255,0.05)',
+        padding: 'clamp(48px,7vw,80px) clamp(24px,6vw,80px)',
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', alignItems: 'start', marginBottom: '48px' }}>
 
             {/* Brand */}
             <div>
               <img
-                src="/DRONE LOGO.png"
+                src="/Translucent Logo.png"
                 alt="Drones of Suburbia"
-                className="h-10 object-contain opacity-30 mb-3"
+                style={{ height: '40px', objectFit: 'contain', opacity: 0.2, marginBottom: '16px', display: 'block' }}
               />
-              <p className="text-xs text-white/20">
-                &copy; {new Date().getFullYear()} Drones of Suburbia<br />All rights reserved
+              <p style={{
+                fontSize: '10px', fontFamily: 'monospace', lineHeight: 1.9,
+                color: 'rgba(255,255,255,0.18)',
+                letterSpacing: '0.05em',
+              }}>
+                © {new Date().getFullYear()} Miss AL Simpson<br />
+                All rights reserved<br />
+                DIAMOND DRONES ARE A GIRL'S BEST FRIEND™
               </p>
             </div>
 
-            {/* World Nav */}
+            {/* Zones */}
             <div>
-              <div className="text-xs font-mono uppercase tracking-[0.2em] mb-3 text-white/25">
+              <div style={{
+                fontSize: '10px', fontFamily: 'monospace', letterSpacing: '0.3em',
+                textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', marginBottom: '16px',
+              }}>
                 Zones
               </div>
-              <div className="space-y-1.5">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {NAV_ITEMS.slice(1).map(item => (
                   <NavLink
                     key={item.path}
                     to={item.path}
-                    className="block text-xs font-mono transition-colors hover:text-white text-white/30"
+                    style={{
+                      fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.1em',
+                      textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)',
+                      textDecoration: 'none', transition: 'color 0.2s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.25)'}
                   >
                     {item.label}
                   </NavLink>
                 ))}
+                <NavLink
+                  to="/drones/mint"
+                  style={{
+                    fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.1em',
+                    textTransform: 'uppercase', color: 'rgba(200,230,255,0.3)',
+                    textDecoration: 'none', transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.color = 'rgba(200,230,255,0.7)'}
+                  onMouseLeave={e => e.currentTarget.style.color = 'rgba(200,230,255,0.3)'}
+                >
+                  ✦ Mint Collector Set
+                </NavLink>
               </div>
             </div>
 
-            {/* Contract addresses placeholder */}
+            {/* Edition info */}
             <div>
-              <div className="text-xs font-mono uppercase tracking-[0.2em] mb-3 text-white/25">
-                Contracts
+              <div style={{
+                fontSize: '10px', fontFamily: 'monospace', letterSpacing: '0.3em',
+                textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', marginBottom: '16px',
+              }}>
+                Edition
               </div>
-              <div className="space-y-2">
-                {[
-                  { label: 'Diamond Drones', addr: 'TBA' },
-                  { label: 'Cinema Reels', addr: 'TBA' },
-                  { label: 'Gallery Stills', addr: 'TBA' },
-                ].map(({ label, addr }) => (
-                  <div key={label}>
-                    <div className="text-[10px] font-mono text-white/20 uppercase tracking-wider">{label}</div>
-                    <div className="text-[10px] font-mono text-white/15">{addr}</div>
-                  </div>
-                ))}
-              </div>
+              {[
+                ['Supply',   '200 editions'],
+                ['Price',    '1 ETH'],
+                ['Network',  'Ethereum'],
+                ['Contract', 'TBA'],
+              ].map(([k, v]) => (
+                <div key={k} style={{
+                  display: 'flex', justifyContent: 'space-between',
+                  padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.04)',
+                }}>
+                  <span style={{ fontSize: '10px', fontFamily: 'monospace', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.18)' }}>{k}</span>
+                  <span style={{ fontSize: '10px', fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>{v}</span>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="mt-10 pt-6 text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.03)' }}>
-            <span className="text-xs font-mono tracking-[0.3em]" style={{ color: 'rgba(255,255,255,0.08)' }}>
-              DRONES OF SUBURBIA WORLD v0.1
-            </span>
+          <div style={{
+            paddingTop: '24px',
+            borderTop: '1px solid rgba(255,255,255,0.03)',
+            textAlign: 'center',
+            fontSize: '9px', fontFamily: 'monospace',
+            letterSpacing: '0.3em', textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.07)',
+          }}>
+            The Drones of Suburbia · Diamond Drones Are a Girl's Best Friend™
           </div>
         </div>
       </footer>

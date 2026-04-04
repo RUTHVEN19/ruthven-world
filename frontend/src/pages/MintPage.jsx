@@ -19,6 +19,7 @@ export default function MintPage() {
   // Support /mint/:brandSlug/:collectionSlug, /ruthven/* and /drones/* World modes
   const isRuthvenWorld = location.pathname.startsWith('/ruthven');
   const isDronesWorld  = location.pathname.startsWith('/drones');
+  const isWorldMode    = isRuthvenWorld || isDronesWorld;
 
   const dronesZoneSlug = isDronesWorld
     ? (location.pathname.split('/drones/')[1] || '').split('?')[0]

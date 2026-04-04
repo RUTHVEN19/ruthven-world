@@ -13,6 +13,11 @@ import RuthvenArtist from './pages/RuthvenArtist';
 import BatchStudio from './pages/BatchStudio';
 import DronesWorld from './pages/drones/DronesWorld';
 import DronesGateway from './pages/drones/DronesGateway';
+import DroneShop from './pages/drones/DroneShop';
+import DroneCinema from './pages/drones/DroneCinema';
+import DroneGallery from './pages/drones/DroneGallery';
+import DroneStudio from './pages/drones/DroneStudio';
+import DroneMint from './pages/drones/DroneMint';
 
 function Layout({ children }) {
   return (
@@ -56,9 +61,11 @@ export default function App() {
       {/* ═══ DRONES OF SUBURBIA WORLD ═══ */}
       <Route path="/drones" element={<DronesWorld />}>
         <Route index element={<DronesGateway />} />
-        <Route path="diamond-shop" element={<MintPage />} />
-        <Route path="cinema" element={<MintPage />} />
-        <Route path="gallery" element={<MintPage />} />
+        <Route path="shop" element={<DroneShop />} />
+        <Route path="cinema" element={<DroneCinema />} />
+        <Route path="gallery" element={<DroneGallery />} />
+        <Route path="studio" element={<DroneStudio />} />
+        <Route path="mint" element={<DroneMint />} />
       </Route>
 
       {/* Legacy mint page route (still works) */}

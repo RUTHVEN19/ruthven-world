@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
+import { ZONES, HERO_COPY, LORE, COLLECTOR_SET, MINT_CONFIG } from '../../config/dronesContent';
 
 const keyframes = `
   * { cursor: none !important; }
@@ -26,6 +27,10 @@ const keyframes = `
     0%   { background-position: -300% center; }
     100% { background-position: 300% center; }
   }
+  @keyframes shimmerSlow {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
   @keyframes glint1 {
     0%, 82%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
     88%           { opacity: 1; transform: scale(1) rotate(15deg); }
@@ -50,34 +55,7 @@ const keyframes = `
   }
 `;
 
-const ZONES = [
-  {
-    slug: 'diamond-shop',
-    label: 'I',
-    title: 'THE DIAMOND SHOP',
-    subtitle: '100 NFTs · Choose Your Drone',
-    description: 'Diamond drones. Couture obsession. 100 hand-selected video NFTs — each one a singular object of desire.',
-    image: '/dd-shop.png',
-  },
-  {
-    slug: 'cinema',
-    label: 'II',
-    title: 'THE CINEMA',
-    subtitle: '10 NFTs · Film + Soundtrack',
-    description: 'Ten reels. Ten scores. A private cinema of diamond drone film — each with an original soundtrack.',
-    image: '/dd-cinema.png',
-  },
-  {
-    slug: 'gallery',
-    label: 'III',
-    title: 'THE ART GALLERY',
-    subtitle: '1000 NFTs · Blind Mint',
-    description: 'One thousand stills from the diamond drone world. Blind mint. Pure chance. Pure image.',
-    image: '/dd-gallery.png',
-  },
-];
-
-// Floating diamond positions (fixed, deterministic — no random on every render)
+// Floating diamond positions
 const DIAMONDS = [
   { left: '8%',  delay: '0s',    duration: '14s', size: 10 },
   { left: '18%', delay: '3s',    duration: '18s', size: 7  },
@@ -99,14 +77,12 @@ export default function DronesGateway() {
   const [audioPlaying, setAudioPlaying] = useState(false);
   const audioRef = useRef(null);
 
-  // Track cursor position
   useEffect(() => {
     const move = (e) => setCursorPos({ x: e.clientX, y: e.clientY });
     window.addEventListener('mousemove', move);
     return () => window.removeEventListener('mousemove', move);
   }, []);
 
-  // Detect hoverable elements for cursor expand
   useEffect(() => {
     const over = (e) => {
       const el = e.target;
@@ -144,11 +120,8 @@ export default function DronesGateway() {
           <div
             key={i}
             style={{
-              position: 'absolute',
-              left: d.left,
-              bottom: '-30px',
-              width: d.size,
-              height: d.size,
+              position: 'absolute', left: d.left, bottom: '-30px',
+              width: d.size, height: d.size,
               border: '1px solid rgba(255,255,255,0.25)',
               background: 'rgba(255,255,255,0.04)',
               transform: 'rotate(45deg)',
@@ -169,21 +142,12 @@ export default function DronesGateway() {
         data-hoverable
         onClick={toggleAudio}
         style={{
-          position: 'fixed',
-          bottom: '28px',
-          right: '28px',
-          zIndex: 100,
-          background: 'rgba(0,0,0,0.6)',
-          border: '1px solid rgba(255,255,255,0.15)',
+          position: 'fixed', bottom: '28px', right: '28px', zIndex: 100,
+          background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.15)',
           color: audioPlaying ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.35)',
-          fontFamily: 'monospace',
-          fontSize: '11px',
-          letterSpacing: '0.25em',
-          textTransform: 'uppercase',
-          padding: '10px 16px',
-          backdropFilter: 'blur(12px)',
-          transition: 'all 0.3s ease',
-          cursor: 'pointer',
+          fontFamily: 'monospace', fontSize: '11px', letterSpacing: '0.25em',
+          textTransform: 'uppercase', padding: '10px 16px',
+          backdropFilter: 'blur(12px)', transition: 'all 0.3s ease', cursor: 'pointer',
         }}
         onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; e.currentTarget.style.color = '#fff'; }}
         onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = audioPlaying ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.35)'; }}
@@ -193,127 +157,138 @@ export default function DronesGateway() {
 
       {/* ── FULL BLEED HERO ── */}
       <div style={{
-        position: 'relative',
-        height: '100vh',
-        minHeight: '600px',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
+        position: 'relative', height: '100vh', minHeight: '600px',
+        overflow: 'hidden', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
       }}>
-        {/* Hero background video */}
-        <video
-          autoPlay muted loop playsInline
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'center',
-            filter: 'grayscale(100%) contrast(1.05)',
-            opacity: 0.5,
-          }}
-        >
+        <video autoPlay muted loop playsInline style={{
+          position: 'absolute', inset: 0,
+          width: '100%', height: '100%',
+          objectFit: 'cover', objectPosition: 'center',
+          filter: 'grayscale(100%) contrast(1.05)', opacity: 0.5,
+        }}>
           <source src="/drones-hero.mp4" type="video/mp4" />
         </video>
-
-        {/* Dark gradient overlay */}
         <div style={{
-          position: 'absolute',
-          inset: 0,
+          position: 'absolute', inset: 0,
           background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,1) 100%)',
         }} />
 
-        {/* Film grain */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E")`,
-          pointerEvents: 'none',
-          opacity: 0.4,
-        }} />
-
-        {/* Hero content */}
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 20px' }}>
-
           {/* Logo */}
           <div style={{ marginBottom: '48px', animation: 'fadeUp 1s ease forwards' }}>
             <img
               src="/Translucent Logo.png"
               alt="The Drones of Suburbia"
-              style={{
-                height: 'clamp(80px, 14vw, 160px)',
-                margin: '0 auto',
-                display: 'block',
-              }}
+              style={{ height: 'clamp(80px, 14vw, 160px)', margin: '0 auto', display: 'block' }}
             />
           </div>
 
-          {/* DIAMOND DRONES title */}
-          <div style={{
-            position: 'relative',
-            display: 'inline-block',
-            animation: 'fadeUp 1s ease 0.2s both',
-          }}>
-            {/* Sparkle glints */}
-            <span style={{ position: 'absolute', top: '8%', left: '10%', color: '#fff', fontSize: '20px', animation: 'glint1 4s ease-in-out infinite', pointerEvents: 'none', zIndex: 3 }}>✦</span>
-            <span style={{ position: 'absolute', top: '15%', right: '6%', color: '#e0f0ff', fontSize: '14px', animation: 'glint2 5s ease-in-out infinite', pointerEvents: 'none', zIndex: 3 }}>✦</span>
+          {/* Crystal title */}
+          <div style={{ position: 'relative', display: 'inline-block', animation: 'fadeUp 1s ease 0.2s both' }}>
+            <span style={{ position: 'absolute', top: '8%',  left: '10%',  color: '#fff', fontSize: '20px', animation: 'glint1 4s ease-in-out infinite', pointerEvents: 'none', zIndex: 3 }}>✦</span>
+            <span style={{ position: 'absolute', top: '15%', right: '6%',  color: '#e0f0ff', fontSize: '14px', animation: 'glint2 5s ease-in-out infinite', pointerEvents: 'none', zIndex: 3 }}>✦</span>
             <span style={{ position: 'absolute', bottom: '12%', left: '30%', color: '#fff', fontSize: '10px', animation: 'glint3 3.5s ease-in-out infinite', pointerEvents: 'none', zIndex: 3 }}>✦</span>
             <span style={{ position: 'absolute', top: '0%', right: '22%', color: '#c8e8ff', fontSize: '8px', animation: 'glint1 6s ease-in-out infinite 1s', pointerEvents: 'none', zIndex: 3 }}>◆</span>
             <span style={{ position: 'absolute', bottom: '0%', right: '15%', color: '#fff', fontSize: '16px', animation: 'glint2 4.5s ease-in-out infinite 0.5s', pointerEvents: 'none', zIndex: 3 }}>✦</span>
-
             <div style={{
               fontSize: 'clamp(60px, 14vw, 160px)',
-              fontWeight: '400',
-              letterSpacing: '0.05em',
-              lineHeight: 0.88,
+              fontWeight: '400', letterSpacing: '0.05em', lineHeight: 0.88,
               fontFamily: '"Anton", "Arial Black", sans-serif',
               textTransform: 'uppercase',
               background: 'linear-gradient(110deg, #b0c8d4 0%, #ddeef4 12%, #ffffff 22%, #a8c0cc 33%, #d8ecf4 44%, #ffffff 52%, #b4ccd8 62%, #e0f0f6 73%, #ffffff 82%, #a4bcc8 100%)',
               backgroundSize: '300% auto',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               animation: 'crystalShimmer 5s linear infinite',
             }}>
-              DIAMOND DRONES<br />ARE A GIRL'S<br />BEST FRIEND<sup style={{fontSize:'0.35em', verticalAlign:'super', WebkitTextFillColor:'rgba(255,255,255,0.6)', backgroundClip:'unset', WebkitBackgroundClip:'unset'}}>™</sup>
+              {HERO_COPY.headline[0]}<br />{HERO_COPY.headline[1]}<br />{HERO_COPY.headline[2]}<sup style={{ fontSize: '0.35em', verticalAlign: 'super', WebkitTextFillColor: 'rgba(255,255,255,0.6)', backgroundClip: 'unset', WebkitBackgroundClip: 'unset' }}>™</sup>
             </div>
           </div>
 
-          {/* Subtitle */}
+          {/* Edition kicker */}
           <div style={{
-            marginTop: '32px',
-            fontSize: 'clamp(11px, 1.4vw, 13px)',
-            letterSpacing: '0.35em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.4)',
-            fontFamily: 'monospace',
-            animation: 'fadeUp 1s ease 0.4s both',
+            marginTop: '28px',
+            fontSize: 'clamp(11px, 1.4vw, 13px)', letterSpacing: '0.35em',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)',
+            fontFamily: 'monospace', animation: 'fadeUp 1s ease 0.4s both',
           }}>
-            The Drones of Suburbia — NYC · A Drop in Three Acts
+            {HERO_COPY.kicker}
+          </div>
+
+          {/* Primary CTA */}
+          <div style={{ animation: 'fadeUp 1s ease 0.55s both', marginTop: '36px', display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button
+              data-hoverable
+              onClick={() => navigate('/drones/mint')}
+              style={{
+                background: 'rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.5)',
+                color: '#fff', padding: '16px 40px',
+                fontSize: '11px', letterSpacing: '0.35em',
+                textTransform: 'uppercase', fontFamily: 'monospace',
+                cursor: 'pointer', backdropFilter: 'blur(8px)',
+                transition: 'all 0.3s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.18)'; e.currentTarget.style.borderColor = '#fff'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; }}
+            >
+              ✦ {HERO_COPY.cta}
+            </button>
+            <div style={{
+              display: 'flex', alignItems: 'center',
+              fontSize: '11px', letterSpacing: '0.25em',
+              fontFamily: 'monospace', textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.3)',
+            }}>
+              {HERO_COPY.editionLine}
+            </div>
           </div>
 
           {/* Scroll hint */}
           <div style={{
-            position: 'absolute',
-            bottom: '-80px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontSize: '11px',
-            letterSpacing: '0.3em',
-            color: 'rgba(255,255,255,0.25)',
-            fontFamily: 'monospace',
-            textTransform: 'uppercase',
-            animation: 'fadeUp 1s ease 0.8s both',
+            position: 'absolute', bottom: '-80px', left: '50%', transform: 'translateX(-50%)',
+            fontSize: '11px', letterSpacing: '0.3em',
+            color: 'rgba(255,255,255,0.25)', fontFamily: 'monospace',
+            textTransform: 'uppercase', animation: 'fadeUp 1s ease 0.8s both',
           }}>
-            Scroll ↓
+            Explore ↓
           </div>
         </div>
       </div>
 
-      {/* ── THREE ZONES ── */}
+      {/* ── EDITION STRIP ── */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
+        borderTop: '1px solid rgba(255,255,255,0.08)',
+      }}>
+        {COLLECTOR_SET.map((item, i) => (
+          <div key={i} style={{
+            padding: 'clamp(20px,3vw,32px) clamp(16px,3vw,28px)',
+            borderRight: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+            display: 'flex', flexDirection: 'column', gap: '6px',
+          }}>
+            <div style={{ fontSize: '18px', color: 'rgba(200,230,255,0.5)' }}>{item.icon}</div>
+            <div style={{
+              fontSize: 'clamp(11px,1.2vw,13px)',
+              fontFamily: '"Anton", sans-serif',
+              textTransform: 'uppercase', letterSpacing: '0.04em',
+              color: 'rgba(255,255,255,0.7)',
+            }}>
+              {item.label}
+            </div>
+            <div style={{
+              fontSize: '10px', letterSpacing: '0.1em',
+              fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)',
+              lineHeight: 1.6,
+            }}>
+              {item.detail}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── FOUR ZONES ── */}
       <div>
         {ZONES.map((zone, i) => (
           <div
@@ -321,27 +296,26 @@ export default function DronesGateway() {
             onClick={() => navigate(`/drones/${zone.slug}`)}
             onMouseEnter={() => setHovered(zone.slug)}
             onMouseLeave={() => setHovered(null)}
+            data-hoverable
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
               gridTemplateAreas: i % 2 === 0 ? '"image text"' : '"text image"',
-              minHeight: '75vh',
+              minHeight: '70vh',
               borderBottom: '1px solid rgba(255,255,255,0.08)',
               cursor: 'pointer',
               background: hovered === zone.slug ? 'rgba(255,255,255,0.02)' : 'transparent',
               transition: 'background 0.4s',
             }}
           >
-            {/* Image */}
-            <div style={{ gridArea: 'image', position: 'relative', overflow: 'hidden', minHeight: '60vh' }}>
+            {/* Image panel */}
+            <div style={{ gridArea: 'image', position: 'relative', overflow: 'hidden', minHeight: '55vh' }}>
               <img
                 src={zone.image}
                 alt={zone.title}
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'center',
+                  width: '100%', height: '100%',
+                  objectFit: 'cover', objectPosition: 'center',
                   filter: 'grayscale(100%) contrast(1.15)',
                   transition: 'transform 0.8s ease',
                   transform: hovered === zone.slug ? 'scale(1.04)' : 'scale(1)',
@@ -357,16 +331,14 @@ export default function DronesGateway() {
                 fontSize: '11px', letterSpacing: '0.3em',
                 fontFamily: 'monospace', color: 'rgba(255,255,255,0.4)',
               }}>
-                {zone.label}
+                {zone.numeral}
               </div>
             </div>
 
-            {/* Text */}
+            {/* Text panel */}
             <div style={{
               gridArea: 'text',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
+              display: 'flex', flexDirection: 'column', justifyContent: 'center',
               padding: 'clamp(40px, 6vw, 100px)',
               borderLeft: i % 2 === 0 ? '1px solid rgba(255,255,255,0.07)' : 'none',
               borderRight: i % 2 === 0 ? 'none' : '1px solid rgba(255,255,255,0.07)',
@@ -378,13 +350,10 @@ export default function DronesGateway() {
               }}>
                 {zone.subtitle}
               </div>
-
               <div style={{
-                fontSize: 'clamp(30px, 4.5vw, 56px)',
-                fontWeight: '400',
-                lineHeight: 0.95,
-                letterSpacing: '0.02em',
-                textTransform: 'uppercase',
+                fontSize: 'clamp(28px, 4.5vw, 56px)',
+                fontWeight: '400', lineHeight: 0.95,
+                letterSpacing: '0.02em', textTransform: 'uppercase',
                 marginBottom: '28px',
                 fontFamily: '"Anton", "Arial Black", sans-serif',
                 color: hovered === zone.slug ? '#fff' : 'rgba(255,255,255,0.9)',
@@ -392,27 +361,18 @@ export default function DronesGateway() {
               }}>
                 {zone.title}
               </div>
-
               <div style={{
-                fontSize: 'clamp(14px, 1.4vw, 17px)',
-                lineHeight: 1.8,
+                fontSize: 'clamp(14px, 1.4vw, 17px)', lineHeight: 1.8,
                 color: 'rgba(255,255,255,0.45)',
-                fontFamily: 'Georgia, serif',
-                fontStyle: 'italic',
-                maxWidth: '380px',
-                marginBottom: '44px',
+                fontFamily: 'Georgia, serif', fontStyle: 'italic',
+                maxWidth: '380px', marginBottom: '44px',
               }}>
                 {zone.description}
               </div>
-
               <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '10px',
-                fontSize: '11px',
-                letterSpacing: '0.3em',
-                textTransform: 'uppercase',
-                fontFamily: 'monospace',
+                display: 'inline-flex', alignItems: 'center', gap: '10px',
+                fontSize: '11px', letterSpacing: '0.3em',
+                textTransform: 'uppercase', fontFamily: 'monospace',
                 color: hovered === zone.slug ? '#fff' : 'rgba(255,255,255,0.3)',
                 transition: 'color 0.3s',
                 paddingBottom: '2px',
@@ -425,25 +385,97 @@ export default function DronesGateway() {
         ))}
       </div>
 
-      {/* ── FOOTER ── */}
+      {/* ── LORE SECTION ── */}
       <div style={{
-        textAlign: 'center',
-        padding: '80px 40px',
+        padding: 'clamp(80px,10vw,140px) clamp(24px,6vw,100px)',
         borderTop: '1px solid rgba(255,255,255,0.07)',
+        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center',
       }}>
-        <p style={{
-          fontSize: 'clamp(13px, 1.4vw, 16px)',
-          lineHeight: 2,
-          color: 'rgba(255,255,255,0.2)',
-          fontFamily: 'Georgia, serif',
-          fontStyle: 'italic',
-          maxWidth: '520px',
-          margin: '0 auto',
-          letterSpacing: '0.02em',
+        <div>
+          <div style={{
+            fontSize: '11px', letterSpacing: '0.4em', fontFamily: 'monospace',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', marginBottom: '24px',
+          }}>
+            {LORE.title}
+          </div>
+          {LORE.paragraphs.map((p, i) => (
+            <p key={i} style={{
+              fontSize: 'clamp(14px,1.5vw,18px)', lineHeight: 2,
+              color: i === 0 ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.35)',
+              fontFamily: 'Georgia, serif', fontStyle: 'italic',
+              marginBottom: '20px',
+            }}>
+              {p}
+            </p>
+          ))}
+        </div>
+        <div>
+          <div style={{
+            fontSize: '11px', letterSpacing: '0.4em', fontFamily: 'monospace',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', marginBottom: '24px',
+          }}>
+            Artist
+          </div>
+          <div style={{
+            fontSize: 'clamp(18px,2.5vw,28px)',
+            fontFamily: '"Anton", sans-serif',
+            textTransform: 'uppercase', letterSpacing: '0.04em',
+            color: 'rgba(255,255,255,0.75)', marginBottom: '16px',
+          }}>
+            {LORE.artist.name}
+          </div>
+          <p style={{
+            fontSize: 'clamp(13px,1.3vw,15px)', lineHeight: 1.9,
+            color: 'rgba(255,255,255,0.35)', fontFamily: 'Georgia, serif',
+            fontStyle: 'italic', marginBottom: '32px',
+          }}>
+            {LORE.artist.bio}
+          </p>
+        </div>
+      </div>
+
+      {/* ── FINAL CTA BANNER ── */}
+      <div style={{
+        padding: 'clamp(80px,10vw,130px) clamp(24px,6vw,80px)',
+        textAlign: 'center',
+        borderTop: '1px solid rgba(255,255,255,0.07)',
+        background: 'rgba(0,0,0,0.3)',
+      }}>
+        <div style={{
+          fontSize: 'clamp(10px,1vw,12px)', letterSpacing: '0.5em',
+          fontFamily: 'monospace', textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.2)', marginBottom: '28px',
         }}>
-          Diamonds. Drones. Obsession. NYC.<br />
-          Diamond Drones Are a Girl's Best Friend™ — The Drones of Suburbia.
-        </p>
+          200 Editions · 1 ETH · Ethereum
+        </div>
+        <div style={{
+          fontSize: 'clamp(36px,7vw,96px)',
+          fontFamily: '"Anton", sans-serif',
+          textTransform: 'uppercase', letterSpacing: '0.04em',
+          lineHeight: 0.9, marginBottom: '40px',
+          background: 'linear-gradient(110deg, #b0c8d4 0%, #ddeef4 12%, #ffffff 22%, #a8c0cc 33%, #d8ecf4 44%, #ffffff 52%, #b4ccd8 62%, #e0f0f6 73%, #ffffff 82%)',
+          backgroundSize: '300% auto',
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+          animation: 'crystalShimmer 6s linear infinite',
+        }}>
+          Mint the<br />Collector Set
+        </div>
+        <button
+          data-hoverable
+          onClick={() => navigate('/drones/mint')}
+          style={{
+            background: 'transparent',
+            border: '1px solid rgba(255,255,255,0.35)',
+            color: '#fff', padding: '18px 56px',
+            fontSize: '11px', letterSpacing: '0.4em',
+            textTransform: 'uppercase', fontFamily: 'monospace',
+            cursor: 'pointer', transition: 'all 0.3s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.8)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)'; }}
+        >
+          ✦ Enter
+        </button>
       </div>
     </div>
   );
