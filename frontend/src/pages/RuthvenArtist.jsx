@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { getMintData } from '../utils/api';
 
@@ -128,6 +129,12 @@ export default function RuthvenArtist() {
 
   return (
     <div className="relative min-h-screen" style={{ backgroundColor: '#001A10' }}>
+      <Helmet>
+        <title>The Artist — Ruthven</title>
+        <meta name="description" content="Meet the artist behind Ruthven — Miss AL Simpson, cryptoartist, painter, and walker of Scottish hills." />
+        <meta property="og:title" content="The Artist — Ruthven" />
+        <meta property="og:description" content="Meet the artist behind Ruthven" />
+      </Helmet>
       {/* Background painting */}
       {bgSrc && (
         <div className="fixed inset-0 z-0">

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getMintData, getWishlistCounts, getMerkleProof } from '../utils/api';
@@ -258,8 +259,21 @@ export default function MintPage() {
         : null
     : null;
 
+  // Per-route page title & meta
+  const pageTitle = isRuthvenWorld
+    ? `First Light — Ruthven`
+    : isDronesWorld
+      ? `${collectionSlug || 'Drones'} — The Drones of Suburbia`
+      : mintData?.collectionName
+        ? `${mintData.collectionName} — Miss AL Simpson`
+        : 'Mint — Miss AL Simpson';
+
   return (
     <div className={`min-h-screen ${isDrones ? 'drone-cursor-page' : ''}`} style={{ backgroundColor: bgColor }}>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta property="og:title" content={pageTitle} />
+      </Helmet>
 
       {/* ═══ BACKGROUND WASH ═══ */}
       {/* Ruthven background video */}

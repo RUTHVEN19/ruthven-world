@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getMintData } from '../utils/api';
@@ -34,6 +35,12 @@ export default function RuthvenGateway() {
 
   return (
     <div className="relative overflow-hidden" style={{ backgroundColor: '#001A10' }}>
+      <Helmet>
+        <title>Ruthven — The World of Miss AL Simpson</title>
+        <meta name="description" content="Enter the world of Ruthven. AI-augmented Highland landscapes by Miss AL Simpson — oil, algorithm, and Scottish light." />
+        <meta property="og:title" content="Ruthven — The World of Miss AL Simpson" />
+        <meta property="og:description" content="AI-augmented Highland landscapes by Miss AL Simpson" />
+      </Helmet>
 
       {/* ── Hero Section — full screen video ── */}
       <section className="relative z-10 min-h-screen flex flex-col overflow-hidden">

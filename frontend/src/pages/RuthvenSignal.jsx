@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { getMintData } from '../utils/api';
 
@@ -74,6 +75,12 @@ export default function RuthvenSignal() {
 
   return (
     <div className="relative min-h-screen" style={{ backgroundColor: '#001A10' }}>
+      <Helmet>
+        <title>Signal — Ruthven</title>
+        <meta name="description" content="Transmissions from Ruthven — dispatches, studio notes, and field reports from the Scottish Highlands." />
+        <meta property="og:title" content="Signal — Ruthven" />
+        <meta property="og:description" content="Transmissions from Ruthven" />
+      </Helmet>
       {/* Background painting */}
       {bgSrc && (
         <div className="fixed inset-0 z-0">
