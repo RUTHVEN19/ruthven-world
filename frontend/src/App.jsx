@@ -1,23 +1,31 @@
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
-import BrandManager from './pages/BrandManager';
-import CollectionEditor from './pages/CollectionEditor';
-import TraitMixer from './pages/TraitMixer';
-import BulkUpload from './pages/BulkUpload';
-import MintPage from './pages/MintPage';
-import RuthvenWorld from './pages/RuthvenWorld';
-import RuthvenGateway from './pages/RuthvenGateway';
-import RuthvenStudio from './pages/RuthvenStudio';
-import RuthvenSignal from './pages/RuthvenSignal';
-import RuthvenArtist from './pages/RuthvenArtist';
-import BatchStudio from './pages/BatchStudio';
-import DronesWorld from './pages/drones/DronesWorld';
-import DronesGateway from './pages/drones/DronesGateway';
-import DroneShop from './pages/drones/DroneShop';
-import DroneCinema from './pages/drones/DroneCinema';
-import DroneGallery from './pages/drones/DroneGallery';
-import DroneStudio from './pages/drones/DroneStudio';
-import DroneMint from './pages/drones/DroneMint';
+import { lazy, Suspense } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
+
+// ── Lazy-loaded routes (code-split per page) ──
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const BrandManager = lazy(() => import('./pages/BrandManager'));
+const CollectionEditor = lazy(() => import('./pages/CollectionEditor'));
+const TraitMixer = lazy(() => import('./pages/TraitMixer'));
+const BulkUpload = lazy(() => import('./pages/BulkUpload'));
+const MintPage = lazy(() => import('./pages/MintPage'));
+const RuthvenWorld = lazy(() => import('./pages/RuthvenWorld'));
+const RuthvenGateway = lazy(() => import('./pages/RuthvenGateway'));
+const RuthvenStudio = lazy(() => import('./pages/RuthvenStudio'));
+const RuthvenSignal = lazy(() => import('./pages/RuthvenSignal'));
+const RuthvenArtist = lazy(() => import('./pages/RuthvenArtist'));
+const BatchStudio = lazy(() => import('./pages/BatchStudio'));
+const CommissionRoom = lazy(() => import('./pages/CommissionRoom'));
+const CommissionAdmin = lazy(() => import('./pages/CommissionAdmin'));
+const DiamondDronesHome = lazy(() => import('./pages/DiamondDronesHome'));
+const DronesWorld = lazy(() => import('./pages/drones/DronesWorld'));
+const DroneMuseum = lazy(() => import('./pages/drones/DroneMuseum'));
+const DroneCinema3D = lazy(() => import('./pages/drones/DroneCinema3D'));
+const DroneStudio = lazy(() => import('./pages/drones/DroneStudio'));
+const DroneLore = lazy(() => import('./pages/drones/DroneLore'));
+const DroneBoudoir = lazy(() => import('./pages/drones/DroneBoudoir'));
+const DronePrintShop = lazy(() => import('./pages/drones/DronePrintShop'));
+const DroneDownloads = lazy(() => import('./pages/drones/DroneDownloads'));
 
 function Layout({ children }) {
   return (
@@ -35,6 +43,9 @@ function Layout({ children }) {
               <Link to="/admin" className="text-gray-400 hover:text-white transition-colors text-sm">
                 Dashboard
               </Link>
+              <Link to="/admin/commissions" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Commissions
+              </Link>
             </div>
           </div>
         </div>
@@ -48,6 +59,7 @@ function Layout({ children }) {
 
 export default function App() {
   return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#0a0a0a' }} />}>
     <Routes>
       {/* ═══ RUTHVEN WORLD ═══ */}
       <Route path="/ruthven" element={<RuthvenWorld />}>
@@ -58,21 +70,30 @@ export default function App() {
         <Route path="signal" element={<RuthvenSignal />} />
       </Route>
 
-      {/* ═══ DRONES OF SUBURBIA WORLD ═══ */}
-      <Route path="/drones" element={<DronesWorld />}>
-        <Route index element={<DronesGateway />} />
-        <Route path="shop" element={<DroneShop />} />
-        <Route path="cinema" element={<DroneCinema />} />
-        <Route path="gallery" element={<DroneGallery />} />
+      {/* ═══ DRONES OF SUBURBIA WORLD ═══
+           Drops mint externally on OpenSea (Diamond Drones, Drone Blondes)
+           and Manifold (Album). Each drop is showcased in its corresponding
+           gallery zone (Vault / Drone Blondes / Studio) with mint CTAs that
+           link out. Cinema is content-only (the 4 films). */}
+      <Route path="/drones" element={<ErrorBoundary><DronesWorld /></ErrorBoundary>}>
+        <Route index element={<DiamondDronesHome />} />
+        <Route path="vault" element={<DroneMuseum />} />
+        <Route path="cinema" element={<DroneCinema3D />} />
         <Route path="studio" element={<DroneStudio />} />
-        <Route path="mint" element={<DroneMint />} />
+        <Route path="lore" element={<DroneLore />} />
+        <Route path="lounge" element={<DroneBoudoir />} />
+        <Route path="prints" element={<DronePrintShop />} />
+        <Route path="downloads" element={<DroneDownloads />} />
       </Route>
+
+      {/* ═══ COMMISSION ROOMS ═══ */}
+      <Route path="/commission/:roomId" element={<CommissionRoom />} />
 
       {/* Legacy mint page route (still works) */}
       <Route path="/mint/:brandSlug/:collectionSlug" element={<MintPage />} />
 
-      {/* Root redirects to Ruthven World public site */}
-      <Route path="/" element={<Navigate to="/ruthven" replace />} />
+      {/* Root redirects to the world */}
+      <Route path="/" element={<Navigate to="/drones" replace />} />
 
       {/* Admin NFT Studio — accessible at /admin */}
       <Route path="/admin" element={<Layout><Dashboard /></Layout>} />
@@ -81,6 +102,8 @@ export default function App() {
       <Route path="/brands/:brandId/collections/:collectionId/traits" element={<Layout><TraitMixer /></Layout>} />
       <Route path="/brands/:brandId/collections/:collectionId/upload" element={<Layout><BulkUpload /></Layout>} />
       <Route path="/admin/batch-studio" element={<Layout><BatchStudio /></Layout>} />
+      <Route path="/admin/commissions" element={<Layout><CommissionAdmin /></Layout>} />
     </Routes>
+    </Suspense>
   );
 }

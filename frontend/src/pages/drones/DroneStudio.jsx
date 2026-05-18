@@ -422,17 +422,6 @@ export default function DroneStudio() {
               Own the<br />Album
             </div>
 
-            {/* Glowing price */}
-            <div style={{
-              fontSize: 'clamp(36px, 6vw, 72px)',
-              fontFamily: '"Anton", sans-serif',
-              textTransform: 'uppercase', letterSpacing: '0.06em',
-              marginBottom: '12px',
-              color: 'rgba(200,230,255,0.9)',
-              animation: 'priceGlow 3s ease-in-out infinite',
-            }}>
-              0.01 ETH
-            </div>
             <div style={{
               fontSize: 'clamp(10px, 1.1vw, 13px)', letterSpacing: '0.45em',
               fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
