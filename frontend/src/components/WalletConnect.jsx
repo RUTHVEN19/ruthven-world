@@ -7,14 +7,17 @@ export default function WalletConnect({ compact = false }) {
     return (
       <div className={`flex items-center ${compact ? 'space-x-2' : 'space-x-3'}`}>
         <div className={`bg-gray-800 border border-gray-700 rounded flex items-center space-x-2 ${compact ? 'px-2 py-1' : 'px-4 py-2 rounded-lg'}`}>
-          <div className={`rounded-full bg-white ${compact ? 'w-1.5 h-1.5' : 'w-2 h-2'}`}></div>
-          <span className={`font-mono ${compact ? 'text-xs' : 'text-sm'}`}>{shortAddress}</span>
+          <div className={`rounded-full ${compact ? 'w-1.5 h-1.5' : 'w-2 h-2'}`} style={{ background: 'rgba(200,230,255,0.6)' }}></div>
+          <span className={`font-mono ${compact ? 'text-xs' : 'text-sm'}`} style={{ letterSpacing: '0.05em' }}>{shortAddress}</span>
+          <span className={`font-mono ${compact ? 'text-xs' : 'text-sm'}`} style={{ color: 'rgba(255,255,255,0.35)', letterSpacing: '0.05em' }}>
+            · Drop Soon
+          </span>
         </div>
         <button
           onClick={disconnect}
           className={`text-gray-500 hover:text-white ${compact ? 'text-xs' : 'text-sm'}`}
         >
-          Disconnect
+          ✕
         </button>
       </div>
     );
