@@ -93,11 +93,11 @@ const btnPrimary = { ...btn, borderColor: C.ice, background: 'rgba(217,230,240,0
 // ── Drop data ────────────────────────────────────────────────────────────────
 const DROPS = [
   {
-    overline: 'OpenSea Genesis Mint · 1,000',
+    overline: '1,000 Unique Digital Diamonds',
     name: 'Diamond Drones',
     hasTM: true,
     zone: 'The Vault',
-    desc: 'One thousand unique digital diamonds minted on OpenSea, cut across five rarity tiers. Enter the vault where the collection rests.',
+    desc: 'One thousand unique digital diamonds, cut across five rarity tiers. Enter the vault where the collection rests.',
     tags: ['Brilliant', 'Princess', 'Marquise', 'Rose', 'Baguette'],
     cta: 'Enter the Vault',
     href: '/drones/vault',
@@ -115,11 +115,11 @@ const DROPS = [
     bgVideo: '/films/dd-diamond-drone-lounge-bg.mp4',
   },
   {
-    overline: 'Open Edition · 11 Tracks',
+    overline: '11 Tracks',
     name: 'The Album',
     zone: 'The Recording Studio',
-    desc: <>The complete <em>Drones of Suburbia&#8482;</em> soundtrack. Own the album on-chain and unlock the full download.</>,
-    tags: ['Mint Forever', 'MP3 320kbps'],
+    desc: <>The complete <em>Drones of Suburbia&#8482;</em> soundtrack. 11 original tracks by Miss AL Simpson.</>,
+    tags: ['11 Tracks', 'MP3 320kbps'],
     cta: 'Enter the Studio',
     href: '/drones/studio',
     images: ['/diamond-drones-cinema.png'],
@@ -231,23 +231,21 @@ export default function DiamondDronesHome() {
         background: C.bg,
         overflow: 'hidden',
       }}>
-        {/* Cycling film backgrounds — all four Diamond Drone films crossfade */}
-        {HERO_FILMS.map((src, i) => (
-          <video
-            key={src}
-            autoPlay muted loop playsInline
-            className="dd-hero-video"
-            style={{
-              position: 'absolute', inset: 0, width: '100%', height: '100%',
-              objectFit: 'cover', pointerEvents: 'none',
-              transformOrigin: '50% 40%',
-              opacity: activeFilm === i ? 0.7 : 0,
-              transition: 'opacity 2s ease-in-out',
-            }}
-          >
-            <source src={src} type="video/mp4" />
-          </video>
-        ))}
+        {/* Active hero film — only one video mounted at a time for performance */}
+        <video
+          key={HERO_FILMS[activeFilm]}
+          autoPlay muted loop playsInline
+          className="dd-hero-video"
+          style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', pointerEvents: 'none',
+            transformOrigin: '50% 40%',
+            opacity: 0.7,
+            animation: 'ddHeroFadeIn 2s ease-in-out',
+          }}
+        >
+          <source src={HERO_FILMS[activeFilm]} type="video/mp4" />
+        </video>
 
         {/* Dark overlay for text legibility */}
         <div style={{
@@ -520,13 +518,190 @@ export default function DiamondDronesHome() {
           marginBottom: '2.5rem',
         }}>
           One thousand Diamond Drones.<br />
-          Minted on the biggest diamond of all.<br />
-          Ethereum.
+          Cut, classed and named.<br />
+          A complete artistic universe.
         </p>
 
         <a href="#genesis" style={{ ...btn, position: 'relative', zIndex: 1 }}>
           Explore the Collections &darr;
         </a>
+      </section>
+
+      {/* ═══ THE DIAMOND ENGINE ═══ */}
+      <section style={{
+        background: C.bg,
+        padding: 'clamp(6rem, 12vw, 12rem) 2rem',
+        borderTop: `1px solid ${C.line}`,
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Subtle radial glow behind the section */}
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '900px', height: '700px',
+          background: 'radial-gradient(ellipse, rgba(180,200,220,0.04) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
+
+        <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+
+          {/* Overline */}
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <span style={{ ...overline, fontSize: '0.6rem', letterSpacing: '0.5em' }}>
+              The Technology
+            </span>
+          </div>
+
+          {/* Title */}
+          <h2 style={{
+            fontFamily: font.display, fontWeight: 700, fontStyle: 'normal',
+            fontSize: 'clamp(2.5rem, 7vw, 5.5rem)', textTransform: 'uppercase', lineHeight: 0.92,
+            textAlign: 'center',
+            background: 'linear-gradient(110deg, #b0c8d4 0%, #ddeef4 15%, #ffffff 30%, #a8c0cc 45%, #d8ecf4 60%, #ffffff 75%, #b4ccd8 100%)',
+            backgroundSize: '300% auto',
+            WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            animation: 'ddShimmer 8s linear infinite',
+            marginBottom: '2rem',
+          }}>
+            The Diamond<br />Engine
+          </h2>
+
+          {/* Lead paragraph */}
+          <p style={{
+            ...sectionLead,
+            textAlign: 'center',
+            margin: '0 auto 5rem',
+            maxWidth: '640px',
+          }}>
+            Diamond Drones&#8482; is not a collection. It is an engine &mdash; a luxury digital
+            asset system built on Ethereum, powered by Ink Interventions, and designed
+            to outlast every market cycle.
+          </p>
+
+          <p style={{
+            ...sectionLead,
+            textAlign: 'center',
+            margin: '0 auto 5rem',
+            maxWidth: '700px',
+          }}>
+            The Diamond Engine&#8482; transforms glamour into code, diamonds into drones,
+            and cinematic artworks into tokenized cultural artefacts.
+          </p>
+
+          {/* Three pillars */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 'clamp(1.5rem, 3vw, 3rem)',
+            marginBottom: '5rem',
+          }} className="dd-engine-pillars">
+
+            {/* Pillar I — Ink Interventions */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                fontFamily: font.display, fontSize: 'clamp(2.5rem, 4vw, 3.5rem)',
+                fontWeight: 700, color: 'rgba(255,255,255,0.04)',
+                lineHeight: 1, marginBottom: '1rem',
+              }}>I</div>
+              <div style={{
+                fontFamily: font.display, fontWeight: 700, fontStyle: 'normal',
+                fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
+                textTransform: 'uppercase', letterSpacing: '0.08em',
+                color: C.ice, marginBottom: '1rem',
+              }}>
+                Ink Interventions
+              </div>
+              <p style={{
+                fontFamily: font.body, fontStyle: 'italic',
+                fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
+                color: C.textDim, lineHeight: 1.8,
+              }}>
+                A proprietary creative process. AI-trained models, hand-finished by
+                the artist. Each asset is generated through a bespoke pipeline &mdash;
+                machine vision refined by human intuition. No two outputs are alike.
+              </p>
+            </div>
+
+            {/* Pillar II — Tokenization */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                fontFamily: font.display, fontSize: 'clamp(2.5rem, 4vw, 3.5rem)',
+                fontWeight: 700, color: 'rgba(255,255,255,0.04)',
+                lineHeight: 1, marginBottom: '1rem',
+              }}>II</div>
+              <div style={{
+                fontFamily: font.display, fontWeight: 700, fontStyle: 'normal',
+                fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
+                textTransform: 'uppercase', letterSpacing: '0.08em',
+                color: C.ice, marginBottom: '1rem',
+              }}>
+                Tokenization
+              </div>
+              <p style={{
+                fontFamily: font.body, fontStyle: 'italic',
+                fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
+                color: C.textDim, lineHeight: 1.8,
+              }}>
+                Every asset is tokenized on Ethereum &mdash; the world's most
+                secure public ledger. Provenance, ownership, and transferability
+                are built into the object itself.
+              </p>
+            </div>
+
+            {/* Pillar III — The Engine */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                fontFamily: font.display, fontSize: 'clamp(2.5rem, 4vw, 3.5rem)',
+                fontWeight: 700, color: 'rgba(255,255,255,0.04)',
+                lineHeight: 1, marginBottom: '1rem',
+              }}>III</div>
+              <div style={{
+                fontFamily: font.display, fontWeight: 700, fontStyle: 'normal',
+                fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
+                textTransform: 'uppercase', letterSpacing: '0.08em',
+                color: C.ice, marginBottom: '1rem',
+              }}>
+                The Engine
+              </div>
+              <p style={{
+                fontFamily: font.body, fontStyle: 'italic',
+                fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
+                color: C.textDim, lineHeight: 1.8,
+              }}>
+                Designed by Miss AL Simpson, engineered as a complete digital
+                asset system. 1000 Diamond Drones, 120 Drone Blondes, an 11-track
+                album &mdash; all cut from the same engine. One brand. One
+                technology. One world.
+              </p>
+            </div>
+          </div>
+
+          {/* Divider line */}
+          <div style={{ width: '60px', height: '1px', background: C.line, margin: '0 auto 3rem' }} />
+
+          {/* Closing statement */}
+          <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
+            <p style={{
+              fontFamily: font.body, fontStyle: 'italic',
+              fontSize: 'clamp(1.05rem, 1.5vw, 1.3rem)',
+              color: C.textDim, lineHeight: 1.9,
+              marginBottom: '2rem',
+            }}>
+              The Diamond Engine is a proprietary luxury digital asset system.
+              Ink Interventions provide the creative layer. Tokenization on Ethereum
+              provides the ownership layer. Together they form an engine designed
+              not for the next cycle &mdash; but for the next century.
+            </p>
+            <div style={{
+              fontFamily: font.mono, fontStyle: 'normal',
+              fontSize: '0.6rem', letterSpacing: '0.4em',
+              textTransform: 'uppercase', color: C.textFaint,
+            }}>
+              Designed by Miss AL Simpson &middot; Engineered on Ethereum
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ═══ FOUR FILMS ═══ */}
@@ -805,7 +980,7 @@ export default function DiamondDronesHome() {
       </section>
 
       {/* ═══ FINAL CTA ═══ */}
-      <section id="mint" style={{
+      <section style={{
         background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg2} 100%)`,
         textAlign: 'center', padding: '10rem 2rem',
         borderTop: `1px solid ${C.line}`,
@@ -819,7 +994,7 @@ export default function DiamondDronesHome() {
             WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
             marginBottom: '3rem',
           }}>
-            Begin Your Collection
+            Enter the World
           </h2>
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '3rem', maxWidth: '900px', marginLeft: 'auto', marginRight: 'auto' }} className="dd-home-final-ctas">
@@ -835,21 +1010,25 @@ export default function DiamondDronesHome() {
           </div>
 
           <div style={{ fontFamily: font.mono, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: C.textFaint, fontStyle: 'normal' }}>
-            All collections on Ethereum Mainnet &middot; OpenSea &amp; Manifold
+            Diamond Drones&#8482; &middot; The Diamond Engine &middot; Miss AL Simpson
           </div>
         </div>
       </section>
 
       {/* ═══ ANIMATIONS & RESPONSIVE STYLES ═══ */}
       <style>{`
+        /* ── Fade in for hero video swap ── */
+        @keyframes ddHeroFadeIn {
+          0%   { opacity: 0; }
+          100% { opacity: 0.7; }
+        }
         /* ── Ken Burns slow zoom on hero video ── */
         @keyframes ddKenBurns {
           0%   { transform: scale(1); }
           100% { transform: scale(1.12); }
         }
         .dd-hero-video {
-          animation: ddKenBurns 30s ease-in-out alternate infinite;
-
+          animation: ddHeroFadeIn 2s ease-in-out, ddKenBurns 30s ease-in-out alternate infinite;
         }
 
         /* ── Diamond shimmer on hero title ── */
@@ -1098,6 +1277,7 @@ export default function DiamondDronesHome() {
           .dd-drop-visual { order: 1 !important; }
           .dd-drop-content { order: 2 !important; }
           .dd-home-films-grid { grid-template-columns: 1fr !important; }
+          .dd-engine-pillars { grid-template-columns: 1fr !important; max-width: 480px; margin-left: auto !important; margin-right: auto !important; }
         }
         @media (max-width: 600px) {
           .dd-home-final-ctas a { width: 100%; max-width: 100% !important; justify-content: center; }

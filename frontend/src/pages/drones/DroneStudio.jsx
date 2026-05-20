@@ -1,10 +1,7 @@
 import { useState, useRef, useEffect, useMemo, Suspense } from 'react';
-import { ethers } from 'ethers';
 import { Helmet } from 'react-helmet-async';
 import { Canvas } from '@react-three/fiber';
-import { ALBUM, ZONES, ALBUM_MINT_CONFIG, EXTERNAL_MINT } from '../../config/dronesContent';
-import { useWallet } from '../../hooks/useWallet';
-// import MintCTA from '../../components/MintCTA'; // re-enable when drops go live
+import { ALBUM, ZONES } from '../../config/dronesContent';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import StudioScene from './studio/StudioScene';
 import { CAMERA } from './studio/studioLayout';
@@ -108,13 +105,10 @@ export default function DroneStudio() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const audioRef = useRef(null);
   const filmRef = useRef(null);
-  const { account, isConnected } = useWallet();
   const [playing, setPlaying] = useState(false);
   const [hoveredTrack, setHoveredTrack] = useState(null);
   const [playingTrack, setPlayingTrack] = useState(null);
-  const [isHolder, setIsHolder] = useState(false);
-  const [checkingHolder, setCheckingHolder] = useState(false);
-  const [downloading, setDownloading] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
   const [filmLoaded, setFilmLoaded] = useState(false);
 
   // Detect WebGL support for 3D studio hero
@@ -124,24 +118,6 @@ export default function DroneStudio() {
       return !!(c.getContext('webgl2') || c.getContext('webgl'));
     } catch { return false; }
   }, []);
-
-  // Check holder status when wallet connects
-  useEffect(() => {
-    if (!isConnected || !account || ALBUM_MINT_CONFIG.contractAddress === 'TBA') {
-      setIsHolder(false);
-      return;
-    }
-    setCheckingHolder(true);
-    fetch(`${API_BASE}/album/verify-holder`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ wallet: account }),
-    })
-      .then(r => r.json())
-      .then(data => setIsHolder(data.is_holder === true))
-      .catch(() => setIsHolder(false))
-      .finally(() => setCheckingHolder(false));
-  }, [account, isConnected]);
 
   // Sync film video to playing track
   useEffect(() => {
@@ -179,37 +155,13 @@ export default function DroneStudio() {
     }
   };
 
-  const handleDownload = async () => {
-    if (!isConnected || !account) return;
-    setDownloading(true);
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const message = 'Download THE DRONES OF SUBURBIA album';
-      const signature = await signer.signMessage(message);
-      const response = await fetch(`${API_BASE}/album/download`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ wallet: account, signature, message }),
-      });
-      if (!response.ok) { const err = await response.json(); throw new Error(err.error || 'Download failed'); }
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'The_Drones_of_Suburbia_-_Miss_AL_Simpson.zip';
-      document.body.appendChild(a); a.click(); a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) { alert(err.message || 'Download failed'); }
-    finally { setDownloading(false); }
-  };
-
   const currentTrack = playingTrack !== null ? ALBUM.tracks[playingTrack] : null;
 
   return (
     <div style={{ background: '#3a3a3a', minHeight: '100vh', color: '#fff', position: 'relative' }}>
       <Helmet>
         <title>Recording Studio — The Drones of Suburbia Album</title>
-        <meta name="description" content="Stream The Drones of Suburbia album. 11 tracks by Miss AL Simpson. Own the album on-chain as an open edition NFT." />
+        <meta name="description" content="Stream The Drones of Suburbia album. 11 tracks by Miss AL Simpson." />
       </Helmet>
       <style>{keyframes}</style>
 
@@ -269,25 +221,53 @@ export default function DroneStudio() {
       }}>
         {/* 3D Studio Canvas (desktop + WebGL) */}
         {hasWebGL && !isMobile ? (
-          <Suspense fallback={null}>
-            <Canvas
-              camera={{
-                position: CAMERA.position,
-                fov: CAMERA.fov,
-                near: 0.1,
-                far: 50,
-              }}
-              gl={{
-                antialias: true,
-                toneMapping: 4,
-                toneMappingExposure: 2.0,
-              }}
-              style={{ width: '100%', height: '100%' }}
-            >
-              <color attach="background" args={['#0a0a0a']} />
-              <StudioScene />
-            </Canvas>
-          </Suspense>
+          <>
+            <Suspense fallback={null}>
+              <Canvas
+                camera={{
+                  position: CAMERA.position,
+                  fov: CAMERA.fov,
+                  near: 0.1,
+                  far: 50,
+                }}
+                gl={{
+                  antialias: true,
+                  toneMapping: 4,
+                  toneMappingExposure: 2.0,
+                }}
+                style={{ width: '100%', height: '100%' }}
+                onCreated={() => setTimeout(() => setSceneReady(true), 600)}
+              >
+                <color attach="background" args={['#0a0a0a']} />
+                <StudioScene />
+              </Canvas>
+            </Suspense>
+            {!sceneReady && (
+              <div style={{
+                position: 'absolute', inset: 0, zIndex: 10,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                background: '#0a0a0a',
+              }}>
+                <div style={{
+                  fontFamily: '"Anton", "Impact", sans-serif',
+                  fontSize: '2.4rem', letterSpacing: '0.15em', textTransform: 'uppercase',
+                  background: 'linear-gradient(110deg, #b0c8d4, #ddeef4, #ffffff, #a8c0cc)',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                  backgroundSize: '300% 100%', animation: 'crystalShimmer 5s linear infinite',
+                }}>THE STUDIO</div>
+                <div style={{
+                  marginTop: '1rem', width: '120px', height: '2px', borderRadius: '1px',
+                  background: 'rgba(200,230,255,0.15)', overflow: 'hidden',
+                }}>
+                  <div style={{
+                    width: '40%', height: '100%', borderRadius: '1px',
+                    background: 'linear-gradient(90deg, #b0c8d4, #ffffff)',
+                    animation: 'shimmerSlow 1.5s ease-in-out infinite',
+                  }} />
+                </div>
+              </div>
+            )}
+          </>
         ) : (
           /* Video fallback for mobile / no WebGL */
           <div style={{ position: 'absolute', inset: 0 }} />
@@ -352,136 +332,35 @@ export default function DroneStudio() {
         borderBottom: '1px solid rgba(255,255,255,0.06)',
         background: 'linear-gradient(180deg, #3a3a3a 0%, rgba(0,0,0,0.4) 50%, #3a3a3a 100%)',
       }}>
-        {isHolder ? (
-          <>
-            <div style={{
-              fontSize: 'clamp(10px, 1vw, 12px)', letterSpacing: '0.5em',
-              fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
-              color: 'rgba(200,230,255,0.25)', marginBottom: '32px',
-            }}>
-              ◆ Album Holder
-            </div>
-            <div style={{
-              fontSize: 'clamp(48px, 9vw, 120px)',
-              fontFamily: '"Anton", sans-serif',
-              textTransform: 'uppercase', letterSpacing: '0.04em',
-              lineHeight: 0.9, marginBottom: '32px',
-              background: 'linear-gradient(110deg, #b0c8d4 0%, #ffffff 30%, #a8c0cc 55%, #ffffff 80%)',
-              backgroundSize: '200% auto',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              animation: 'shimmerSlow 6s linear infinite',
-            }}>
-              Download<br />Your Album
-            </div>
-            <p style={{
-              fontSize: 'clamp(14px,1.5vw,17px)', lineHeight: 1.9,
-              color: 'rgba(200,230,255,0.35)', fontFamily: 'Georgia, serif',
-              fontStyle: 'italic', maxWidth: '440px', margin: '0 auto 44px',
-            }}>
-              You own this album. Stream below or download now.
-            </p>
-            <button
-              onClick={handleDownload}
-              disabled={downloading}
-              style={{
-                background: 'transparent',
-                border: '1px solid rgba(200,230,255,0.35)',
-                color: 'rgba(200,230,255,0.8)', padding: '22px 72px',
-                fontSize: '13px', letterSpacing: '0.4em',
-                textTransform: 'uppercase', fontFamily: "'Space Mono', monospace",
-                cursor: downloading ? 'not-allowed' : 'pointer',
-                transition: 'all 0.3s',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.07)'; e.currentTarget.style.borderColor = 'rgba(200,230,255,0.7)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(200,230,255,0.35)'; }}
-            >
-              ↓ Download Full Album
-            </button>
-          </>
-        ) : (
-          <>
-            <div style={{
-              fontSize: 'clamp(10px, 1vw, 12px)', letterSpacing: '0.5em',
-              fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.2)', marginBottom: '28px',
-            }}>
-              Open Edition · 11 Tracks
-            </div>
-            <div style={{
-              fontSize: 'clamp(52px, 10vw, 140px)',
-              fontFamily: '"Anton", sans-serif',
-              textTransform: 'uppercase', letterSpacing: '0.04em',
-              lineHeight: 0.9, marginBottom: '28px',
-              background: 'linear-gradient(110deg, #b0c8d4 0%, #ddeef4 12%, #ffffff 22%, #a8c0cc 33%, #d8ecf4 44%, #ffffff 52%, #b4ccd8 62%, #e0f0f6 73%, #ffffff 82%)',
-              backgroundSize: '300% auto',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              animation: 'crystalShimmer 5s linear infinite',
-            }}>
-              Own the<br />Album
-            </div>
+        <div style={{
+          fontSize: 'clamp(10px, 1vw, 12px)', letterSpacing: '0.5em',
+          fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.2)', marginBottom: '28px',
+        }}>
+          11 Tracks
+        </div>
+        <div style={{
+          fontSize: 'clamp(52px, 10vw, 140px)',
+          fontFamily: '"Anton", sans-serif',
+          textTransform: 'uppercase', letterSpacing: '0.04em',
+          lineHeight: 0.9, marginBottom: '28px',
+          background: 'linear-gradient(110deg, #b0c8d4 0%, #ddeef4 12%, #ffffff 22%, #a8c0cc 33%, #d8ecf4 44%, #ffffff 52%, #b4ccd8 62%, #e0f0f6 73%, #ffffff 82%)',
+          backgroundSize: '300% auto',
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          animation: 'crystalShimmer 5s linear infinite',
+        }}>
+          The<br />Album
+        </div>
 
-            <div style={{
-              fontSize: 'clamp(10px, 1.1vw, 13px)', letterSpacing: '0.45em',
-              fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.22)', marginBottom: '36px',
-            }}>
-              Open Edition · Mint on Manifold
-            </div>
-
-            <p style={{
-              fontSize: 'clamp(14px,1.5vw,17px)', lineHeight: 1.9,
-              color: 'rgba(255,255,255,0.35)', fontFamily: 'Georgia, serif',
-              fontStyle: 'italic', maxWidth: '480px', margin: '0 auto 20px',
-            }}>
-              11 original tracks by Miss AL Simpson.
-              Own the album on-chain and unlock the full MP3 320kbps download.
-            </p>
-            <div style={{ height: '28px' }} />
-            {EXTERNAL_MINT.album.mintUrl ? (
-              <a
-                href={EXTERNAL_MINT.album.mintUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-block',
-                  background: 'transparent',
-                  border: '1px solid rgba(255,255,255,0.4)',
-                  color: '#fff', padding: '22px 72px',
-                  fontSize: '13px', letterSpacing: '0.4em',
-                  textTransform: 'uppercase', fontFamily: "'Space Mono', monospace",
-                  cursor: 'pointer', transition: 'all 0.3s',
-                  textDecoration: 'none',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.8)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)';
-                }}
-              >
-                ✦ Mint on Manifold →
-              </a>
-            ) : (
-              <div style={{
-                display: 'inline-block',
-                padding: '16px 48px',
-                border: '1px solid rgba(200,230,255,0.3)',
-                fontFamily: "'Anton', sans-serif",
-                fontSize: 'clamp(14px, 1.5vw, 18px)',
-                letterSpacing: '0.3em',
-                textTransform: 'uppercase',
-                color: 'rgba(220,235,245,0.8)',
-                background: 'linear-gradient(110deg, rgba(106,138,154,0.08) 0%, rgba(176,200,212,0.12) 50%, rgba(106,138,154,0.08) 100%)',
-              }}>
-                ◆ Mint Coming Soon ◆
-              </div>
-            )}
-          </>
-        )}
+        <p style={{
+          fontSize: 'clamp(14px,1.5vw,17px)', lineHeight: 1.9,
+          color: 'rgba(255,255,255,0.35)', fontFamily: 'Georgia, serif',
+          fontStyle: 'italic', maxWidth: '480px', margin: '0 auto 20px',
+        }}>
+          11 original tracks by Miss AL Simpson.
+          The complete Drones of Suburbia{'\u2122'} soundtrack.
+        </p>
       </section>
 
       {/* ── VINYL + TRACKLIST ── */}
@@ -697,7 +576,7 @@ export default function DroneStudio() {
                     fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
                     color: (playing && playingTrack === i) ? 'rgba(200,230,255,0.5)' : 'rgba(255,255,255,0.3)',
                   }}>
-                    {playing && playingTrack === i ? 'Playing' : isHolder ? 'Play' : 'Preview'}
+                    {playing && playingTrack === i ? 'Playing' : 'Play'}
                   </div>
                 )}
               </div>
@@ -709,49 +588,11 @@ export default function DroneStudio() {
               fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
               color: 'rgba(255,255,255,0.2)',
             }}>
-              {ALBUM.year} · Open Edition · Manifold
+              {ALBUM.year} {'\u00B7'} Miss AL Simpson
             </div>
           </div>
         </div>
       </section>
-
-      {/* ── HOLDER STATUS BAR ── */}
-      {isConnected && (
-        <div style={{
-          padding: '12px clamp(24px,6vw,80px)',
-          background: isHolder ? 'rgba(200,230,255,0.04)' : 'rgba(255,255,255,0.03)',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        }}>
-          <div style={{
-            fontSize: '10px', fontFamily: "'Space Mono', monospace",
-            letterSpacing: '0.2em', textTransform: 'uppercase',
-            color: isHolder ? 'rgba(200,230,255,0.6)' : 'rgba(255,255,255,0.3)',
-          }}>
-            {checkingHolder ? 'Checking wallet...' :
-             isHolder ? '◆ Album Holder — Full Access' :
-             '◇ Preview Mode — Buy album for full access'}
-          </div>
-          {isHolder && (
-            <button
-              onClick={handleDownload}
-              disabled={downloading}
-              style={{
-                background: 'transparent',
-                border: '1px solid rgba(200,230,255,0.3)',
-                color: 'rgba(200,230,255,0.7)',
-                padding: '8px 20px',
-                fontSize: '9px', letterSpacing: '0.25em',
-                fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
-                cursor: downloading ? 'not-allowed' : 'pointer',
-                transition: 'all 0.3s',
-              }}
-            >
-              {downloading ? 'Preparing...' : '↓ Download Album'}
-            </button>
-          )}
-        </div>
-      )}
 
       {/* ── DIAMOND DRONE VISUALISER ── */}
       <div style={{
@@ -984,7 +825,7 @@ export default function DroneStudio() {
           letterSpacing: '0.05em',
           lineHeight: 1.7,
         }}>
-          The Drones of Suburbia™ Album · Open Edition · Manifold
+          The Drones of Suburbia{'\u2122'} Album {'\u00B7'} Miss AL Simpson
         </p>
       </section>
 

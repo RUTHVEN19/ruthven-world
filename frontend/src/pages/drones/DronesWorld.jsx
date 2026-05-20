@@ -17,8 +17,6 @@ const NAV_ITEMS = [
   { path: '/drones/studio',        label: 'Studio' },
   { path: '/drones/lounge',        label: 'The Lounge' },
   { path: '/drones/lore',          label: 'Lore' },
-  { path: '/drones/prints',        label: 'Prints' },
-  { path: '/drones/downloads',    label: 'Downloads' },
 ];
 
 export default function DronesWorld() {
@@ -397,7 +395,7 @@ export default function DronesWorld() {
               letterSpacing: '0.4em', textTransform: 'uppercase',
               color: 'rgba(255,255,255,0.25)',
             }}>
-              Minted Once · Kept Forever
+              Made Once {'\u00B7'} Kept Forever
             </div>
           </div>
         </div>

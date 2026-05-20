@@ -13,15 +13,11 @@ export const SITE_META = {
   trademark: 'DIAMOND DRONES is a registered trademark of Miss AL Simpson.',
 };
 
-// ── Mint configuration ───────────────────────────────────────────────────────
-export const MINT_CONFIG = {
-  network: 'Ethereum Mainnet',
-  chainId: 1,
-  drops: {
-    diamondDrones: { totalSupply: 1000, label: 'Diamond Drones',  platform: 'OpenSea',  contractAddress: 'TBA' },
-    droneBlondes:  { totalSupply: 120,  label: 'Drone Blondes',   platform: 'OpenSea',  contractAddress: 'TBA' },
-    album:         { totalSupply: null, label: 'The Album',       platform: 'Manifold', contractAddress: 'TBA', price: '0.01 ETH' },
-  },
+// ── Collection configuration ─────────────────────────────────────────────────
+export const COLLECTIONS = {
+  diamondDrones: { totalSupply: 1000, label: 'Diamond Drones' },
+  droneBlondes:  { totalSupply: 120,  label: 'Drone Blondes' },
+  album:         { label: 'The Album' },
 };
 
 // ── Hero copy ────────────────────────────────────────────────────────────────
@@ -77,9 +73,9 @@ export const ZONES = [
     nav: 'Studio',
     numeral: 'III',
     title: 'RECORDING STUDIO',
-    subtitle: 'Collector\'s Album + Open Edition',
+    subtitle: 'The Album',
     tagline: 'Eleven tracks. Eleven films. One album. The soundtrack to a world where glamour took flight and the diamond became a machine.',
-    description: 'The album is airdropped to every Collector\'s Set holder. The Open Edition is also available to everyone at 0.01 ETH.',
+    description: 'The complete Drones of Suburbia soundtrack. 11 original tracks by Miss AL Simpson.',
     image: '/dd-shop.png',
     heroStatement: 'Sound as sovereign object.',
   },
@@ -116,58 +112,6 @@ export const ALBUM = {
     { number: '10', title: 'Heist' },
     { number: '11', title: "Diamond Drones Are a Girl's Best Friend" },
   ],
-};
-
-// ── Album Mint configuration (open edition) ─────────────────────────────────
-export const ALBUM_MINT_CONFIG = {
-  title: 'THE DRONES OF SUBURBIA',
-  artist: 'Miss AL Simpson',
-  label: 'Drones of Suburbia Music Studios',
-  price: '0.01 ETH',
-  priceETH: 0.01,
-  // Fill in once deployed:
-  contractAddress: 'TBA',
-  network: 'Ethereum Mainnet',
-  chainId: 1,
-  openEdition: true,
-  royaltyPct: '7.5%',
-};
-
-// ── External Mint Configuration ──────────────────────────────────────────────
-// Each drop mints externally on OpenSea (Diamond Drones, Drone Blondes) or
-// Manifold (Album). Update the `mintUrl` once contracts are deployed.
-// Leave as null/empty for "Coming Soon" state with allowlist signup.
-export const EXTERNAL_MINT = {
-  diamondDrones: {
-    slug: 'diamond-drones',
-    title: 'DIAMOND DRONES™',
-    subtitle: 'Diamond Drones Are a Girl\'s Best Friend™ · 1000 Unique',
-    platform: 'OpenSea',
-    mintUrl: null,  // → 'https://opensea.io/collection/diamond-drones' once deployed
-    cta: 'MINT ON OPENSEA',
-    comingSoonNote: '1000 Diamond Drones · Ethereum · Diamond Drones Are a Girl\'s Best Friend™',
-    network: 'Ethereum Mainnet',
-  },
-  droneBlondes: {
-    slug: 'drone-blondes',
-    title: 'THE DRONE BLONDES',
-    subtitle: '120 Unique 1/1 Video Loops',
-    platform: 'OpenSea',
-    mintUrl: null,  // → 'https://opensea.io/collection/drone-blondes' once deployed
-    cta: 'MINT ON OPENSEA',
-    comingSoonNote: '120 Unique 1/1 · Ethereum · Each holder unlocks hi-res film',
-    network: 'Ethereum Mainnet',
-  },
-  album: {
-    slug: 'drones-of-suburbia-album',
-    title: 'THE DRONES OF SUBURBIA ALBUM',
-    subtitle: 'Open Edition · 11 Tracks',
-    platform: 'Manifold',
-    mintUrl: null,  // → 'https://app.manifold.xyz/c/drones-of-suburbia-album' once deployed
-    cta: 'MINT ON MANIFOLD',
-    comingSoonNote: 'Open Edition · 0.01 ETH · MP3 320kbps download for holders',
-    network: 'Ethereum Mainnet',
-  },
 };
 
 // ── Diamond Drone cut / rarity tiers ─────────────────────────────────────────

@@ -260,7 +260,7 @@ function DiamondRoom({ px, videoSrc, collection }) {
 
       {/* Near layer — counter silhouette */}
       <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none" style={px(20, 0.1)}>
-        <div className="h-[18%] bg-[#0a0a0a]"
+        <div className="h-[18%] bg-[#3a3a3a]"
           style={{ borderTop: '1px solid rgba(255,255,255,0.12)' }} />
       </div>
 
@@ -315,7 +315,7 @@ function GalleryRoom({ px, videoSrc, collection }) {
           {/* Museum frame */}
           <div className="relative" style={{ aspectRatio: '4/3' }}>
             {/* Outer mount */}
-            <div className="absolute -inset-4" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.12)' }} />
+            <div className="absolute -inset-4" style={{ background: '#3a3a3a', border: '1px solid rgba(255,255,255,0.12)' }} />
             {/* Inner frame */}
             <div className="absolute -inset-1" style={{ border: '2px solid rgba(255,255,255,0.35)' }} />
             {/* Video or placeholder */}
@@ -334,7 +334,7 @@ function GalleryRoom({ px, videoSrc, collection }) {
                 {collection?.name || 'Gallery Stills'}
               </div>
               <div className="font-mono text-[8px] uppercase tracking-[0.3em] text-white/25 mt-0.5">
-                Drones of Suburbia · FAL Generated · Blind Mint
+                Drones of Suburbia · FAL Generated
               </div>
             </div>
             <div className="w-px h-8 bg-white/15 self-center" />
@@ -381,7 +381,7 @@ function CinemaPlaceholder() {
 
 function DiamondPlaceholder() {
   return (
-    <div className="absolute inset-0 bg-[#080808] flex items-center justify-center">
+    <div className="absolute inset-0 bg-[#3a3a3a] flex items-center justify-center">
       <div className="text-center">
         <div className="text-4xl text-white/20 mb-2">◆</div>
         <div className="font-mono text-[9px] uppercase tracking-[0.4em] text-white/15">

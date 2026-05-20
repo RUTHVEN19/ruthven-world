@@ -215,7 +215,7 @@ function StaircaseText({ position, rotation = [0, 0, 0], onBrowseAll }) {
       // Crown tagline
       ctx.fillStyle = '#888888';
       ctx.font = '40px "Space Mono", monospace';
-      ctx.fillText('◇  Collect on OpenSea  ◇', cx, 700);
+      ctx.fillText('◇  120 Unique 1/1 Artworks  ◇', cx, 700);
 
       // "VIEW ALL THE DRONE BLONDES" CTA
       ctx.fillStyle = '#555555';
@@ -307,7 +307,7 @@ function FloorText() {
       // Crown tagline
       sctx.font = '58px "Space Mono", monospace';
       sctx.fillStyle = 'rgba(60,60,60,0.06)';
-      sctx.fillText('◇  Collect on OpenSea  ◇', cx, 3200);
+      sctx.fillText('◇  120 Unique 1/1 Artworks  ◇', cx, 3200);
 
       staticRef.current = staticCanvas;
 
@@ -593,8 +593,8 @@ export default function BoudoirRoom({ onBrowseAll }) {
     baseTiers, baseTierHeight,
   } = STAIRCASE;
 
-  // Video wash texture — projected across walls
-  const videoTex = useVideoTexture('/films/dd-diamond-drone-lounge.mp4');
+  // Video wash texture — projected across walls (use lighter BG edit)
+  const videoTex = useVideoTexture('/films/dd-diamond-drone-lounge-bg.mp4');
 
   // Pre-compute staircase steps
   const steps = useMemo(() => {

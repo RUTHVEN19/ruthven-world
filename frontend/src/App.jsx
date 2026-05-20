@@ -24,8 +24,6 @@ const DroneCinema3D = lazy(() => import('./pages/drones/DroneCinema3D'));
 const DroneStudio = lazy(() => import('./pages/drones/DroneStudio'));
 const DroneLore = lazy(() => import('./pages/drones/DroneLore'));
 const DroneBoudoir = lazy(() => import('./pages/drones/DroneBoudoir'));
-const DronePrintShop = lazy(() => import('./pages/drones/DronePrintShop'));
-const DroneDownloads = lazy(() => import('./pages/drones/DroneDownloads'));
 
 function Layout({ children }) {
   return (
@@ -70,11 +68,7 @@ export default function App() {
         <Route path="signal" element={<RuthvenSignal />} />
       </Route>
 
-      {/* ═══ DRONES OF SUBURBIA WORLD ═══
-           Drops mint externally on OpenSea (Diamond Drones, Drone Blondes)
-           and Manifold (Album). Each drop is showcased in its corresponding
-           gallery zone (Vault / Drone Blondes / Studio) with mint CTAs that
-           link out. Cinema is content-only (the 4 films). */}
+      {/* ═══ DRONES OF SUBURBIA WORLD ═══ */}
       <Route path="/drones" element={<ErrorBoundary><DronesWorld /></ErrorBoundary>}>
         <Route index element={<DiamondDronesHome />} />
         <Route path="vault" element={<DroneMuseum />} />
@@ -82,8 +76,6 @@ export default function App() {
         <Route path="studio" element={<DroneStudio />} />
         <Route path="lore" element={<DroneLore />} />
         <Route path="lounge" element={<DroneBoudoir />} />
-        <Route path="prints" element={<DronePrintShop />} />
-        <Route path="downloads" element={<DroneDownloads />} />
       </Route>
 
       {/* ═══ COMMISSION ROOMS ═══ */}
