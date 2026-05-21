@@ -2,9 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { HelmetProvider } from 'react-helmet-async';
 import { WalletProvider } from './hooks/useWallet';
 import App from './App';
 import './index.css';
+import './styles/drones-shared.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,7 +18,10 @@ const queryClient = new QueryClient({
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  // Note: StrictMode removed — React 18 StrictMode double-mount breaks
+  // R3F Canvas initialization (render loop never starts after unmount/remount).
+  // This is a known issue with @react-three/fiber + React 18 StrictMode.
+  <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <WalletProvider>
@@ -24,5 +29,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </WalletProvider>
       </BrowserRouter>
     </QueryClientProvider>
-  </React.StrictMode>
+  </HelmetProvider>
 );

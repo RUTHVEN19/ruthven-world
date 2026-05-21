@@ -75,7 +75,7 @@ function FilmStripBg({ opacity = 0.35, speed = 90, reverse = false }) {
         ))}
       </div>
 
-      {/* Film frames */}
+      {/* Film frames with actual video */}
       <div style={{
         display: 'flex',
         animation: `filmStripScroll ${speed}s linear infinite${reverse ? ' reverse' : ''}`,
@@ -90,18 +90,26 @@ function FilmStripBg({ opacity = 0.35, speed = 90, reverse = false }) {
             position: 'relative',
             borderLeft: '3px solid #111',
             borderRight: '3px solid #111',
+            background: '#151515',
+            overflow: 'hidden',
           }}>
             <video
               autoPlay muted loop playsInline
               preload="metadata"
-              src={film.src}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                objectFit: 'cover',
+              }}
+            >
+              <source src={film.src} type="video/mp4" />
+            </video>
             <div style={{
               position: 'absolute', bottom: '12px', left: '14px',
               fontSize: '9px', fontFamily: MONO,
               letterSpacing: '0.2em',
               color: 'rgba(255,255,255,0.4)',
+              zIndex: 1,
             }}>
               {String(i % FILM_STRIP.length + 1).padStart(2, '0')}
             </div>

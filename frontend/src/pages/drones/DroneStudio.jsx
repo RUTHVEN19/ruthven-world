@@ -162,6 +162,10 @@ export default function DroneStudio() {
       <Helmet>
         <title>Recording Studio — The Drones of Suburbia Album</title>
         <meta name="description" content="Stream The Drones of Suburbia album. 11 tracks by Miss AL Simpson." />
+        <meta property="og:title" content="The Album — Diamond Drones™" />
+        <meta property="og:description" content="11 tracks. The Drones of Suburbia album by Miss AL Simpson." />
+        <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+        <link rel="canonical" href="https://diamonddrones.world/drones/studio" />
       </Helmet>
       <style>{keyframes}</style>
 

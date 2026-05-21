@@ -218,7 +218,12 @@ export default function DiamondDronesHome() {
 
       <Helmet>
         <title>Diamond Drones Are a Girl's Best Friend — A digital diamond house. Native to Ethereum.</title>
-        <meta name="description" content="DIAMOND DRONES&#8482; — Three genesis collections on Ethereum. 1000 Diamond Drones, 120 Drone Blondes, The Album. By Miss AL Simpson." />
+        <meta name="description" content="DIAMOND DRONES™ — A digital diamond house by Miss AL Simpson. 1000 Diamond Drones, 120 Drone Blondes, The Album. Exhibited at Sotheby's. Powered by the Diamond Engine on Ethereum." />
+        <meta property="og:title" content="DIAMOND DRONES™ — Are a Girl's Best Friend" />
+        <meta property="og:description" content="A digital diamond house. 1000 Diamond Drones, 120 Drone Blondes, 11-track album. Exhibited at Sotheby's." />
+        <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+        <meta property="og:url" content="https://diamonddrones.world/drones" />
+        <link rel="canonical" href="https://diamonddrones.world/drones" />
       </Helmet>
 
       {/* ═══ HERO ═══ */}
@@ -231,21 +236,22 @@ export default function DiamondDronesHome() {
         background: C.bg,
         overflow: 'hidden',
       }}>
-        {/* Active hero film — only one video mounted at a time for performance */}
-        <video
-          key={HERO_FILMS[activeFilm]}
-          autoPlay muted loop playsInline
-          className="dd-hero-video"
-          style={{
-            position: 'absolute', inset: 0, width: '100%', height: '100%',
-            objectFit: 'cover', pointerEvents: 'none',
-            transformOrigin: '50% 40%',
-            opacity: 0.7,
-            animation: 'ddHeroFadeIn 2s ease-in-out',
-          }}
-        >
-          <source src={HERO_FILMS[activeFilm]} type="video/mp4" />
-        </video>
+        {/* All hero films mounted — crossfade via opacity */}
+        {HERO_FILMS.map((film, i) => (
+          <video
+            key={film}
+            autoPlay muted loop playsInline
+            style={{
+              position: 'absolute', inset: 0, width: '100%', height: '100%',
+              objectFit: 'cover', pointerEvents: 'none',
+              transformOrigin: '50% 40%',
+              opacity: i === activeFilm ? 0.7 : 0,
+              transition: 'opacity 2s ease-in-out',
+            }}
+          >
+            <source src={film} type="video/mp4" />
+          </video>
+        ))}
 
         {/* Dark overlay for text legibility */}
         <div style={{
@@ -585,7 +591,7 @@ export default function DiamondDronesHome() {
             margin: '0 auto 5rem',
             maxWidth: '700px',
           }}>
-            The Diamond Engine&#8482; transforms glamour into code, diamonds into drones,
+            The Diamond Engine transforms glamour into code, diamonds into drones,
             and cinematic artworks into tokenized cultural artefacts.
           </p>
 
