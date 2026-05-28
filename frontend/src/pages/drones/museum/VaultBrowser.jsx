@@ -233,7 +233,7 @@ export default function VaultBrowser({ onSwitch3D }) {
               />
               <div style={{ padding: '14px 16px' }}>
                 <div style={{ fontFamily: DISPLAY, fontSize: '16px', letterSpacing: '1.5px', color: '#c8e0f0', marginBottom: '10px' }}>
-                  DIAMOND DRONE #{id}
+                  DIAMOND DRONE #{pad(id)}
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px' }}>
                   {TRAIT_FIELDS.map(f => (
@@ -272,11 +272,25 @@ export default function VaultBrowser({ onSwitch3D }) {
         backdropFilter: 'blur(12px)',
         borderTop: '1px solid rgba(200,230,255,0.1)',
         padding: '12px 24px',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px',
       }}>
         <span style={{ fontFamily: MONO, fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(200,230,255,0.4)' }}>
           Diamond Drones{'\u2122'} {'\u00B7'} 1000 Unique Digital Diamonds
         </span>
+        <a
+          href="https://opensea.io/collection/diamond-drones"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: MONO, fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase',
+            padding: '5px 14px', background: 'rgba(200,230,255,0.08)', border: '1px solid rgba(200,230,255,0.25)',
+            color: 'rgba(200,230,255,0.7)', textDecoration: 'none', transition: 'all 0.3s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.15)'; e.currentTarget.style.color = '#fff'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.08)'; e.currentTarget.style.color = 'rgba(200,230,255,0.7)'; }}
+        >
+          View on OpenSea
+        </a>
       </div>
 
       {/* Fullscreen lightbox */}
@@ -296,7 +310,7 @@ export default function VaultBrowser({ onSwitch3D }) {
             style={{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain' }}
           />
           <div style={{ marginTop: '16px', fontFamily: DISPLAY, fontSize: '18px', letterSpacing: '2px', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase' }}>
-            Diamond Drone #{expandedId}
+            Diamond Drone #{pad(expandedId)}
           </div>
           <div style={{ marginTop: '8px', fontFamily: MONO, fontSize: '10px', letterSpacing: '2px', color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase' }}>
             Click anywhere to close

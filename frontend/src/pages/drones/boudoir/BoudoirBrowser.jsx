@@ -248,11 +248,25 @@ export default function BoudoirBrowser({ onSwitch3D }) {
         backdropFilter: 'blur(12px)',
         borderTop: '1px solid rgba(200,230,255,0.1)',
         padding: '12px 24px',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px',
       }}>
         <span style={{ fontFamily: MONO, fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(200,230,255,0.4)' }}>
           The Drone Blondes {'\u00B7'} 120 Unique 1/1 Artworks
         </span>
+        <a
+          href="https://opensea.io/collection/drone-blondes"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: MONO, fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase',
+            padding: '5px 14px', background: 'rgba(200,230,255,0.08)', border: '1px solid rgba(200,230,255,0.25)',
+            color: 'rgba(200,230,255,0.7)', textDecoration: 'none', transition: 'all 0.3s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.15)'; e.currentTarget.style.color = '#fff'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.08)'; e.currentTarget.style.color = 'rgba(200,230,255,0.7)'; }}
+        >
+          View on OpenSea
+        </a>
       </div>
 
       {/* Fullscreen lightbox */}
