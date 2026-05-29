@@ -108,6 +108,32 @@ export default function BoudoirHUD({ focusedMarilyn, onNavigate, onUnfocus, onBr
         </div>
       </div>
 
+      {/* ── View on OpenSea — bottom left ── */}
+      {!focusedMarilyn && (
+        <div style={{
+          position: 'absolute',
+          bottom: '50px',
+          left: '24px',
+          pointerEvents: 'auto',
+        }}>
+          <a
+            href="https://opensea.io/collection/drone-blondes"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontFamily: MONO, fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase',
+              padding: '8px 20px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.5)',
+              color: '#fff', textDecoration: 'none', transition: 'all 0.3s',
+              backdropFilter: 'blur(8px)',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.25)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; }}
+          >
+            View on OpenSea
+          </a>
+        </div>
+      )}
+
       {/* ── Viewpoint navigation — bottom right ── */}
       <div style={{
         position: 'absolute',
