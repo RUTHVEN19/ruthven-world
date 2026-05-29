@@ -32,16 +32,17 @@ const COLLECTIONS = [
     isVinyl: true,
     accent: 'rgba(200,255,220,0.4)',
   },
-  {
-    key: 'films',
-    label: '4K Films',
-    icon: '\u25C8',
-    desc: 'Full 4K archival master of your 1/1 film',
-    fileLabel: '4K MP4',
-    images: ['/films/poster-recording-studio.jpg', '/films/poster-the-vault.jpg', '/films/poster-jewellery-box.jpg'],
-    accent: 'rgba(255,200,255,0.4)',
-  },
 ];
+
+const FILMS_CARD = {
+  key: 'films',
+  label: '4K Films',
+  icon: '\u25C8',
+  desc: 'Full 4K archival master of your 1/1 film',
+  fileLabel: '4K MP4',
+  filmSrc: '/films/dd-the-vault.mp4',
+  accent: 'rgba(255,200,255,0.4)',
+};
 
 // Design tokens matching DiamondDronesHome
 const C = {
@@ -186,6 +187,7 @@ export default function DroneDownloads() {
         @media (max-width: 700px) {
           .dd-dl-collections { grid-template-columns: 1fr !important; }
           .dd-dl-hero-images { display: none !important; }
+          .dd-dl-films-card { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
@@ -284,9 +286,9 @@ export default function DroneDownloads() {
         }}>
           <div className="dd-dl-collections" style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gridTemplateColumns: 'repeat(3, 1fr)',
             gap: 'clamp(12px, 2vw, 24px)',
-            marginBottom: 'clamp(48px, 6vw, 80px)',
+            marginBottom: 'clamp(20px, 3vw, 32px)',
           }}>
             {COLLECTIONS.map((c, ci) => (
               <div
@@ -449,6 +451,91 @@ export default function DroneDownloads() {
                 }} />
               </div>
             ))}
+          </div>
+
+          {/* ═══ 4K FILMS CARD — full width below ═══ */}
+          <div
+            className="dd-dl-card dd-dl-films-card"
+            style={{
+              border: `1px solid ${C.line}`,
+              background: 'rgba(255,255,255,0.015)',
+              overflow: 'hidden',
+              cursor: 'default',
+              transition: 'all 0.4s ease',
+              position: 'relative',
+              marginBottom: 'clamp(48px, 6vw, 80px)',
+              animation: 'ddDlFadeUp 1.25s ease-out both',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+            }}
+          >
+            {/* Video preview */}
+            <div style={{ position: 'relative', overflow: 'hidden', minHeight: '220px' }}>
+              <video
+                autoPlay muted loop playsInline preload="metadata"
+                style={{
+                  width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                  filter: 'brightness(0.6) contrast(1.1)',
+                }}
+              >
+                <source src={FILMS_CARD.filmSrc} type="video/mp4" />
+              </video>
+              <div style={{
+                position: 'absolute', inset: 0, pointerEvents: 'none',
+                background: 'linear-gradient(90deg, transparent 60%, rgba(10,10,12,0.9) 100%)',
+              }} />
+            </div>
+
+            {/* Card content */}
+            <div style={{
+              padding: 'clamp(28px, 4vw, 48px)',
+              display: 'flex', flexDirection: 'column', justifyContent: 'center',
+            }}>
+              <div style={{
+                fontFamily: font.mono, fontStyle: 'normal',
+                fontSize: '0.55rem', letterSpacing: '0.3em',
+                textTransform: 'uppercase', color: C.textFaint,
+                marginBottom: '12px',
+              }}>
+                {'\u25C8'} 4 × 1/1 Film NFTs
+              </div>
+              <div style={{
+                fontFamily: font.display, fontWeight: 700, fontStyle: 'normal',
+                fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: C.iceBright,
+                marginBottom: '12px',
+              }}>
+                4K Films
+              </div>
+              <div style={{
+                fontFamily: font.body, fontStyle: 'italic',
+                fontSize: '1rem', color: C.textDim,
+                lineHeight: 1.8, marginBottom: '16px',
+                maxWidth: '400px',
+              }}>
+                Full 4K archival masters of the Diamond Drones Are a Girl's Best Friend
+                film series. Each film is a unique 1/1 NFT with token-gated download
+                of the original 4K master file.
+              </div>
+              <div style={{
+                fontFamily: font.mono, fontStyle: 'normal',
+                fontSize: '0.55rem', letterSpacing: '0.2em',
+                textTransform: 'uppercase', color: C.textFaint,
+                display: 'flex', alignItems: 'center', gap: '6px',
+              }}>
+                <span style={{ color: FILMS_CARD.accent, fontSize: '8px' }}>{'\u25C6'}</span>
+                4K MP4
+              </div>
+            </div>
+
+            {/* Hover glow */}
+            <div className="dd-dl-card-glow" style={{
+              position: 'absolute', bottom: 0, left: '10%', right: '10%', height: '1px',
+              background: `linear-gradient(90deg, transparent, ${FILMS_CARD.accent}, transparent)`,
+              opacity: 0, transition: 'opacity 0.4s ease',
+            }} />
           </div>
 
           {/* ═══ DOWNLOAD PANEL ═══ */}
