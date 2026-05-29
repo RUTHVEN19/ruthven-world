@@ -330,7 +330,6 @@ export default function DroneContact() {
                       style={{ fontStyle: formData.subject ? 'italic' : 'italic' }}
                     >
                       <option value="">Select enquiry type</option>
-                      <option value="Collectors Edition Enquiry">Collectors Edition</option>
                       <option value="Private Viewing Request">Private Viewing</option>
                       <option value="Exhibition Proposal">Exhibition Proposal</option>
                       <option value="Commission Enquiry">Commission</option>
