@@ -32,6 +32,15 @@ const COLLECTIONS = [
     isVinyl: true,
     accent: 'rgba(200,255,220,0.4)',
   },
+  {
+    key: 'films',
+    label: '4K Films',
+    icon: '\u25C8',
+    desc: 'Full 4K archival master of your 1/1 film',
+    fileLabel: '4K MP4',
+    images: ['/films/poster-recording-studio.jpg', '/films/poster-the-vault.jpg', '/films/poster-jewellery-box.jpg'],
+    accent: 'rgba(255,200,255,0.4)',
+  },
 ];
 
 // Design tokens matching DiamondDronesHome
@@ -275,7 +284,7 @@ export default function DroneDownloads() {
         }}>
           <div className="dd-dl-collections" style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
             gap: 'clamp(12px, 2vw, 24px)',
             marginBottom: 'clamp(48px, 6vw, 80px)',
           }}>
@@ -522,7 +531,7 @@ export default function DroneDownloads() {
                 maxWidth: '480px', margin: '0 auto',
               }}>
                 Token-gated downloads will unlock after minting. Hold a Diamond Drone,
-                Drone Blonde, or Album token to access exclusive high-resolution files.
+                Drone Blonde, Album, or Film token to access exclusive high-resolution files.
               </p>
             </div>
           </div>

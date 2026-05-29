@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { path: '/drones/studio',        label: 'Studio' },
   { path: '/drones/lounge',        label: 'The Lounge' },
   { path: '/drones/lore',          label: 'Lore' },
+  { path: '/drones/downloads',    label: 'Downloads' },
 ];
 
 export default function DronesWorld() {
