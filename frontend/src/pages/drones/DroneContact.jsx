@@ -167,7 +167,7 @@ export default function DroneContact() {
             lineHeight: 1.9,
             animation: 'ddContactFadeUp 1.2s ease-out both',
           }}>
-            For enquiries regarding the work.
+            For enquiries regarding Diamond Drones.
           </p>
         </div>
 
