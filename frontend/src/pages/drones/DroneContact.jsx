@@ -167,8 +167,7 @@ export default function DroneContact() {
             lineHeight: 1.9,
             animation: 'ddContactFadeUp 1.2s ease-out both',
           }}>
-            For collector enquiries, exhibition proposals, and private viewings
-            of the Diamond Drones Collectors Edition.
+            For enquiries regarding the work.
           </p>
         </div>
 
@@ -194,7 +193,31 @@ export default function DroneContact() {
                 textTransform: 'uppercase', color: C.iceBright,
                 marginBottom: '24px',
               }}>
-                The Artist
+                Miss AL Simpson
+              </div>
+
+              <div style={{
+                fontFamily: font.body, fontStyle: 'italic',
+                fontSize: '1rem', color: C.textDim,
+                lineHeight: 2, marginBottom: '16px',
+              }}>
+                Edinburgh, Scotland.
+              </div>
+
+              <div style={{
+                fontFamily: font.body, fontStyle: 'italic',
+                fontSize: '1rem', color: C.textDim,
+                lineHeight: 2, marginBottom: '16px',
+              }}>
+                Contemporary artist working with ink, AI, and cinema.
+              </div>
+
+              <div style={{
+                fontFamily: font.body, fontStyle: 'italic',
+                fontSize: '1rem', color: C.textDim,
+                lineHeight: 2, marginBottom: '16px',
+              }}>
+                Recent exhibition: Sotheby's New York, Contemporary Discoveries, 2025.
               </div>
 
               <div style={{
@@ -202,34 +225,7 @@ export default function DroneContact() {
                 fontSize: '1rem', color: C.textDim,
                 lineHeight: 2, marginBottom: '32px',
               }}>
-                Miss AL Simpson is a cryptoartist and filmmaker working at the intersection
-                of AI, fashion, and digital luxury. Diamond Drones is her signature collection
-                {'\u2009'}{'\u2014'}{'\u2009'}1000 unique digital diamonds, 120 Drone Blondes, four 1/1 films,
-                and an original album.
-              </div>
-
-              <div style={{
-                width: '40px', height: '1px', marginBottom: '32px',
-                background: 'rgba(217,230,240,0.15)',
-              }} />
-
-              <div style={{
-                fontFamily: font.display, fontWeight: 700, fontStyle: 'normal',
-                fontSize: '0.8rem', letterSpacing: '0.2em',
-                textTransform: 'uppercase', color: C.iceBright,
-                marginBottom: '16px',
-              }}>
-                Collectors Edition
-              </div>
-
-              <div style={{
-                fontFamily: font.body, fontStyle: 'italic',
-                fontSize: '0.95rem', color: C.textDim,
-                lineHeight: 2, marginBottom: '32px',
-              }}>
-                Four positions available. Each edition includes 7 Diamond Drone NFTs,
-                1 Film Edition NFT, and 1 Album Edition NFT {'\u2014'} with full 4K archival
-                masters via token-gated download.
+                Enquiries are answered personally.
               </div>
 
               <div style={{
