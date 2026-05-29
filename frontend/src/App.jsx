@@ -25,6 +25,7 @@ const DroneStudio = lazy(() => import('./pages/drones/DroneStudio'));
 const DroneLore = lazy(() => import('./pages/drones/DroneLore'));
 const DroneBoudoir = lazy(() => import('./pages/drones/DroneBoudoir'));
 const DroneDownloads = lazy(() => import('./pages/drones/DroneDownloads'));
+const DroneContact = lazy(() => import('./pages/drones/DroneContact'));
 
 function Layout({ children }) {
   return (
@@ -78,6 +79,7 @@ export default function App() {
         <Route path="lore" element={<DroneLore />} />
         <Route path="lounge" element={<DroneBoudoir />} />
         <Route path="downloads" element={<DroneDownloads />} />
+        <Route path="contact" element={<DroneContact />} />
       </Route>
 
       {/* ═══ COMMISSION ROOMS ═══ */}
