@@ -259,12 +259,11 @@ export default function BoudoirBrowser({ onSwitch3D }) {
           rel="noopener noreferrer"
           style={{
             fontFamily: MONO, fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase',
-            padding: '8px 20px', background: '#2081e2', border: '1px solid #2081e2',
+            padding: '8px 20px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.5)',
             color: '#fff', textDecoration: 'none', transition: 'all 0.3s',
-            fontWeight: 'bold', borderRadius: '4px',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#1868b7'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#2081e2'; }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.25)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; }}
         >
           View on OpenSea
         </a>
