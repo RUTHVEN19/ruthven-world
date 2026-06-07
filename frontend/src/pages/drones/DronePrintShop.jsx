@@ -14,7 +14,7 @@ const ALL_BLONDES = PRINT_EDITION_NUMS.map(n => ({
 
 const OPENSEA_BASE = 'https://opensea.io/assets/ethereum/0x505348E10069D5083842532f5F5FA432631d109e';
 
-const PRICE_DISPLAY = '\u00A31,200';
+const PRICE_DISPLAY = '\u00A3600';
 
 const SPECS = [
   ['Paper', 'Hahnem\u00FChle Photo Rag Metallic 300gsm'],
@@ -907,7 +907,7 @@ function PrintGrid({ onBuy, onSwitchCarousel }) {
             maxWidth: '85vw', maxHeight: '75vh',
           }}>
             <img
-              src={`/marilyns/Drone%20Blonde%20${lightbox.num}.png`}
+              src={`/marilyns/web/${lightbox.num}.jpg`}
               alt={lightbox.title}
               style={{
                 maxWidth: '100%', maxHeight: 'calc(75vh - 60px)',
@@ -1012,7 +1012,7 @@ export default function DronePrintShop() {
         <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
         <meta property="og:url" content="https://diamonddrones.world/drones/prints" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="description" content="20 Drone Blondes available as signed A2 Hahnem\u00FChle Photo Rag Metallic prints with AR video activation. \u00A31,200 each." />
+        <meta name="description" content="20 Drone Blondes available as signed A2 Hahnem\u00FChle Photo Rag Metallic prints with AR video activation. \u00A3600 each." />
       </Helmet>
 
       <style>{`
@@ -1358,7 +1358,7 @@ export default function DronePrintShop() {
             maxWidth: '85vw', maxHeight: '75vh',
           }}>
             <img
-              src={`/marilyns/Drone%20Blonde%20${expandedPrint.num}.png`}
+              src={`/marilyns/web/${expandedPrint.num}.jpg`}
               alt={expandedPrint.title}
               style={{ maxWidth: '100%', maxHeight: 'calc(75vh - 60px)', objectFit: 'contain', display: 'block' }}
             />
