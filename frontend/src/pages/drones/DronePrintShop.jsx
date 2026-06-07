@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+const API = import.meta.env.VITE_API_URL || 'https://diamond-drones.onrender.com/api';
 
 // 20 Drone Blondes selected for the Print Shop — spread across the collection
 const PRINT_EDITION_NUMS = [3, 7, 14, 22, 29, 35, 41, 48, 56, 63, 69, 74, 81, 88, 94, 99, 103, 109, 115, 120];
