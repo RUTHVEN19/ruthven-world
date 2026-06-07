@@ -24,8 +24,17 @@ const DroneCinema3D = lazy(() => import('./pages/drones/DroneCinema3D'));
 const DroneStudio = lazy(() => import('./pages/drones/DroneStudio'));
 const DroneLore = lazy(() => import('./pages/drones/DroneLore'));
 const DroneBoudoir = lazy(() => import('./pages/drones/DroneBoudoir'));
-const DroneDownloads = lazy(() => import('./pages/drones/DroneDownloads'));
 const DroneContact = lazy(() => import('./pages/drones/DroneContact'));
+const DronePrintShop = lazy(() => import('./pages/drones/DronePrintShop'));
+const AndroidsWorld = lazy(() => import('./pages/androids/AndroidsWorld'));
+const PorcelainAndroidsHome = lazy(() => import('./pages/androids/PorcelainAndroidsHome'));
+const AndroidsOriginals = lazy(() => import('./pages/androids/AndroidsOriginals'));
+const MangaMachine = lazy(() => import('./pages/androids/MangaMachine'));
+const AndroidsNightclub = lazy(() => import('./pages/androids/AndroidsCinema'));
+const AndroidsGraffiti = lazy(() => import('./pages/androids/AndroidsGraffiti'));
+const AndroidsPrintShop = lazy(() => import('./pages/androids/AndroidsPrintShop'));
+const AndroidsLore = lazy(() => import('./pages/androids/AndroidsLore'));
+const AndroidsSocial = lazy(() => import('./pages/androids/AndroidsSocial'));
 
 function Layout({ children }) {
   return (
@@ -78,8 +87,20 @@ export default function App() {
         <Route path="studio" element={<DroneStudio />} />
         <Route path="lore" element={<DroneLore />} />
         <Route path="lounge" element={<DroneBoudoir />} />
-        <Route path="downloads" element={<DroneDownloads />} />
+        <Route path="prints" element={<DronePrintShop />} />
         <Route path="contact" element={<DroneContact />} />
+      </Route>
+
+      {/* ═══ PORCELAIN ANDROIDS WORLD ═══ */}
+      <Route path="/androids" element={<ErrorBoundary><AndroidsWorld /></ErrorBoundary>}>
+        <Route index element={<PorcelainAndroidsHome />} />
+        <Route path="originals" element={<AndroidsOriginals />} />
+        <Route path="manga-machine" element={<MangaMachine />} />
+        <Route path="nightclub" element={<AndroidsNightclub />} />
+        <Route path="graffiti" element={<AndroidsGraffiti />} />
+        <Route path="prints" element={<AndroidsPrintShop />} />
+        <Route path="lore" element={<AndroidsLore />} />
+        <Route path="social" element={<AndroidsSocial />} />
       </Route>
 
       {/* ═══ COMMISSION ROOMS ═══ */}

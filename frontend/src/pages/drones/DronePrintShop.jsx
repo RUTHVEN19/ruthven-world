@@ -1,32 +1,28 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
-/* ── 10 Drone Blondes for open edition prints (swap IDs when chosen) ── */
-const PRINT_EDITIONS = [
-  { id: 'db-07', num: 7,  title: 'Drone Blonde #7' },
-  { id: 'db-17', num: 17, title: 'Drone Blonde #17' },
-  { id: 'db-23', num: 23, title: 'Drone Blonde #23' },
-  { id: 'db-34', num: 34, title: 'Drone Blonde #34' },
-  { id: 'db-45', num: 45, title: 'Drone Blonde #45' },
-  { id: 'db-58', num: 58, title: 'Drone Blonde #58' },
-  { id: 'db-63', num: 63, title: 'Drone Blonde #63' },
-  { id: 'db-71', num: 71, title: 'Drone Blonde #71' },
-  { id: 'db-84', num: 84, title: 'Drone Blonde #84' },
-  { id: 'db-99', num: 99, title: 'Drone Blonde #99' },
-];
+// 20 Drone Blondes selected for the Print Shop — spread across the collection
+const PRINT_EDITION_NUMS = [3, 7, 14, 22, 29, 35, 41, 48, 56, 63, 69, 74, 81, 88, 94, 99, 103, 109, 115, 120];
+const ALL_BLONDES = PRINT_EDITION_NUMS.map(n => ({
+  id: `db-${n}`,
+  num: n,
+  title: `Drone Blonde #${n}`,
+}));
 
-const PRICE_DISPLAY = '\u00A3295';
-const PRICE_PENCE = 29500;
+const OPENSEA_BASE = 'https://opensea.io/assets/ethereum/0x505348E10069D5083842532f5F5FA432631d109e';
+
+const PRICE_DISPLAY = '\u00A31,200';
 
 const SPECS = [
-  ['Paper', 'Hahnem\u00FChle Photo Rag Metallic 340gsm'],
+  ['Paper', 'Hahnem\u00FChle Photo Rag Metallic 300gsm'],
   ['Size', 'A2 (420 \u00D7 594 mm)'],
   ['Finish', 'Metallic lustre with deep blacks'],
   ['Signed', 'Hand-signed by Miss AL Simpson'],
-  ['Edition', 'Unlimited Open Edition'],
-  ['AR', 'Drone Blonde dance activation included'],
+  ['Edition', 'Limited Edition of 50'],
+  ['AR', 'Drone Blonde AR video activation included'],
   ['Shipping', 'Worldwide \u00B7 Insured \u00B7 21 days'],
 ];
 
@@ -34,78 +30,83 @@ const MONO = "'Space Mono', monospace";
 const SERIF = 'Georgia, serif';
 const DISPLAY = '"Anton", "Arial Black", sans-serif';
 
+
 /* ═══════════════════════════════════════════════════════════════
-   AR PREVIEW CARD — shows the print, hover triggers AR dance sim
+   CAROUSEL PRINT CARD
    ═══════════════════════════════════════════════════════════════ */
-function PrintCard({ print, index, onBuy }) {
+function CarouselCard({ print, isActive, onBuy, onExpand }) {
   const [hovered, setHovered] = useState(false);
   const [arActive, setArActive] = useState(false);
+  const videoRef = useRef(null);
   const timerRef = useRef(null);
 
-  const imgSrc = `/marilyns/Drone%20Blonde%20${print.num}.png`;
+  const imgSrc = `/marilyns/browse/${print.num}.jpg`;
+  const videoSrc = `/prints/ar/drone-blonde-${print.num}.mp4`;
 
   const handleMouseEnter = () => {
     setHovered(true);
-    timerRef.current = setTimeout(() => setArActive(true), 400);
+    timerRef.current = setTimeout(() => setArActive(true), 300);
   };
-
   const handleMouseLeave = () => {
     setHovered(false);
     setArActive(false);
     if (timerRef.current) clearTimeout(timerRef.current);
   };
 
-  // Mobile tap toggle
-  const handleTap = () => {
-    if (arActive) {
-      setArActive(false);
-      setHovered(false);
-    } else {
-      setHovered(true);
-      setTimeout(() => setArActive(true), 400);
-    }
-  };
-
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
+
+  // Try to play video when AR activates
+  useEffect(() => {
+    if (arActive && videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    } else if (!arActive && videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  }, [arActive]);
+
+  const scale = isActive ? 1 : 0.88;
+  const opacity = isActive ? 1 : 0.5;
 
   return (
     <div
       style={{
-        animation: `fadeUp 0.8s ease-out ${0.1 * index}s both`,
+        flex: '0 0 auto',
+        width: 'clamp(300px, 38vw, 480px)',
+        transition: 'all 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
+        transform: `scale(${hovered && isActive ? 1.02 : scale})`,
+        opacity,
+        filter: isActive ? 'none' : 'brightness(0.6)',
+        cursor: isActive ? 'default' : 'pointer',
       }}
+      onMouseEnter={isActive ? handleMouseEnter : undefined}
+      onMouseLeave={isActive ? handleMouseLeave : undefined}
     >
-      {/* Framed print with AR overlay */}
-      <div
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={handleTap}
-        style={{
-          position: 'relative',
-          background: '#f5f3f0',
-          padding: 'clamp(10px, 2vw, 20px)',
-          boxShadow: hovered
-            ? '0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(176,200,212,0.1)'
-            : '0 12px 50px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4)',
-          cursor: 'pointer',
-          transition: 'all 0.5s ease',
-          transform: hovered ? 'scale(1.02)' : 'scale(1)',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Glint sweep */}
+      {/* Framed print */}
+      <div style={{
+        position: 'relative',
+        background: '#f5f3f0',
+        padding: 'clamp(10px, 2vw, 20px)',
+        boxShadow: hovered
+          ? '0 30px 80px rgba(0,0,0,0.8), 0 0 60px rgba(176,200,212,0.15)'
+          : '0 20px 60px rgba(0,0,0,0.6)',
+        transition: 'all 0.5s ease',
+        overflow: 'hidden',
+      }}>
+        {/* Diamond glint sweep */}
         <div style={{
           position: 'absolute', top: 0, bottom: 0,
           width: '45%',
-          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-          animation: `glintSweep ${9 + index * 2}s ease-in-out infinite`,
-          animationDelay: `${index * 1.5 + 3}s`,
+          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)',
+          animation: `glintSweep 8s ease-in-out infinite`,
+          animationDelay: `${(print.num % 5) * 1.5}s`,
           pointerEvents: 'none', zIndex: 3,
         }} />
 
-        {/* Artwork */}
+        {/* Artwork container */}
         <div style={{
           position: 'relative',
-          aspectRatio: '1',
+          aspectRatio: '3/2',
           overflow: 'hidden',
           background: '#111',
         }}>
@@ -113,17 +114,34 @@ function PrintCard({ print, index, onBuy }) {
             src={imgSrc}
             alt={print.title}
             loading="lazy"
+            onClick={isActive && onExpand ? () => onExpand(print) : undefined}
             style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              display: 'block',
+              width: '100%', height: '100%',
+              objectFit: 'cover', display: 'block',
               filter: arActive ? 'contrast(1.1) brightness(1.05)' : 'none',
               transition: 'filter 0.6s ease',
+              cursor: isActive ? 'pointer' : 'default',
             }}
           />
 
-          {/* AR Dance Activation Overlay */}
+          {/* AR video overlay (plays on hover if file exists) */}
+          <video
+            ref={videoRef}
+            src={videoSrc}
+            muted
+            loop
+            playsInline
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%',
+              objectFit: 'cover',
+              opacity: arActive ? 1 : 0,
+              transition: 'opacity 0.8s ease',
+              pointerEvents: 'none',
+            }}
+          />
+
+          {/* AR scan effect overlay */}
           <div style={{
             position: 'absolute', inset: 0,
             pointerEvents: 'none',
@@ -146,29 +164,16 @@ function PrintCard({ print, index, onBuy }) {
               animation: arActive ? 'scanBeam 2.5s ease-in-out infinite' : 'none',
             }} />
 
-            {/* Dancing silhouette shimmer */}
+            {/* Holographic shimmer */}
             <div style={{
               position: 'absolute', inset: 0,
               background: 'radial-gradient(ellipse at 50% 60%, rgba(176,200,212,0.12) 0%, transparent 60%)',
               animation: arActive ? 'arPulse 1.5s ease-in-out infinite' : 'none',
             }} />
 
-            {/* Motion blur streaks */}
-            {[...Array(5)].map((_, i) => (
-              <div key={i} style={{
-                position: 'absolute',
-                left: `${15 + i * 15}%`,
-                top: '20%', bottom: '20%',
-                width: '1px',
-                background: `linear-gradient(180deg, transparent, rgba(176,200,212,${0.1 + i * 0.04}), transparent)`,
-                animation: arActive ? `motionStreak 1.2s ease-in-out ${i * 0.15}s infinite alternate` : 'none',
-              }} />
-            ))}
-
             {/* AR badge */}
             <div style={{
-              position: 'absolute',
-              top: '12px', left: '12px',
+              position: 'absolute', top: '12px', left: '12px',
               display: 'flex', alignItems: 'center', gap: '6px',
               padding: '5px 10px',
               background: 'rgba(0,0,0,0.6)',
@@ -177,32 +182,28 @@ function PrintCard({ print, index, onBuy }) {
               borderRadius: '2px',
             }}>
               <div style={{
-                width: '6px', height: '6px',
-                borderRadius: '50%',
+                width: '6px', height: '6px', borderRadius: '50%',
                 background: '#b0c8d4',
                 boxShadow: '0 0 6px rgba(176,200,212,0.8)',
                 animation: 'arDot 1s ease-in-out infinite',
               }} />
               <span style={{
-                fontFamily: MONO,
-                fontSize: '8px',
+                fontFamily: MONO, fontSize: '8px',
                 letterSpacing: '0.2em',
                 color: 'rgba(176,200,212,0.9)',
                 textTransform: 'uppercase',
-              }}>
-                AR Active
-              </span>
+              }}>AR Active</span>
             </div>
 
             {/* Corner brackets */}
-            {[[12, 12, 'borderTop', 'borderLeft'], [null, 12, 'borderTop', 'borderRight'], [12, null, 'borderBottom', 'borderLeft'], [null, null, 'borderBottom', 'borderRight']].map(([l, t, bv, bh], i) => (
-              <div key={`c${i}`} style={{
+            {[[12, 40, 'Top', 'Left'], [null, 40, 'Top', 'Right'], [12, null, 'Bottom', 'Left'], [null, null, 'Bottom', 'Right']].map(([l, t, bv, bh], i) => (
+              <div key={i} style={{
                 position: 'absolute',
                 ...(l !== null ? { left: l } : { right: 12 }),
-                ...(t !== null ? { top: t + 28 } : { bottom: 12 }),
+                ...(t !== null ? { top: t } : { bottom: 12 }),
                 width: '20px', height: '20px',
-                [bv]: '1px solid rgba(176,200,212,0.5)',
-                [bh]: '1px solid rgba(176,200,212,0.5)',
+                [`border${bv}`]: '1px solid rgba(176,200,212,0.5)',
+                [`border${bh}`]: '1px solid rgba(176,200,212,0.5)',
               }} />
             ))}
           </div>
@@ -211,77 +212,352 @@ function PrintCard({ print, index, onBuy }) {
         {/* Signature strip */}
         <div style={{ paddingTop: 'clamp(6px, 1vw, 14px)', textAlign: 'center' }}>
           <div style={{
-            fontFamily: SERIF,
-            fontSize: '7px',
-            fontStyle: 'italic',
-            color: 'rgba(0,0,0,0.25)',
-            letterSpacing: '0.15em',
-          }}>
-            Miss AL Simpson
-          </div>
+            fontFamily: SERIF, fontSize: '7px', fontStyle: 'italic',
+            color: 'rgba(0,0,0,0.25)', letterSpacing: '0.15em',
+          }}>Miss AL Simpson</div>
         </div>
       </div>
 
-      {/* Label + AR hint */}
-      <div style={{ textAlign: 'center', marginTop: '16px' }}>
+      {/* Title + AR hint */}
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
         <div style={{
-          fontFamily: MONO,
-          fontSize: '10px',
-          letterSpacing: '0.2em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.3)',
+          fontFamily: DISPLAY, fontSize: 'clamp(16px, 2vw, 22px)',
+          textTransform: 'uppercase', letterSpacing: '0.05em',
+          background: 'linear-gradient(110deg, #b0c8d4 0%, #ffffff 40%, #a8c0cc 70%, #ffffff 100%)',
+          backgroundSize: '300% auto',
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          animation: 'crystalShimmer 6s linear infinite',
         }}>
           {print.title}
         </div>
         <div style={{
-          fontFamily: MONO,
-          fontSize: '8px',
-          letterSpacing: '0.15em',
-          color: 'rgba(176,200,212,0.3)',
-          marginTop: '6px',
+          fontFamily: MONO, fontSize: '8px', letterSpacing: '0.15em',
+          color: 'rgba(176,200,212,0.35)', marginTop: '8px',
         }}>
           {hovered || arActive ? 'AR dance activated' : 'Hover to preview AR'}
         </div>
       </div>
 
-      {/* Buy button */}
-      <button
-        onClick={(e) => { e.stopPropagation(); onBuy(print); }}
-        style={{
-          display: 'block',
-          width: '100%',
-          marginTop: '16px',
-          fontFamily: MONO,
-          fontSize: '10px',
-          letterSpacing: '0.2em',
-          textTransform: 'uppercase',
-          border: '1px solid rgba(255,255,255,0.15)',
-          background: 'transparent',
-          color: 'rgba(255,255,255,0.6)',
-          padding: '14px 0',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'rgba(176,200,212,0.5)';
-          e.currentTarget.style.color = '#fff';
-          e.currentTarget.style.background = 'rgba(176,200,212,0.08)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
-          e.currentTarget.style.color = 'rgba(255,255,255,0.6)';
-          e.currentTarget.style.background = 'transparent';
-        }}
-      >
-        {PRICE_DISPLAY} — Order Print
-      </button>
+      {/* Action buttons */}
+      {isActive && (
+        <div style={{
+          display: 'flex', gap: '10px', marginTop: '16px',
+          animation: 'fadeUp 0.4s ease-out both',
+        }}>
+          <button
+            onClick={(e) => { e.stopPropagation(); onBuy(print); }}
+            style={{
+              flex: 1, padding: '14px 0',
+              fontFamily: MONO, fontSize: '10px',
+              letterSpacing: '0.2em', textTransform: 'uppercase',
+              border: '1px solid rgba(176,200,212,0.4)',
+              background: 'rgba(176,200,212,0.08)',
+              color: '#fff', cursor: 'pointer',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(176,200,212,0.18)';
+              e.currentTarget.style.borderColor = 'rgba(176,200,212,0.7)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(176,200,212,0.08)';
+              e.currentTarget.style.borderColor = 'rgba(176,200,212,0.4)';
+            }}
+          >
+            {PRICE_DISPLAY} — Order Print
+          </button>
+          <a
+            href={`${OPENSEA_BASE}/${print.num}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '14px 18px',
+              fontFamily: MONO, fontSize: '10px',
+              letterSpacing: '0.15em', textTransform: 'uppercase',
+              border: '1px solid rgba(255,255,255,0.15)',
+              background: 'transparent',
+              color: 'rgba(255,255,255,0.5)',
+              cursor: 'pointer', textDecoration: 'none',
+              transition: 'all 0.3s ease',
+              display: 'flex', alignItems: 'center',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)';
+              e.currentTarget.style.color = '#fff';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+              e.currentTarget.style.color = 'rgba(255,255,255,0.5)';
+            }}
+          >
+            OpenSea
+          </a>
+        </div>
+      )}
     </div>
   );
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   CHECKOUT MODAL — email + Stripe redirect
+   CAROUSEL — horizontal scroll with snap, arrows, counter
+   ═══════════════════════════════════════════════════════════════ */
+function PrintCarousel({ onBuy, onExpand, initialIndex = 0 }) {
+  const scrollRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, scrollLeft: 0 });
+
+  const scrollToIndex = useCallback((index) => {
+    const clamped = Math.max(0, Math.min(ALL_BLONDES.length - 1, index));
+    setActiveIndex(clamped);
+    const container = scrollRef.current;
+    if (!container) return;
+    const cards = container.children;
+    if (cards[clamped]) {
+      const cardWidth = cards[clamped].offsetWidth;
+      const containerWidth = container.offsetWidth;
+      const scrollPos = cards[clamped].offsetLeft - (containerWidth / 2) + (cardWidth / 2);
+      container.scrollTo({ left: scrollPos, behavior: 'smooth' });
+    }
+  }, []);
+
+  // Scroll to initial index on mount
+  useEffect(() => {
+    if (initialIndex > 0) {
+      setTimeout(() => scrollToIndex(initialIndex), 100);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Snap to nearest card on scroll end
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    let timeout;
+    const handleScroll = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        const containerCenter = container.scrollLeft + container.offsetWidth / 2;
+        let closest = 0;
+        let closestDist = Infinity;
+        Array.from(container.children).forEach((child, i) => {
+          const childCenter = child.offsetLeft + child.offsetWidth / 2;
+          const dist = Math.abs(containerCenter - childCenter);
+          if (dist < closestDist) { closestDist = dist; closest = i; }
+        });
+        if (closest !== activeIndex) setActiveIndex(closest);
+      }, 80);
+    };
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => { container.removeEventListener('scroll', handleScroll); clearTimeout(timeout); };
+  }, [activeIndex]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === 'ArrowLeft') scrollToIndex(activeIndex - 1);
+      if (e.key === 'ArrowRight') scrollToIndex(activeIndex + 1);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [activeIndex, scrollToIndex]);
+
+  // Mouse drag
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    dragStart.current = { x: e.pageX, scrollLeft: scrollRef.current.scrollLeft };
+  };
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const dx = e.pageX - dragStart.current.x;
+    scrollRef.current.scrollLeft = dragStart.current.scrollLeft - dx;
+  };
+  const handleMouseUp = () => setIsDragging(false);
+
+  // Jump to specific blonde
+  const [jumpValue, setJumpValue] = useState('');
+  const handleJump = () => {
+    const n = parseInt(jumpValue);
+    const idx = ALL_BLONDES.findIndex(b => b.num === n);
+    if (idx !== -1) scrollToIndex(idx);
+    setJumpValue('');
+  };
+
+  return (
+    <div style={{ position: 'relative' }}>
+      {/* Carousel track */}
+      <div
+        ref={scrollRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        style={{
+          display: 'flex',
+          gap: 'clamp(20px, 3vw, 40px)',
+          overflowX: 'auto',
+          scrollSnapType: 'x mandatory',
+          scrollBehavior: 'smooth',
+          padding: 'clamp(40px, 6vw, 80px) clamp(60px, 15vw, 200px)',
+          cursor: isDragging ? 'grabbing' : 'grab',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          userSelect: 'none',
+        }}
+      >
+        <style>{`div::-webkit-scrollbar { display: none; }`}</style>
+        {ALL_BLONDES.map((print, i) => (
+          <div
+            key={print.id}
+            onClick={() => scrollToIndex(i)}
+            style={{ scrollSnapAlign: 'center', flex: '0 0 auto' }}
+          >
+            <CarouselCard
+              print={print}
+              isActive={i === activeIndex}
+              onBuy={onBuy}
+              onExpand={onExpand}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Navigation arrows */}
+      <button
+        onClick={() => scrollToIndex(activeIndex - 1)}
+        disabled={activeIndex === 0}
+        style={{
+          ...arrowStyle,
+          left: 'clamp(8px, 2vw, 24px)',
+          opacity: activeIndex === 0 ? 0.2 : 0.7,
+        }}
+        aria-label="Previous print"
+      >
+        <span style={{ fontSize: '24px' }}>{'\u2039'}</span>
+      </button>
+      <button
+        onClick={() => scrollToIndex(activeIndex + 1)}
+        disabled={activeIndex === ALL_BLONDES.length - 1}
+        style={{
+          ...arrowStyle,
+          right: 'clamp(8px, 2vw, 24px)',
+          opacity: activeIndex === ALL_BLONDES.length - 1 ? 0.2 : 0.7,
+        }}
+        aria-label="Next print"
+      >
+        <span style={{ fontSize: '24px' }}>{'\u203A'}</span>
+      </button>
+
+      {/* Counter + Jump */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        gap: '24px', marginTop: '8px',
+      }}>
+        {/* Diamond counter */}
+        <div style={{
+          fontFamily: MONO, fontSize: '11px', letterSpacing: '0.2em',
+          color: 'rgba(255,255,255,0.3)',
+        }}>
+          <span style={{
+            fontFamily: DISPLAY, fontSize: '20px',
+            background: 'linear-gradient(110deg, #b0c8d4, #fff, #a8c0cc)',
+            backgroundSize: '300% auto',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            animation: 'crystalShimmer 5s linear infinite',
+          }}>
+            {String(activeIndex + 1).padStart(3, '0')}
+          </span>
+          <span style={{ margin: '0 6px' }}>/</span>
+          <span>{ALL_BLONDES.length}</span>
+        </div>
+
+        {/* Jump input */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <input
+            type="number"
+            min="1"
+            max={ALL_BLONDES.length}
+            placeholder="#"
+            value={jumpValue}
+            onChange={(e) => setJumpValue(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleJump()}
+            style={{
+              width: '60px', padding: '6px 10px',
+              fontFamily: MONO, fontSize: '11px',
+              color: '#fff', background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              outline: 'none', textAlign: 'center',
+            }}
+          />
+          <button
+            onClick={handleJump}
+            style={{
+              fontFamily: MONO, fontSize: '9px',
+              letterSpacing: '0.15em', textTransform: 'uppercase',
+              padding: '7px 12px',
+              border: '1px solid rgba(255,255,255,0.12)',
+              background: 'transparent', color: 'rgba(255,255,255,0.4)',
+              cursor: 'pointer',
+            }}
+          >Go</button>
+        </div>
+      </div>
+
+      {/* Scroll indicator dots (every 10th) */}
+      <div style={{
+        display: 'flex', justifyContent: 'center', gap: '4px',
+        marginTop: '20px', padding: '0 20px',
+      }}>
+        {Array.from({ length: 12 }, (_, i) => {
+          const dotIndex = i * 10;
+          const isNear = Math.abs(activeIndex - dotIndex) < 5;
+          return (
+            <button
+              key={i}
+              onClick={() => scrollToIndex(dotIndex)}
+              style={{
+                width: isNear ? '20px' : '6px',
+                height: '3px',
+                borderRadius: '1.5px',
+                border: 'none',
+                background: isNear
+                  ? 'linear-gradient(90deg, rgba(176,200,212,0.6), rgba(255,255,255,0.8))'
+                  : 'rgba(255,255,255,0.1)',
+                cursor: 'pointer',
+                transition: 'all 0.4s ease',
+                padding: 0,
+              }}
+              title={`Jump to #${dotIndex + 1}`}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const arrowStyle = {
+  position: 'absolute',
+  top: '50%',
+  transform: 'translateY(-70%)',
+  width: '48px', height: '48px',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  border: '1px solid rgba(255,255,255,0.15)',
+  background: 'rgba(0,0,0,0.5)',
+  backdropFilter: 'blur(12px)',
+  color: '#fff',
+  cursor: 'pointer',
+  transition: 'all 0.3s ease',
+  zIndex: 10,
+  borderRadius: '50%',
+};
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CHECKOUT MODAL
    ═══════════════════════════════════════════════════════════════ */
 function CheckoutModal({ print, onClose }) {
   const [email, setEmail] = useState('');
@@ -335,80 +611,66 @@ function CheckoutModal({ print, onClose }) {
         }}
       >
         <div style={{
-          fontFamily: MONO,
-          fontSize: '9px',
-          letterSpacing: '0.4em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.2)',
+          fontFamily: MONO, fontSize: '9px', letterSpacing: '0.4em',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)',
           marginBottom: '24px',
+        }}>Order Print</div>
+
+        <div style={{
+          fontFamily: DISPLAY, fontSize: '22px', textTransform: 'uppercase',
+          letterSpacing: '0.05em', marginBottom: '8px', color: '#fff',
+        }}>{print.title}</div>
+
+        <div style={{
+          fontFamily: SERIF, fontSize: '14px', fontStyle: 'italic',
+          color: 'rgba(255,255,255,0.4)', marginBottom: '32px', lineHeight: 1.8,
         }}>
-          Order Print
+          Signed A2 Hahnem{'\u00FC'}hle Photo Rag Metallic print with AR video activation.
+        </div>
+
+        {/* Print preview */}
+        <div style={{
+          marginBottom: '28px', textAlign: 'center',
+        }}>
+          <div style={{
+            display: 'inline-block',
+            background: '#f5f3f0',
+            padding: '8px',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
+          }}>
+            <img
+              src={`/marilyns/browse/${print.num}.jpg`}
+              alt={print.title}
+              style={{ width: '280px', height: '187px', objectFit: 'cover', display: 'block' }}
+            />
+          </div>
         </div>
 
         <div style={{
-          fontFamily: DISPLAY,
-          fontSize: '22px',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-          marginBottom: '8px',
-          color: '#fff',
-        }}>
-          {print.title}
-        </div>
-
-        <div style={{
-          fontFamily: SERIF,
-          fontSize: '14px',
-          fontStyle: 'italic',
-          color: 'rgba(255,255,255,0.4)',
-          marginBottom: '32px',
-          lineHeight: 1.8,
-        }}>
-          Signed A2 Hahnem{'\u00FC'}hle Photo Rag Metallic print with AR Drone Blonde dance activation.
-        </div>
-
-        <div style={{
-          fontFamily: DISPLAY,
-          fontSize: '36px',
-          letterSpacing: '0.02em',
-          marginBottom: '28px',
+          fontFamily: DISPLAY, fontSize: '36px', letterSpacing: '0.02em',
+          marginBottom: '28px', textAlign: 'center',
           background: 'linear-gradient(110deg, #b0c8d4 0%, #ddeef4 15%, #ffffff 30%, #b4ccd8 50%, #ffffff 70%, #a4bcc8 100%)',
           backgroundSize: '300% auto',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          animation: 'crystalShimmer 6s linear infinite',
-        }}>
-          {PRICE_DISPLAY}
-        </div>
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text', animation: 'crystalShimmer 6s linear infinite',
+        }}>{PRICE_DISPLAY}</div>
 
         <div style={{ marginBottom: '24px' }}>
           <label style={{
-            display: 'block',
-            fontFamily: MONO,
-            fontSize: '9px',
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.25)',
-            marginBottom: '10px',
-          }}>
-            Email Address
-          </label>
+            display: 'block', fontFamily: MONO, fontSize: '9px',
+            letterSpacing: '0.3em', textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.25)', marginBottom: '10px',
+          }}>Email Address</label>
           <input
-            type="email"
-            value={email}
+            type="email" value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
             style={{
-              width: '100%',
-              padding: '14px 16px',
-              fontFamily: MONO,
-              fontSize: '13px',
-              color: '#fff',
+              width: '100%', padding: '14px 16px',
+              fontFamily: MONO, fontSize: '13px', color: '#fff',
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.12)',
-              outline: 'none',
-              boxSizing: 'border-box',
+              outline: 'none', boxSizing: 'border-box',
               transition: 'border-color 0.3s',
             }}
             onFocus={(e) => e.target.style.borderColor = 'rgba(176,200,212,0.4)'}
@@ -418,12 +680,7 @@ function CheckoutModal({ print, onClose }) {
         </div>
 
         {error && (
-          <div style={{
-            fontFamily: MONO,
-            fontSize: '11px',
-            color: '#e57373',
-            marginBottom: '16px',
-          }}>
+          <div style={{ fontFamily: MONO, fontSize: '11px', color: '#e57373', marginBottom: '16px' }}>
             {error}
           </div>
         )}
@@ -432,42 +689,29 @@ function CheckoutModal({ print, onClose }) {
           onClick={handleCheckout}
           disabled={loading}
           style={{
-            width: '100%',
-            padding: '16px',
-            fontFamily: MONO,
-            fontSize: '11px',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
+            width: '100%', padding: '16px',
+            fontFamily: MONO, fontSize: '11px',
+            letterSpacing: '0.2em', textTransform: 'uppercase',
             border: '1px solid rgba(176,200,212,0.4)',
             background: 'rgba(176,200,212,0.08)',
-            color: '#fff',
-            cursor: loading ? 'wait' : 'pointer',
+            color: '#fff', cursor: loading ? 'wait' : 'pointer',
             opacity: loading ? 0.5 : 1,
             transition: 'all 0.3s ease',
           }}
         >
-          {loading ? 'Redirecting to Stripe...' : `Pay ${PRICE_DISPLAY} — Secure Checkout`}
+          {loading ? 'Redirecting to Stripe...' : `Pay ${PRICE_DISPLAY} \u2014 Secure Checkout`}
         </button>
 
         <button
           onClick={onClose}
           style={{
-            display: 'block',
-            width: '100%',
-            marginTop: '12px',
-            padding: '12px',
-            fontFamily: MONO,
-            fontSize: '10px',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            border: 'none',
-            background: 'transparent',
-            color: 'rgba(255,255,255,0.25)',
-            cursor: 'pointer',
+            display: 'block', width: '100%', marginTop: '12px',
+            padding: '12px', fontFamily: MONO, fontSize: '10px',
+            letterSpacing: '0.15em', textTransform: 'uppercase',
+            border: 'none', background: 'transparent',
+            color: 'rgba(255,255,255,0.25)', cursor: 'pointer',
           }}
-        >
-          Cancel
-        </button>
+        >Cancel</button>
       </div>
     </div>
   );
@@ -477,9 +721,275 @@ function CheckoutModal({ print, onClose }) {
 /* ═══════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   PRINT GRID — view all 20 at once
+   ═══════════════════════════════════════════════════════════════ */
+function PrintGrid({ onBuy, onSwitchCarousel }) {
+  const navigate = useNavigate();
+  const [hovered, setHovered] = useState(null);
+  const [lightbox, setLightbox] = useState(null);
+
+  return (
+    <div style={{ position: 'relative', zIndex: 1, padding: 'clamp(20px, 4vw, 60px) clamp(16px, 3vw, 40px)' }}>
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <div style={{
+          fontFamily: MONO, fontSize: '10px', letterSpacing: '0.4em',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', marginBottom: '16px',
+        }}>All 20 Signed Prints</div>
+        <h2 style={{
+          fontFamily: DISPLAY, fontSize: 'clamp(32px, 5vw, 56px)',
+          textTransform: 'uppercase', letterSpacing: '0.03em', margin: '0 0 20px',
+          background: 'linear-gradient(110deg, #b0c8d4 0%, #ffffff 30%, #a8c0cc 60%, #ffffff 100%)',
+          backgroundSize: '300% auto',
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text', animation: 'crystalShimmer 5s linear infinite',
+        }}>Choose Your Print</h2>
+        <button
+          onClick={onSwitchCarousel}
+          style={{
+            fontFamily: MONO, fontSize: '9px', letterSpacing: '0.2em', textTransform: 'uppercase',
+            padding: '10px 24px', background: 'rgba(176,200,212,0.06)',
+            border: '1px solid rgba(176,200,212,0.2)', color: 'rgba(176,200,212,0.5)',
+            cursor: 'pointer', transition: 'all 0.3s',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(176,200,212,0.12)'; e.currentTarget.style.color = '#fff'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(176,200,212,0.06)'; e.currentTarget.style.color = 'rgba(176,200,212,0.5)'; }}
+        >
+          {'\u2190'} Back to Carousel
+        </button>
+      </div>
+
+      {/* Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+        gap: 'clamp(16px, 2vw, 28px)',
+        maxWidth: '1600px', margin: '0 auto',
+      }}>
+        {ALL_BLONDES.map((print) => {
+          const isHovered = hovered === print.num;
+          return (
+            <div
+              key={print.id}
+              onMouseEnter={() => setHovered(print.num)}
+              onMouseLeave={() => setHovered(null)}
+              style={{
+                background: isHovered ? 'rgba(255,255,255,0.03)' : 'transparent',
+                border: '1px solid',
+                borderColor: isHovered ? 'rgba(176,200,212,0.2)' : 'rgba(255,255,255,0.06)',
+                padding: 'clamp(10px, 1.5vw, 16px)',
+                transition: 'all 0.4s ease',
+                transform: isHovered ? 'translateY(-2px)' : 'none',
+                boxShadow: isHovered ? '0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(176,200,212,0.05)' : 'none',
+              }}
+            >
+              {/* Framed print */}
+              <div style={{
+                background: '#f5f3f0', padding: 'clamp(6px, 1vw, 10px)',
+                position: 'relative', overflow: 'hidden',
+              }}>
+                <div style={{
+                  position: 'absolute', top: 0, bottom: 0, width: '45%',
+                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                  animation: 'glintSweep 8s ease-in-out infinite',
+                  animationDelay: `${(print.num % 7) * 1.2}s`,
+                  pointerEvents: 'none', zIndex: 2,
+                }} />
+                <img
+                  src={`/marilyns/browse/${print.num}.jpg`}
+                  alt={print.title}
+                  loading="lazy"
+                  onClick={() => setLightbox(print)}
+                  style={{
+                    width: '100%', aspectRatio: '3/2', objectFit: 'cover', display: 'block',
+                    background: '#111', cursor: 'pointer',
+                  }}
+                />
+                <div style={{ paddingTop: '4px', textAlign: 'center' }}>
+                  <div style={{
+                    fontFamily: SERIF, fontSize: '6px', fontStyle: 'italic',
+                    color: 'rgba(0,0,0,0.2)', letterSpacing: '0.15em',
+                  }}>Miss AL Simpson</div>
+                </div>
+              </div>
+
+              {/* Info */}
+              <div style={{ padding: '12px 0 4px' }}>
+                <div style={{
+                  fontFamily: DISPLAY, fontSize: '15px', textTransform: 'uppercase',
+                  letterSpacing: '0.05em', marginBottom: '8px',
+                  background: 'linear-gradient(110deg, #b0c8d4 0%, #ffffff 40%, #a8c0cc 70%, #ffffff 100%)',
+                  backgroundSize: '300% auto',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text', animation: 'crystalShimmer 6s linear infinite',
+                }}>{print.title}</div>
+
+                <div style={{
+                  fontFamily: MONO, fontSize: '9px', letterSpacing: '0.15em',
+                  color: 'rgba(255,255,255,0.25)', marginBottom: '12px',
+                }}>
+                  {PRICE_DISPLAY} {'\u00B7'} Ed. of 50 {'\u00B7'} Signed A2 {'\u00B7'} AR Video
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={() => onBuy(print)}
+                    style={{
+                      flex: 1, padding: '10px 0',
+                      fontFamily: MONO, fontSize: '9px', letterSpacing: '0.15em',
+                      textTransform: 'uppercase',
+                      border: '1px solid rgba(176,200,212,0.3)',
+                      background: isHovered ? 'rgba(176,200,212,0.12)' : 'rgba(176,200,212,0.06)',
+                      color: isHovered ? '#fff' : 'rgba(255,255,255,0.6)',
+                      cursor: 'pointer', transition: 'all 0.3s',
+                    }}
+                  >Order Print</button>
+                  <a
+                    href={`${OPENSEA_BASE}/${print.num}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      padding: '10px 14px',
+                      fontFamily: MONO, fontSize: '9px', letterSpacing: '0.1em',
+                      textTransform: 'uppercase', textDecoration: 'none',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: 'transparent',
+                      color: 'rgba(255,255,255,0.4)',
+                      display: 'flex', alignItems: 'center',
+                      transition: 'all 0.3s',
+                    }}
+                  >OpenSea</a>
+                  <button
+                    onClick={() => navigate('/drones/lounge')}
+                    style={{
+                      padding: '10px 14px',
+                      fontFamily: MONO, fontSize: '9px', letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: 'transparent',
+                      color: 'rgba(255,255,255,0.4)',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s',
+                    }}
+                  >Traits</button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        textAlign: 'center', marginTop: '60px',
+        fontFamily: MONO, fontSize: '9px', letterSpacing: '0.3em',
+        textTransform: 'uppercase', color: 'rgba(255,255,255,0.1)',
+      }}>
+        DIAMOND DRONES{'\u2122'} {'\u00B7'} The Diamond Press {'\u00B7'} 20 Prints
+      </div>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          onClick={() => setLightbox(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(12px)',
+            cursor: 'pointer', animation: 'fadeIn 0.3s ease-out',
+          }}
+        >
+          {/* Framed print */}
+          <div style={{
+            background: '#f5f3f0', padding: 'clamp(12px, 2vw, 24px)',
+            boxShadow: '0 40px 120px rgba(0,0,0,0.8), 0 0 80px rgba(176,200,212,0.08)',
+            maxWidth: '85vw', maxHeight: '75vh',
+          }}>
+            <img
+              src={`/marilyns/Drone%20Blonde%20${lightbox.num}.png`}
+              alt={lightbox.title}
+              style={{
+                maxWidth: '100%', maxHeight: 'calc(75vh - 60px)',
+                objectFit: 'contain', display: 'block',
+              }}
+            />
+            <div style={{ paddingTop: '8px', textAlign: 'center' }}>
+              <div style={{
+                fontFamily: SERIF, fontSize: '9px', fontStyle: 'italic',
+                color: 'rgba(0,0,0,0.25)', letterSpacing: '0.15em',
+              }}>Miss AL Simpson</div>
+            </div>
+          </div>
+
+          <div style={{
+            fontFamily: DISPLAY, fontSize: 'clamp(18px, 3vw, 28px)',
+            textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '24px',
+            background: 'linear-gradient(110deg, #b0c8d4 0%, #ffffff 40%, #a8c0cc 70%, #ffffff 100%)',
+            backgroundSize: '300% auto',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text', animation: 'crystalShimmer 6s linear infinite',
+          }}>{lightbox.title}</div>
+
+          <div style={{
+            fontFamily: MONO, fontSize: '10px', letterSpacing: '0.2em',
+            color: 'rgba(255,255,255,0.3)', marginTop: '8px',
+          }}>
+            {PRICE_DISPLAY} {'\u00B7'} Edition of 50 {'\u00B7'} Signed A2 {'\u00B7'} AR Video
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }} onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => { onBuy(lightbox); setLightbox(null); }}
+              style={{
+                fontFamily: MONO, fontSize: '10px', letterSpacing: '0.2em',
+                textTransform: 'uppercase', padding: '14px 32px',
+                border: '1px solid rgba(176,200,212,0.4)',
+                background: 'rgba(176,200,212,0.08)', color: '#fff',
+                cursor: 'pointer', transition: 'all 0.3s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(176,200,212,0.18)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(176,200,212,0.08)'; }}
+            >Order Print</button>
+            <a
+              href={`${OPENSEA_BASE}/${lightbox.num}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: MONO, fontSize: '10px', letterSpacing: '0.15em',
+                textTransform: 'uppercase', padding: '14px 24px',
+                border: '1px solid rgba(255,255,255,0.15)',
+                background: 'transparent', color: 'rgba(255,255,255,0.5)',
+                textDecoration: 'none', display: 'flex', alignItems: 'center',
+                transition: 'all 0.3s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+            >OpenSea</a>
+          </div>
+
+          <div style={{
+            fontFamily: MONO, fontSize: '9px', letterSpacing: '0.2em',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.15)',
+            marginTop: '20px',
+          }}>Click anywhere to close</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 export default function DronePrintShop() {
+  const [searchParams] = useSearchParams();
+  const blondeParam = parseInt(searchParams.get('blonde'));
+  const initialParamIndex = ALL_BLONDES.findIndex(b => b.num === blondeParam);
+  const initialIndex = initialParamIndex !== -1 ? initialParamIndex : 0;
+
   const [checkoutPrint, setCheckoutPrint] = useState(null);
   const [successMsg, setSuccessMsg] = useState('');
+  const [viewMode, setViewMode] = useState('carousel');
+  const [expandedPrint, setExpandedPrint] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -496,8 +1006,13 @@ export default function DronePrintShop() {
   return (
     <>
       <Helmet>
-        <title>The Diamond Press | Drone Blonde Open Edition Prints</title>
-        <meta name="description" content="Signed A2 Hahnem\u00FChle Photo Rag Metallic prints of the Drone Blondes with AR dance activation. Unlimited edition, \u00A3295." />
+        <title>The Diamond Press | Drone Blonde Prints with AR</title>
+        <meta property="og:title" content="The Diamond Press \u2014 20 Drone Blonde A2 Prints" />
+        <meta property="og:description" content="Signed A2 Hahnem\u00FChle Photo Rag Metallic prints of the Drone Blondes by Miss AL Simpson. Each with AR video activation." />
+        <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+        <meta property="og:url" content="https://diamonddrones.world/drones/prints" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="description" content="20 Drone Blondes available as signed A2 Hahnem\u00FChle Photo Rag Metallic prints with AR video activation. \u00A31,200 each." />
       </Helmet>
 
       <style>{`
@@ -536,54 +1051,82 @@ export default function DronePrintShop() {
           0%, 100% { opacity: 1; }
           50%      { opacity: 0.3; }
         }
-        @keyframes motionStreak {
-          0%   { opacity: 0; transform: translateX(-3px); }
-          50%  { opacity: 0.5; }
-          100% { opacity: 0; transform: translateX(3px); }
+        @keyframes diamondFloat {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          33%      { transform: translateY(-12px) rotate(1deg); }
+          66%      { transform: translateY(-6px) rotate(-0.5deg); }
+        }
+        @keyframes sparkleFloat {
+          0%   { transform: translateY(0) scale(0); opacity: 0; }
+          20%  { transform: translateY(-20px) scale(1); opacity: 1; }
+          80%  { transform: translateY(-80px) scale(0.5); opacity: 0.3; }
+          100% { transform: translateY(-100px) scale(0); opacity: 0; }
         }
       `}</style>
 
-      <div style={{ background: '#0a0a0a', color: '#fff', position: 'relative', minHeight: '100vh' }}>
+      <div style={{ background: '#0a0a0a', color: '#fff', position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+
+        {/* Background film */}
+        <video
+          autoPlay muted loop playsInline
+          src="/films/dd-diamond-drone-lounge-bg.mp4"
+          style={{
+            position: 'fixed', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', zIndex: 0, opacity: 0.08,
+            pointerEvents: 'none', filter: 'saturate(0) contrast(1.2)',
+          }}
+        />
+
+        {/* Ambient diamond sparkle particles */}
+        <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+          {Array.from({ length: 40 }, (_, i) => (
+            <div key={i} style={{
+              position: 'absolute',
+              left: `${5 + (i * 47) % 90}%`,
+              top: `${10 + (i * 31) % 80}%`,
+              width: i % 3 === 0 ? '3px' : '2px',
+              height: i % 3 === 0 ? '3px' : '2px',
+              background: i % 5 === 0 ? 'rgba(255,255,255,0.6)' : 'rgba(176,200,212,0.5)',
+              borderRadius: '50%',
+              boxShadow: i % 3 === 0
+                ? '0 0 8px rgba(255,255,255,0.4), 0 0 16px rgba(176,200,212,0.2)'
+                : '0 0 4px rgba(176,200,212,0.3)',
+              animation: `sparkleFloat ${3 + (i % 6) * 1.5}s ease-in-out ${i * 0.4}s infinite`,
+            }} />
+          ))}
+        </div>
 
         {/* ═══════ HERO ═══════ */}
         <div style={{
-          position: 'relative',
-          textAlign: 'center',
-          padding: 'clamp(100px, 14vw, 180px) clamp(24px, 6vw, 80px) clamp(40px, 6vw, 80px)',
-          overflow: 'hidden',
-          zIndex: 1,
+          position: 'relative', textAlign: 'center',
+          padding: 'clamp(100px, 14vw, 180px) clamp(24px, 6vw, 80px) clamp(20px, 3vw, 40px)',
+          overflow: 'hidden', zIndex: 1,
         }}>
+          {/* Radial glow */}
           <div style={{
             position: 'absolute', top: '45%', left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '700px', height: '500px',
-            background: 'radial-gradient(ellipse, rgba(180,200,220,0.07) 0%, transparent 70%)',
+            width: '900px', height: '600px',
+            background: 'radial-gradient(ellipse, rgba(180,200,220,0.08) 0%, transparent 70%)',
             pointerEvents: 'none',
           }} />
 
           <div style={{
-            fontFamily: MONO,
-            fontSize: '10px',
-            letterSpacing: '0.5em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.2)',
-            marginBottom: '28px',
-            animation: 'fadeUp 0.8s ease-out both',
+            fontFamily: MONO, fontSize: '10px', letterSpacing: '0.5em',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)',
+            marginBottom: '28px', animation: 'fadeUp 0.8s ease-out both',
           }}>
-            Open Edition Prints
+            20 Signed Prints {'\u00B7'} AR Video Activation
           </div>
 
           <h1 style={{
             fontFamily: DISPLAY,
-            fontSize: 'clamp(52px, 9vw, 110px)',
-            lineHeight: 1.0,
-            textTransform: 'uppercase',
-            letterSpacing: '0.03em',
-            margin: '0 0 28px',
+            fontSize: 'clamp(52px, 9vw, 120px)',
+            lineHeight: 1.0, textTransform: 'uppercase',
+            letterSpacing: '0.03em', margin: '0 0 28px',
             background: 'linear-gradient(110deg, #b0c8d4 0%, #ddeef4 12%, #ffffff 22%, #a8c0cc 33%, #d8ecf4 44%, #ffffff 52%, #b4ccd8 62%, #e0f0f6 73%, #ffffff 82%, #a4bcc8 100%)',
             backgroundSize: '300% auto',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
             animation: 'crystalShimmer 5s linear infinite, fadeUp 1s ease-out both',
           }}>
@@ -591,19 +1134,34 @@ export default function DronePrintShop() {
           </h1>
 
           <p style={{
-            fontFamily: SERIF,
-            fontSize: 'clamp(14px, 1.6vw, 17px)',
-            fontStyle: 'italic',
-            color: 'rgba(255,255,255,0.35)',
-            maxWidth: '560px',
-            margin: '0 auto',
-            lineHeight: 1.9,
+            fontFamily: SERIF, fontSize: 'clamp(14px, 1.6vw, 17px)',
+            fontStyle: 'italic', color: 'rgba(255,255,255,0.35)',
+            maxWidth: '600px', margin: '0 auto', lineHeight: 1.9,
             animation: 'fadeUp 1.2s ease-out both',
           }}>
-            Ten Drone Blondes, printed on museum-grade Hahnem{'\u00FC'}hle Photo Rag Metallic
-            at A2 scale. Hand-signed by the artist. Each paired with a bespoke AR dance
-            activation that brings your Drone Blonde to life.
+            Every Drone Blonde, available as a signed A2 print on museum-grade
+            Hahnem{'\u00FC'}hle Photo Rag Metallic. Each paired with a bespoke AR
+            video activation that brings your Drone Blonde to life.
           </p>
+
+          {/* View All 20 — prominent at top */}
+          <button
+            onClick={() => { setViewMode('grid'); window.scrollTo(0, 0); }}
+            style={{
+              display: 'inline-block', marginTop: '32px',
+              fontFamily: DISPLAY, fontSize: 'clamp(14px, 2vw, 18px)',
+              letterSpacing: '0.15em', textTransform: 'uppercase',
+              padding: '16px 44px',
+              border: '1px solid rgba(176,200,212,0.5)',
+              background: 'rgba(176,200,212,0.08)', color: '#fff',
+              cursor: 'pointer', transition: 'all 0.4s',
+              animation: 'fadeUp 1.4s ease-out both',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(176,200,212,0.2)'; e.currentTarget.style.borderColor = 'rgba(176,200,212,0.8)'; e.currentTarget.style.boxShadow = '0 0 30px rgba(176,200,212,0.15)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(176,200,212,0.08)'; e.currentTarget.style.borderColor = 'rgba(176,200,212,0.5)'; e.currentTarget.style.boxShadow = 'none'; }}
+          >
+            View All 20 Prints
+          </button>
         </div>
 
         {/* ═══════ SUCCESS BANNER ═══════ */}
@@ -613,143 +1171,92 @@ export default function DronePrintShop() {
             padding: '20px 28px',
             border: '1px solid rgba(129,199,132,0.3)',
             background: 'rgba(129,199,132,0.06)',
-            fontFamily: MONO,
-            fontSize: '12px',
+            fontFamily: MONO, fontSize: '12px',
             color: 'rgba(129,199,132,0.9)',
-            textAlign: 'center',
-            lineHeight: 1.7,
+            textAlign: 'center', lineHeight: 1.7, zIndex: 1, position: 'relative',
           }}>
             {successMsg}
           </div>
         )}
 
-        {/* ═══════ AR CONCEPT SECTION ═══════ */}
+        {/* ═══════ CAROUSEL / GRID TOGGLE ═══════ */}
+        {viewMode === 'carousel' ? (
+          <>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <PrintCarousel onBuy={setCheckoutPrint} onExpand={setExpandedPrint} initialIndex={initialIndex} />
+            </div>
+
+          </>
+        ) : (
+          <PrintGrid onBuy={setCheckoutPrint} onSwitchCarousel={() => { setViewMode('carousel'); window.scrollTo(0, 0); }} />
+        )}
+
+        {viewMode === 'carousel' && (
+        <>
+        {/* ═══════ AR CONCEPT ═══════ */}
         <div style={{
-          maxWidth: '900px',
-          margin: '0 auto',
-          padding: '0 clamp(24px, 6vw, 80px) clamp(60px, 8vw, 80px)',
+          maxWidth: '900px', margin: '0 auto', position: 'relative', zIndex: 1,
+          padding: 'clamp(60px, 8vw, 100px) clamp(24px, 6vw, 80px) clamp(40px, 4vw, 60px)',
           textAlign: 'center',
         }}>
           <div style={{
             fontFamily: DISPLAY,
             fontSize: 'clamp(28px, 4vw, 44px)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            lineHeight: 1.1,
-            marginBottom: '20px',
+            textTransform: 'uppercase', letterSpacing: '0.05em',
+            lineHeight: 1.1, marginBottom: '20px',
             background: 'linear-gradient(110deg, #b0c8d4 0%, #ffffff 40%, #a8c0cc 70%, #ffffff 100%)',
             backgroundSize: '300% auto',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            animation: 'crystalShimmer 7s linear infinite',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text', animation: 'crystalShimmer 7s linear infinite',
           }}>
-            AR Dance Activation
+            AR Video Activation
           </div>
           <p style={{
-            fontFamily: SERIF,
-            fontSize: 'clamp(14px, 1.4vw, 16px)',
-            fontStyle: 'italic',
-            color: 'rgba(255,255,255,0.35)',
-            maxWidth: '520px',
-            margin: '0 auto 12px',
-            lineHeight: 2,
+            fontFamily: SERIF, fontSize: 'clamp(14px, 1.4vw, 16px)',
+            fontStyle: 'italic', color: 'rgba(255,255,255,0.35)',
+            maxWidth: '520px', margin: '0 auto 12px', lineHeight: 2,
           }}>
             Each print conceals a unique AR experience. Point your phone at the artwork
-            and watch your Drone Blonde dance with her Diamond Drones &mdash; a bespoke
-            animation by Miss AL Simpson, embedded in the print itself.
+            and watch your Drone Blonde come alive in a bespoke video by Miss AL Simpson,
+            embedded in the print itself.
           </p>
           <div style={{
-            fontFamily: MONO,
-            fontSize: '9px',
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: 'rgba(176,200,212,0.3)',
+            fontFamily: MONO, fontSize: '9px', letterSpacing: '0.3em',
+            textTransform: 'uppercase', color: 'rgba(176,200,212,0.3)',
             marginTop: '16px',
           }}>
-            Hover over any print below to preview the AR activation
-          </div>
-        </div>
-
-        {/* ═══════ PRINT GRID ═══════ */}
-        <div style={{
-          position: 'relative', zIndex: 1,
-          padding: 'clamp(40px, 6vw, 80px) clamp(24px, 6vw, 80px)',
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: 'clamp(28px, 4vw, 48px)',
-          }}>
-            {PRINT_EDITIONS.map((print, i) => (
-              <PrintCard
-                key={print.id}
-                print={print}
-                index={i}
-                onBuy={setCheckoutPrint}
-              />
-            ))}
+            Hover over any print above to preview the AR activation
           </div>
         </div>
 
         {/* ═══════ THREE PILLARS ═══════ */}
         <div style={{
-          maxWidth: '900px',
-          margin: '0 auto',
-          padding: 'clamp(40px, 6vw, 80px) clamp(24px, 6vw, 80px)',
+          maxWidth: '900px', margin: '0 auto', position: 'relative', zIndex: 1,
+          padding: '0 clamp(24px, 6vw, 80px) clamp(60px, 6vw, 80px)',
         }}>
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
+            display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
             gap: 'clamp(20px, 3vw, 40px)',
-            marginBottom: '24px',
           }}>
             {[
-              {
-                numeral: 'I',
-                title: 'The Print',
-                text: 'Hahnem\u00FChle Photo Rag Metallic, A2 scale. Deep blacks, metallic lustre. Hand-signed by Miss AL Simpson.',
-              },
-              {
-                numeral: 'II',
-                title: 'The AR Dance',
-                text: 'Point your phone at the print. Your Drone Blonde comes alive in a bespoke dance animation with her Diamond Drones.',
-              },
-              {
-                numeral: 'III',
-                title: 'Unlimited Edition',
-                text: 'No scarcity games. Beautiful art, beautifully printed, available to everyone who wants one.',
-              },
+              { numeral: 'I', title: 'The Print', text: 'Hahnem\u00FChle Photo Rag Metallic, A2 scale. Deep blacks, metallic lustre. Hand-signed by Miss AL Simpson.' },
+              { numeral: 'II', title: 'The AR Video', text: 'Point your phone at the print. Your Drone Blonde comes alive in a bespoke video by Miss AL Simpson.' },
+              { numeral: 'III', title: 'All 20', text: '20 Drone Blondes selected from the collection. Each available as a signed A2 Metallic Rag print, edition of 50.' },
             ].map((pillar) => (
               <div key={pillar.numeral} style={{ textAlign: 'center' }}>
                 <div style={{
-                  fontFamily: DISPLAY,
-                  fontSize: '32px',
-                  color: 'rgba(255,255,255,0.06)',
-                  marginBottom: '12px',
-                }}>
-                  {pillar.numeral}
-                </div>
+                  fontFamily: DISPLAY, fontSize: '32px',
+                  color: 'rgba(255,255,255,0.06)', marginBottom: '12px',
+                }}>{pillar.numeral}</div>
                 <div style={{
-                  fontFamily: DISPLAY,
-                  fontSize: '18px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  color: 'rgba(255,255,255,0.7)',
-                  marginBottom: '12px',
-                }}>
-                  {pillar.title}
-                </div>
+                  fontFamily: DISPLAY, fontSize: '18px',
+                  textTransform: 'uppercase', letterSpacing: '0.1em',
+                  color: 'rgba(255,255,255,0.7)', marginBottom: '12px',
+                }}>{pillar.title}</div>
                 <div style={{
-                  fontFamily: SERIF,
-                  fontSize: '14px',
-                  color: 'rgba(255,255,255,0.35)',
-                  lineHeight: 1.8,
-                }}>
-                  {pillar.text}
-                </div>
+                  fontFamily: SERIF, fontSize: '14px',
+                  color: 'rgba(255,255,255,0.35)', lineHeight: 1.8,
+                }}>{pillar.text}</div>
               </div>
             ))}
           </div>
@@ -759,61 +1266,45 @@ export default function DronePrintShop() {
         <div style={{
           position: 'relative', zIndex: 1,
           maxWidth: '900px', margin: '0 auto',
-          padding: '0 clamp(24px, 6vw, 80px)',
+          padding: 'clamp(40px, 6vw, 80px) clamp(24px, 6vw, 80px)',
         }}>
           <div style={{
             textAlign: 'center',
-            margin: 'clamp(20px, 4vw, 40px) 0 clamp(60px, 8vw, 100px)',
             padding: '48px 40px',
             border: '1px solid rgba(255,255,255,0.08)',
             background: 'rgba(255,255,255,0.02)',
           }}>
             <div style={{
-              fontFamily: DISPLAY,
-              fontSize: 'clamp(40px, 5vw, 56px)',
-              letterSpacing: '0.02em',
-              marginBottom: '8px',
+              fontFamily: DISPLAY, fontSize: 'clamp(40px, 5vw, 56px)',
+              letterSpacing: '0.02em', marginBottom: '8px',
               background: 'linear-gradient(110deg, #b0c8d4 0%, #ddeef4 15%, #ffffff 30%, #b4ccd8 50%, #ffffff 70%, #a4bcc8 100%)',
               backgroundSize: '300% auto',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              animation: 'crystalShimmer 6s linear infinite',
-            }}>
-              {PRICE_DISPLAY}
-            </div>
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text', animation: 'crystalShimmer 6s linear infinite',
+            }}>{PRICE_DISPLAY}</div>
             <div style={{
-              fontFamily: MONO,
-              fontSize: '10px',
-              letterSpacing: '0.3em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.3)',
+              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.3em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
             }}>
-              Signed A2 Photo Rag Metallic Print + AR Dance Activation
+              Signed A2 Photo Rag Metallic Print + AR Video Activation
             </div>
           </div>
         </div>
 
         {/* ═══════ SPECS ═══════ */}
         <div style={{
-          maxWidth: '900px', margin: '0 auto',
+          maxWidth: '900px', margin: '0 auto', position: 'relative', zIndex: 1,
           padding: '0 clamp(24px, 6vw, 80px) clamp(60px, 8vw, 100px)',
         }}>
           <div style={{
             border: '1px solid rgba(255,255,255,0.06)',
-            padding: '40px 32px',
-            background: 'rgba(255,255,255,0.015)',
+            padding: '40px 32px', background: 'rgba(255,255,255,0.015)',
           }}>
             <div style={{
-              fontFamily: MONO,
-              fontSize: '10px',
-              letterSpacing: '0.4em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.2)',
+              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.4em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)',
               marginBottom: '24px',
-            }}>
-              Print Specification
-            </div>
+            }}>Print Specification</div>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -822,77 +1313,99 @@ export default function DronePrintShop() {
               {SPECS.map(([label, value]) => (
                 <div key={label}>
                   <div style={{
-                    fontFamily: MONO,
-                    fontSize: '9px',
-                    letterSpacing: '0.2em',
-                    textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.2)',
+                    fontFamily: MONO, fontSize: '9px', letterSpacing: '0.2em',
+                    textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)',
                     marginBottom: '6px',
-                  }}>
-                    {label}
-                  </div>
+                  }}>{label}</div>
                   <div style={{
-                    fontFamily: SERIF,
-                    fontSize: '13px',
+                    fontFamily: SERIF, fontSize: '13px',
                     color: 'rgba(255,255,255,0.5)',
-                  }}>
-                    {value}
-                  </div>
+                  }}>{value}</div>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* ═══════ AR SECTION ═══════ */}
-        <div style={{
-          maxWidth: '900px', margin: '0 auto',
-          padding: 'clamp(60px, 8vw, 100px) clamp(24px, 6vw, 80px)',
-        }}>
-          <div style={{
-            border: '1px solid rgba(255,255,255,0.06)',
-            padding: '40px 32px',
-            background: 'rgba(255,255,255,0.015)',
-          }}>
-            <div style={{
-              fontFamily: MONO,
-              fontSize: '10px',
-              letterSpacing: '0.4em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.2)',
-              marginBottom: '24px',
-            }}>
-              AR Dance Activation
-            </div>
-            <div style={{
-              fontFamily: SERIF,
-              fontSize: '14px',
-              color: 'rgba(255,255,255,0.4)',
-              lineHeight: 1.9,
-              maxWidth: '600px',
-            }}>
-              Each print ships with a discreet QR code on the reverse.
-              Scan it with your phone camera to unlock the AR experience &mdash;
-              your Drone Blonde dances with her Diamond Drones in a bespoke
-              animation by Miss AL Simpson. The physical print becomes a portal
-              to the digital artwork.
-            </div>
-          </div>
-        </div>
-
         {/* ═══════ FOOTER ═══════ */}
         <div style={{
-          paddingBottom: '40px',
+          paddingBottom: '40px', paddingTop: 'clamp(40px, 6vw, 80px)',
           textAlign: 'center',
-          fontFamily: MONO,
-          fontSize: '9px',
-          letterSpacing: '0.3em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.1)',
+          fontFamily: MONO, fontSize: '9px', letterSpacing: '0.3em',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.1)',
+          position: 'relative', zIndex: 1,
         }}>
-          DIAMOND DRONES{'\u2122'} {'\u00B7'} The Diamond Press {'\u00B7'} Open Edition
+          DIAMOND DRONES{'\u2122'} {'\u00B7'} The Diamond Press {'\u00B7'} 20 Prints
         </div>
+        </>
+        )}
       </div>
+
+      {/* ═══════ CAROUSEL LIGHTBOX ═══════ */}
+      {expandedPrint && (
+        <div
+          onClick={() => setExpandedPrint(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(12px)',
+            cursor: 'pointer', animation: 'fadeIn 0.3s ease-out',
+          }}
+        >
+          <div style={{
+            background: '#f5f3f0', padding: 'clamp(12px, 2vw, 24px)',
+            boxShadow: '0 40px 120px rgba(0,0,0,0.8), 0 0 80px rgba(176,200,212,0.08)',
+            maxWidth: '85vw', maxHeight: '75vh',
+          }}>
+            <img
+              src={`/marilyns/Drone%20Blonde%20${expandedPrint.num}.png`}
+              alt={expandedPrint.title}
+              style={{ maxWidth: '100%', maxHeight: 'calc(75vh - 60px)', objectFit: 'contain', display: 'block' }}
+            />
+            <div style={{ paddingTop: '8px', textAlign: 'center' }}>
+              <div style={{ fontFamily: SERIF, fontSize: '9px', fontStyle: 'italic', color: 'rgba(0,0,0,0.25)', letterSpacing: '0.15em' }}>Miss AL Simpson</div>
+            </div>
+          </div>
+          <div style={{
+            fontFamily: DISPLAY, fontSize: 'clamp(18px, 3vw, 28px)',
+            textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '24px',
+            background: 'linear-gradient(110deg, #b0c8d4 0%, #ffffff 40%, #a8c0cc 70%, #ffffff 100%)',
+            backgroundSize: '300% auto',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text', animation: 'crystalShimmer 6s linear infinite',
+          }}>{expandedPrint.title}</div>
+          <div style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', marginTop: '8px' }}>
+            {PRICE_DISPLAY} {'\u00B7'} Edition of 50 {'\u00B7'} Signed A2 {'\u00B7'} AR Video
+          </div>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }} onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => { setCheckoutPrint(expandedPrint); setExpandedPrint(null); }}
+              style={{
+                fontFamily: MONO, fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase',
+                padding: '14px 32px', border: '1px solid rgba(176,200,212,0.4)',
+                background: 'rgba(176,200,212,0.08)', color: '#fff', cursor: 'pointer', transition: 'all 0.3s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(176,200,212,0.18)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(176,200,212,0.08)'; }}
+            >Order Print</button>
+            <a
+              href={`${OPENSEA_BASE}/${expandedPrint.num}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                fontFamily: MONO, fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase',
+                padding: '14px 24px', border: '1px solid rgba(255,255,255,0.15)',
+                background: 'transparent', color: 'rgba(255,255,255,0.5)',
+                textDecoration: 'none', display: 'flex', alignItems: 'center', transition: 'all 0.3s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+            >OpenSea</a>
+          </div>
+          <div style={{ fontFamily: MONO, fontSize: '9px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.15)', marginTop: '20px' }}>
+            Click anywhere to close
+          </div>
+        </div>
+      )}
 
       {/* ═══════ CHECKOUT MODAL ═══════ */}
       {checkoutPrint && (
