@@ -18,8 +18,10 @@ PRICE_GBP_PENCE = 60000  # £600.00
 
 # Valid print IDs (matches frontend PRINT_EDITIONS)
 VALID_PRINTS = {
-    'db-07', 'db-17', 'db-23', 'db-34', 'db-45',
-    'db-58', 'db-63', 'db-71', 'db-84', 'db-99',
+    'db-3', 'db-7', 'db-14', 'db-22', 'db-29',
+    'db-35', 'db-41', 'db-48', 'db-56', 'db-63',
+    'db-69', 'db-74', 'db-81', 'db-88', 'db-94',
+    'db-99', 'db-103', 'db-109', 'db-115', 'db-120',
 }
 
 
