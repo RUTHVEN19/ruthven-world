@@ -100,7 +100,7 @@ const DROPS = [
     desc: 'One thousand unique digital diamonds, cut across five rarity tiers. Enter the vault where the collection rests.',
     tags: ['Brilliant', 'Princess', 'Marquise', 'Rose', 'Baguette'],
     cta: 'Enter the Vault',
-    href: '/drones/vault',
+    href: '/vault',
     images: ['/vault/1.png', '/vault/420.png', '/vault/850.png'],
   },
   {
@@ -110,19 +110,19 @@ const DROPS = [
     desc: 'One hundred and twenty unique 1/1 artworks. Machine-trained Ink Interventions, worked over by hand. No two alike.',
     tags: ['Ink Intervention', '1/1', 'Hand-Worked'],
     cta: 'Enter the Lounge',
-    href: '/drones/lounge',
+    href: '/lounge',
     images: ['/marilyns/web/Drone Blonde 5.jpg', '/marilyns/web/Drone Blonde 12.jpg', '/marilyns/web/Drone Blonde 21.jpg'],
     bgVideo: '/films/dd-diamond-drone-lounge-bg.mp4',
   },
   {
-    overline: '11 Tracks',
-    name: 'The Album',
+    overline: 'Single Track Release',
+    name: 'The Single',
     zone: 'The Recording Studio',
-    desc: <>The complete <em>Drones of Suburbia&#8482;</em> soundtrack. 11 original tracks by Miss AL Simpson.</>,
-    tags: ['11 Tracks', 'MP3 320kbps'],
+    desc: <>Diamond Drones Are a Girl&#8217;s Best Friend. The debut single by Miss AL Simpson.</>,
+    tags: ['Single', 'MP3 320kbps'],
     cta: 'Enter the Studio',
-    href: '/drones/studio',
-    images: ['/diamond-drones-cinema.png'],
+    href: '/studio',
+    images: ['/marilyns/web/Drone Blonde 8.jpg'],
     bgVideo: '/films/dd-recording-studio.mp4',
   },
 ];
@@ -218,9 +218,9 @@ export default function DiamondDronesHome() {
 
       <Helmet>
         <title>Diamond Drones Are a Girl's Best Friend — A digital diamond house. Native to Ethereum.</title>
-        <meta name="description" content="DIAMOND DRONES™ — A digital diamond house by Miss AL Simpson. 1000 Diamond Drones, 120 Drone Blondes, The Album. Exhibited at Sotheby's. Powered by the Diamond Engine on Ethereum." />
+        <meta name="description" content="DIAMOND DRONES™ — A digital diamond house by Miss AL Simpson. 1000 Diamond Drones, 120 Drone Blondes, The Single. Exhibited at Sotheby's. Powered by the Diamond Engine on Ethereum." />
         <meta property="og:title" content="DIAMOND DRONES™ — Are a Girl's Best Friend" />
-        <meta property="og:description" content="A digital diamond house. 1000 Diamond Drones, 120 Drone Blondes, 11-track album. Exhibited at Sotheby's." />
+        <meta property="og:description" content="A digital diamond house. 1000 Diamond Drones, 120 Drone Blondes, debut single. Exhibited at Sotheby's." />
         <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
         <meta property="og:url" content="https://diamonddrones.world/drones" />
         <link rel="canonical" href="https://diamonddrones.world/drones" />
@@ -402,7 +402,7 @@ export default function DiamondDronesHome() {
             </svg>
 
             {/* Zone 1 — Vault (top-left) */}
-            <Link to="/drones/vault" className="dd-zone-card" style={{
+            <Link to="/vault" className="dd-zone-card" style={{
               position: 'absolute', top: '2%', left: '2%',
               width: '38%', aspectRatio: '1',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -417,7 +417,7 @@ export default function DiamondDronesHome() {
             </Link>
 
             {/* Zone 2 — Cinema (top-right) */}
-            <Link to="/drones/cinema" className="dd-zone-card" style={{
+            <Link to="/cinema" className="dd-zone-card" style={{
               position: 'absolute', top: '2%', right: '2%',
               width: '38%', aspectRatio: '1',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -432,7 +432,7 @@ export default function DiamondDronesHome() {
             </Link>
 
             {/* Zone 3 — Studio (bottom-left) */}
-            <Link to="/drones/studio" className="dd-zone-card" style={{
+            <Link to="/studio" className="dd-zone-card" style={{
               position: 'absolute', bottom: '2%', left: '2%',
               width: '38%', aspectRatio: '1',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -443,11 +443,11 @@ export default function DiamondDronesHome() {
             }}>
               <div style={{ fontSize: '34px', marginBottom: '10px' }}>&#9835;</div>
               <div style={{ fontFamily: font.display, fontWeight: 700, fontStyle: 'normal', fontSize: 'clamp(1.1rem, 2vw, 1.5rem)', textTransform: 'uppercase', letterSpacing: '0.1em', color: C.iceBright }}>Studio</div>
-              <div style={{ fontFamily: font.body, fontStyle: 'italic', fontSize: '0.9rem', color: C.textDim, marginTop: '6px' }}>The Album</div>
+              <div style={{ fontFamily: font.body, fontStyle: 'italic', fontSize: '0.9rem', color: C.textDim, marginTop: '6px' }}>The Single</div>
             </Link>
 
             {/* Zone 4 — Lounge (bottom-right) */}
-            <Link to="/drones/lounge" className="dd-zone-card" style={{
+            <Link to="/lounge" className="dd-zone-card" style={{
               position: 'absolute', bottom: '2%', right: '2%',
               width: '38%', aspectRatio: '1',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -676,8 +676,8 @@ export default function DiamondDronesHome() {
                 color: C.textDim, lineHeight: 1.8,
               }}>
                 Designed by Miss AL Simpson, engineered as a complete digital
-                asset system. 1000 Diamond Drones, 120 Drone Blondes, an 11-track
-                album &mdash; all cut from the same engine. One brand. One
+                asset system. 1000 Diamond Drones, 120 Drone Blondes, the debut
+                single &mdash; all cut from the same engine. One brand. One
                 technology. One world.
               </p>
             </div>
@@ -750,7 +750,7 @@ export default function DiamondDronesHome() {
           </div>
 
           <div style={{ marginTop: '3rem', textAlign: 'center' }}>
-            <Link to="/drones/cinema" style={btn}>Enter the Cinema &rarr;</Link>
+            <Link to="/cinema" style={btn}>Enter the Cinema &rarr;</Link>
           </div>
         </div>
       </section>
@@ -902,7 +902,7 @@ export default function DiamondDronesHome() {
                         aspectRatio: '2/3', overflow: 'hidden', borderRadius: '2px', position: 'relative',
                         boxShadow: '0 8px 30px rgba(0,0,0,0.4)',
                       }}>
-                        <img src={src} alt="" style={{
+                        <img src={src} alt="Diamond Drone artwork" loading="lazy" style={{
                           width: '100%', height: '100%', objectFit: 'cover', display: 'block',
                         }} className={`dd-img-zoom dd-img-zoom-${j}`} />
                         {/* Gradient overlay */}
@@ -960,7 +960,7 @@ export default function DiamondDronesHome() {
             margin: '3rem 0', padding: '2rem 0',
             borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`,
           }}>
-            {['Sotheby\'s New York', 'SuperRare', '2024\u20132026'].map((item, i, arr) => (
+            {['Sotheby\'s New York', 'OpenSea', '2024\u20132026'].map((item, i, arr) => (
               <span key={i}>
                 <span style={{ fontFamily: font.display, fontWeight: 500, fontStyle: 'normal', fontSize: '0.85rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: C.text }}>{item}</span>
                 {i < arr.length - 1 && <span style={{ color: C.textFaint, margin: '0 0.75rem' }}>&#9670;</span>}
@@ -980,7 +980,7 @@ export default function DiamondDronesHome() {
           </p>
 
           <div style={{ marginTop: '3rem' }}>
-            <Link to="/drones/lore" style={btn}>Explore the Drones of Suburbia universe &rarr;</Link>
+            <Link to="/lore" style={btn}>Explore the Drones of Suburbia universe &rarr;</Link>
           </div>
         </div>
       </section>
@@ -1004,14 +1004,14 @@ export default function DiamondDronesHome() {
           </h2>
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '3rem', maxWidth: '900px', marginLeft: 'auto', marginRight: 'auto' }} className="dd-home-final-ctas">
-            <Link to="/drones/vault" style={{ ...btnPrimary, padding: '1.2rem 1.8rem', fontSize: '0.75rem', flex: 1, minWidth: '250px', maxWidth: '280px', justifyContent: 'center' }}>
+            <Link to="/vault" style={{ ...btnPrimary, padding: '1.2rem 1.8rem', fontSize: '0.75rem', flex: 1, minWidth: '250px', maxWidth: '280px', justifyContent: 'center' }}>
               Diamond Drones &rarr;
             </Link>
-            <Link to="/drones/lounge" style={{ ...btnPrimary, padding: '1.2rem 1.8rem', fontSize: '0.75rem', flex: 1, minWidth: '250px', maxWidth: '280px', justifyContent: 'center' }}>
+            <Link to="/lounge" style={{ ...btnPrimary, padding: '1.2rem 1.8rem', fontSize: '0.75rem', flex: 1, minWidth: '250px', maxWidth: '280px', justifyContent: 'center' }}>
               Drone Blondes &rarr;
             </Link>
-            <Link to="/drones/studio" style={{ ...btnPrimary, padding: '1.2rem 1.8rem', fontSize: '0.75rem', flex: 1, minWidth: '250px', maxWidth: '280px', justifyContent: 'center' }}>
-              The Album &rarr;
+            <Link to="/studio" style={{ ...btnPrimary, padding: '1.2rem 1.8rem', fontSize: '0.75rem', flex: 1, minWidth: '250px', maxWidth: '280px', justifyContent: 'center' }}>
+              The Single &rarr;
             </Link>
           </div>
 

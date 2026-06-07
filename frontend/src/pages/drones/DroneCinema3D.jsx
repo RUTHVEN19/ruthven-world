@@ -149,7 +149,20 @@ export default function DroneCinema3D() {
         <meta property="og:title" content="Drone Cinema — Diamond Drones™" />
         <meta property="og:description" content="Four films. One track. An immersive cinema experience by Miss AL Simpson." />
         <meta property="og:image" content="https://diamonddrones.world/diamond-drones-cinema.png" />
-        <link rel="canonical" href="https://diamonddrones.world/drones/cinema" />
+        <link rel="canonical" href="https://diamonddrones.world/cinema" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "VideoGallery",
+          "name": "Drone Cinema — Diamond Drones™ Film Premiere",
+          "url": "https://diamonddrones.world/cinema",
+          "description": "Four cinematic films by Miss AL Simpson: Recording Studio, The Vault, Jewellery Box, and Diamond Drone Lounge.",
+          "creator": { "@type": "Person", "name": "Miss AL Simpson" },
+          "about": {
+            "@type": "CreativeWork",
+            "name": "Diamond Drones™",
+            "description": "A cinematic universe where surveillance drones are reimagined as objects of glamour."
+          }
+        })}</script>
       </Helmet>
 
       <div style={{

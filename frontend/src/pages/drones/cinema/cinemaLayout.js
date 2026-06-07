@@ -66,10 +66,10 @@ export function generateSeatPositions() {
 
 /* ── The 4 Diamond Drones Films ── */
 export const FILMS = [
-  { title: "Diamond Drones Are a Girl's Best Friend — Jewellery Box",       file: '/films/dd-jewellery-box.mp4',       fileHQ: '/films/dd-jewellery-box-hq.mp4',       track: 'I' },
-  { title: "Diamond Drones Are a Girl's Best Friend — Recording Studio",    file: '/films/dd-recording-studio.mp4',    fileHQ: '/films/dd-recording-studio-hq.mp4',    track: 'II' },
-  { title: "Diamond Drones Are a Girl's Best Friend — The Vault",           file: '/films/dd-the-vault.mp4',           fileHQ: '/films/dd-the-vault-hq.mp4',           track: 'III' },
-  { title: "Diamond Drones Are a Girl's Best Friend — Diamond Drone Lounge", file: '/films/dd-diamond-drone-lounge.mp4', fileHQ: '/films/dd-diamond-drone-lounge-hq.mp4', track: 'IV' },
+  { title: "Diamond Drones Are a Girl's Best Friend — Jewellery Box",       file: '/films/dd-jewellery-box.mp4',       fileHQ: '/films/dd-jewellery-box-hq.mp4',       track: 'I',  opensea: 'https://opensea.io/assets/ethereum/0x9F0a500F315B1cCa767C91b25299914EbE320b67/1' },
+  { title: "Diamond Drones Are a Girl's Best Friend — Recording Studio",    file: '/films/dd-recording-studio.mp4',    fileHQ: '/films/dd-recording-studio-hq.mp4',    track: 'II', opensea: 'https://opensea.io/assets/ethereum/0x2373A77bD873ce11aD5759E9664E8362CDDeebc8/1' },
+  { title: "Diamond Drones Are a Girl's Best Friend — The Vault",           file: '/films/dd-the-vault.mp4',           fileHQ: '/films/dd-the-vault-hq.mp4',           track: 'III', opensea: 'https://opensea.io/assets/ethereum/0x32B0b71e465c6E2B6D8A04Ad8B3AD9F3449a2Fb2/1' },
+  { title: "Diamond Drones Are a Girl's Best Friend — Diamond Drone Lounge", file: '/films/dd-diamond-drone-lounge.mp4', fileHQ: '/films/dd-diamond-drone-lounge-hq.mp4', track: 'IV', opensea: 'https://opensea.io/assets/ethereum/0xa94a9ad4D71ec7B4f4Ae4A24006A17DA626F4191/1' },
 ];
 
 // Default film index — Jewellery Box

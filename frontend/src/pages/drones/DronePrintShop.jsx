@@ -861,7 +861,7 @@ function PrintGrid({ onBuy, onSwitchCarousel }) {
                     }}
                   >OpenSea</a>
                   <button
-                    onClick={() => navigate('/drones/lounge')}
+                    onClick={() => navigate('/lounge')}
                     style={{
                       padding: '10px 14px',
                       fontFamily: MONO, fontSize: '9px', letterSpacing: '0.1em',
@@ -1010,7 +1010,7 @@ export default function DronePrintShop() {
         <meta property="og:title" content="The Diamond Press \u2014 20 Drone Blonde A2 Prints" />
         <meta property="og:description" content="Signed A2 Hahnem\u00FChle Photo Rag Metallic prints of the Drone Blondes by Miss AL Simpson. Each with AR video activation." />
         <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
-        <meta property="og:url" content="https://diamonddrones.world/drones/prints" />
+        <meta property="og:url" content="https://diamonddrones.world/prints" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="description" content="20 Drone Blondes available as signed A2 Hahnem\u00FChle Photo Rag Metallic prints with AR video activation. \u00A3600 each." />
       </Helmet>

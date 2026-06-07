@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { SITE_META, LORE_PAGE, ALBUM } from '../../config/dronesContent';
 
 /* ── Film files for the strip ── */
@@ -178,6 +179,32 @@ export default function DroneLore() {
   }, []);
 
   return (
+    <>
+      <Helmet>
+        <title>Lore | Diamond Drones Are a Girl's Best Friend</title>
+        <meta name="description" content="The origin story of Diamond Drones. Explore the cinematic lore behind Miss AL Simpson's AI ink interventions." />
+        <meta property="og:title" content="Lore | Diamond Drones" />
+        <meta property="og:description" content="The origin story of Diamond Drones. Explore the cinematic lore behind Miss AL Simpson's AI ink interventions." />
+        <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+        <meta property="og:url" content="https://diamonddrones.world/lore" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": "The Origin Story of Diamond Drones",
+          "url": "https://diamonddrones.world/lore",
+          "description": "The origin story of Diamond Drones — from Edinburgh's weather system to Sotheby's New York.",
+          "author": {
+            "@type": "Person",
+            "name": "Miss AL Simpson",
+            "jobTitle": "Contemporary Artist",
+            "address": { "@type": "PostalAddress", "addressLocality": "Edinburgh", "addressCountry": "GB" },
+            "knowsAbout": ["Ink art", "AI art", "Cryptoart", "Cinema", "NFTs"],
+            "description": "Contemporary artist working with ink, AI, and cinema. Exhibited at Sotheby's Contemporary Discoveries, New York, 2025."
+          },
+          "publisher": { "@type": "Organization", "name": "Diamond Drones™", "url": "https://diamonddrones.world" }
+        })}</script>
+      </Helmet>
     <div style={{ backgroundColor: '#3a3a3a', color: '#ffffff' }}>
 
       {/* Keyframes */}
@@ -724,7 +751,7 @@ export default function DroneLore() {
             opacity: sothebysVisible ? 1 : 0,
             transition: 'opacity 1s ease 0.6s',
           }}>
-            {['Sotheby\'s', 'SuperRare', 'Edinburgh', 'New York City'].map(name => (
+            {['Sotheby\'s', 'OpenSea', 'Edinburgh', 'New York City'].map(name => (
               <div key={name} style={{
                 fontFamily: MONO,
                 fontSize: '10px', letterSpacing: '0.3em',
@@ -823,5 +850,6 @@ export default function DroneLore() {
       </section>
 
     </div>
+    </>
   );
 }

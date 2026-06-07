@@ -37,7 +37,26 @@ export default function DroneContact() {
     <>
       <Helmet>
         <title>Contact | Diamond Drones Are a Girl's Best Friend</title>
-        <meta name="description" content="Private enquiries for the Diamond Drones Collectors Edition. Contact Miss AL Simpson." />
+        <meta name="description" content="Private enquiries for Diamond Drones. Contact Miss AL Simpson." />
+        <meta property="og:title" content="Contact | Diamond Drones™" />
+        <meta property="og:description" content="Private enquiries for Diamond Drones. Contact Miss AL Simpson." />
+        <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+        <meta property="og:url" content="https://diamonddrones.world/contact" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contact Diamond Drones™",
+          "url": "https://diamonddrones.world/contact",
+          "description": "Private enquiries for Diamond Drones. Contact Miss AL Simpson.",
+          "mainEntity": {
+            "@type": "Person",
+            "name": "Miss AL Simpson",
+            "email": "info@thedronesofsuburbia.com",
+            "jobTitle": "Contemporary Artist",
+            "address": { "@type": "PostalAddress", "addressLocality": "Edinburgh", "addressCountry": "GB" }
+          }
+        })}</script>
       </Helmet>
 
       <style>{`
@@ -323,18 +342,13 @@ export default function DroneContact() {
                       value={formData.email}
                       onChange={handleChange('email')}
                     />
-                    <select
+                    <input
                       className="dd-contact-input"
+                      type="text"
+                      placeholder="Subject"
                       value={formData.subject}
                       onChange={handleChange('subject')}
-                      style={{ fontStyle: formData.subject ? 'italic' : 'italic' }}
-                    >
-                      <option value="">Select enquiry type</option>
-                      <option value="Private Viewing Request">Private Viewing</option>
-                      <option value="Exhibition Proposal">Exhibition Proposal</option>
-                      <option value="Commission Enquiry">Commission</option>
-                      <option value="General Enquiry">General Enquiry</option>
-                    </select>
+                    />
                     <textarea
                       className="dd-contact-input"
                       placeholder="Your message"

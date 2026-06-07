@@ -22,16 +22,6 @@ const COLLECTIONS = [
     images: ['/marilyns/web/Drone Blonde 5.jpg', '/marilyns/web/Drone Blonde 12.jpg', '/marilyns/web/Drone Blonde 21.jpg', '/marilyns/web/Drone Blonde 8.jpg', '/marilyns/web/Drone Blonde 15.jpg', '/marilyns/web/Drone Blonde 3.jpg'],
     accent: 'rgba(255,220,200,0.4)',
   },
-  {
-    key: 'album',
-    label: 'The Album',
-    icon: '\u266B',
-    desc: 'Full album \u2014 11 tracks, 320kbps MP3',
-    fileLabel: 'ZIP Archive',
-    images: [],
-    isVinyl: true,
-    accent: 'rgba(200,255,220,0.4)',
-  },
 ];
 
 const FILMS_CARD = {
@@ -147,7 +137,12 @@ export default function DroneDownloads() {
     <>
       <Helmet>
         <title>Downloads | Diamond Drones Are a Girl&#39;s Best Friend</title>
-        <meta name="description" content="Token-gated downloads for Diamond Drones, Drone Blondes, and Album holders." />
+        <meta name="description" content="Token-gated downloads for Diamond Drones, Drone Blondes, and Film holders." />
+        <meta property="og:title" content="Downloads | Diamond Drones™" />
+        <meta property="og:description" content="Token-gated downloads for Diamond Drones, Drone Blondes, and Film holders." />
+        <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+        <meta property="og:url" content="https://diamonddrones.world/downloads" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
       <style>{`
@@ -235,7 +230,7 @@ export default function DroneDownloads() {
                 boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
                 transform: `rotate(${i === 0 ? -3 : i === 2 ? 3 : 0}deg)`,
               }}>
-                <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <img src={src} alt="Diamond Drone artwork preview" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               </div>
             ))}
           </div>
@@ -286,7 +281,7 @@ export default function DroneDownloads() {
         }}>
           <div className="dd-dl-collections" style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
+            gridTemplateColumns: 'repeat(2, 1fr)',
             gap: 'clamp(12px, 2vw, 24px)',
             marginBottom: 'clamp(20px, 3vw, 32px)',
           }}>
@@ -396,7 +391,7 @@ export default function DroneDownloads() {
                       <div key={j} style={{
                         overflow: 'hidden', position: 'relative',
                       }}>
-                        <img src={src} alt="" style={{
+                        <img src={src} alt={`${c.label} preview`} style={{
                           width: '100%', height: '100%',
                           objectFit: 'cover', display: 'block',
                           filter: 'brightness(0.7) contrast(1.1)',
@@ -603,7 +598,7 @@ export default function DroneDownloads() {
                     width: '60px', height: '80px', overflow: 'hidden',
                     borderRadius: '1px',
                   }}>
-                    <img src={src} alt="" style={{
+                    <img src={src} alt="Collection preview" style={{
                       width: '100%', height: '100%', objectFit: 'cover', display: 'block',
                       filter: 'brightness(0.6)',
                     }} />
@@ -618,7 +613,7 @@ export default function DroneDownloads() {
                 maxWidth: '480px', margin: '0 auto',
               }}>
                 Token-gated downloads will unlock after minting. Hold a Diamond Drone,
-                Drone Blonde, Album, or Film token to access exclusive high-resolution files.
+                Drone Blonde, or Film token to access exclusive high-resolution files.
               </p>
             </div>
           </div>

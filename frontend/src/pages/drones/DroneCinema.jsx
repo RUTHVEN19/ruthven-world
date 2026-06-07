@@ -27,10 +27,10 @@ const keyframes = `
 
 // The 4 Diamond Drone films
 const FILMS = [
-  { title: 'Recording Studio',      file: '/films/dd-recording-studio.mp4',      fileHQ: '/films/dd-recording-studio-hq.mp4',      num: '01' },
-  { title: 'The Vault',             file: '/films/dd-the-vault.mp4',             fileHQ: '/films/dd-the-vault-hq.mp4',             num: '02' },
-  { title: 'Jewellery Box',         file: '/films/dd-jewellery-box.mp4',         fileHQ: '/films/dd-jewellery-box-hq.mp4',         num: '03' },
-  { title: 'Diamond Drone Lounge',  file: '/films/dd-diamond-drone-lounge.mp4',  fileHQ: '/films/dd-diamond-drone-lounge-hq.mp4',  num: '04' },
+  { title: 'Recording Studio',      file: '/films/dd-recording-studio.mp4',      fileHQ: '/films/dd-recording-studio-hq.mp4',      poster: '/films/dd-recording-studio-poster.jpg',      num: '01', opensea: 'https://opensea.io/assets/ethereum/0x2373A77bD873ce11aD5759E9664E8362CDDeebc8/1' },
+  { title: 'The Vault',             file: '/films/dd-the-vault.mp4',             fileHQ: '/films/dd-the-vault-hq.mp4',             poster: '/films/dd-the-vault-poster.jpg',             num: '02', opensea: 'https://opensea.io/assets/ethereum/0x32B0b71e465c6E2B6D8A04Ad8B3AD9F3449a2Fb2/1' },
+  { title: 'Jewellery Box',         file: '/films/dd-jewellery-box.mp4',         fileHQ: '/films/dd-jewellery-box-hq.mp4',         poster: '/films/dd-jewellery-box-poster.jpg',         num: '03', opensea: 'https://opensea.io/assets/ethereum/0x9F0a500F315B1cCa767C91b25299914EbE320b67/1' },
+  { title: 'Diamond Drone Lounge',  file: '/films/dd-diamond-drone-lounge.mp4',  fileHQ: '/films/dd-diamond-drone-lounge-hq.mp4',  poster: '/films/dd-diamond-drone-lounge-poster.jpg',  num: '04', opensea: 'https://opensea.io/assets/ethereum/0xa94a9ad4D71ec7B4f4Ae4A24006A17DA626F4191/1' },
 ];
 
 export default function DroneCinema() {
@@ -50,6 +50,8 @@ export default function DroneCinema() {
       if (heroVideoRef.current) {
         heroVideoRef.current.play().catch(() => {});
       }
+      // Scroll to hero so user can see the film playing
+      heroSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
   };
 
@@ -60,6 +62,11 @@ export default function DroneCinema() {
       <Helmet>
         <title>Drone Cinema — The Drones of Suburbia Films</title>
         <meta name="description" content="4 Diamond Drone films by Miss AL Simpson. Diamond Drones Are a Girl's Best Friend — Recording Studio, The Vault, Jewellery Box, and Diamond Drone Lounge." />
+        <meta property="og:title" content="Drone Cinema — Diamond Drones™" />
+        <meta property="og:description" content="Four Diamond Drone films by Miss AL Simpson. An immersive cinema experience." />
+        <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+        <meta property="og:url" content="https://diamonddrones.world/cinema" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
       <style>{keyframes}</style>
 
@@ -183,7 +190,7 @@ export default function DroneCinema() {
             fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
             color: 'rgba(255,255,255,0.2)',
           }}>
-            Collected on SuperRare · Exhibited at Sotheby's
+            Directed by Miss AL Simpson · Premiering at diamonddrones.world
           </div>
         </div>
       </div>
@@ -251,7 +258,7 @@ export default function DroneCinema() {
             margin: '0 0 48px', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto',
             animation: 'fadeUp 1s ease both 0.4s',
           }}>
-            The final NYC Film and the closing track of The Drones of Suburbia Album.<br />
+            The final NYC Film and the closing track of Diamond Drones Are a Girl's Best Friend.<br />
             Debuting here.
           </p>
 
@@ -338,9 +345,9 @@ export default function DroneCinema() {
             ['Format', 'Film / Digital Video'],
             ['Director', 'Miss AL Simpson'],
             ['Films', '4 Films'],
-            ['Collected', 'SuperRare'],
-            ['Exhibited', "Sotheby's · LA"],
-            ['Soundtracks', 'The Drones of Suburbia album'],
+            ['On-Chain', 'Ethereum (OpenSea)'],
+            ['Premiered', 'diamonddrones.world'],
+            ['Soundtrack', 'Diamond Drones Are a Girl\'s Best Friend'],
           ].map(([k, v]) => (
             <div key={k} style={{
               display: 'flex', justifyContent: 'space-between',
@@ -424,6 +431,7 @@ export default function DroneCinema() {
                   {hasVideo ? (
                     <video
                       src={film.file}
+                      poster={film.poster}
                       muted
                       loop
                       playsInline
@@ -436,8 +444,8 @@ export default function DroneCinema() {
                         opacity: hoveredFilm === i ? 1 : 0.7,
                         transition: 'opacity 0.4s',
                       }}
-                      onMouseEnter={e => { e.target.load(); e.target.play().catch(() => {}); }}
-                      onMouseLeave={e => { e.target.pause(); e.target.currentTime = 0; }}
+                      onMouseEnter={e => { if (!isMobile) { e.target.play().catch(() => {}); } }}
+                      onMouseLeave={e => { if (!isMobile) { e.target.pause(); e.target.currentTime = 0; } }}
                     />
                   ) : (
                     <div style={{
@@ -516,13 +524,44 @@ export default function DroneCinema() {
                     </span>
                   </div>
                   <div style={{
-                    fontSize: '9px', letterSpacing: '0.2em',
-                    fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
-                    color: hasVideo
-                      ? (isActive ? 'rgba(200,230,255,0.4)' : 'rgba(255,255,255,0.15)')
-                      : 'rgba(255,255,255,0.08)',
+                    display: 'flex', alignItems: 'center', gap: '12px',
                   }}>
-                    {hasVideo ? 'Film · SuperRare' : 'Film Coming Soon'}
+                    <span style={{
+                      fontSize: '9px', letterSpacing: '0.2em',
+                      fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
+                      color: isActive ? 'rgba(200,230,255,0.4)' : 'rgba(255,255,255,0.15)',
+                    }}>
+                      1/1 Film · Ethereum
+                    </span>
+                    {film.opensea && (
+                      <a
+                        href={film.opensea}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        style={{
+                          fontSize: '9px', letterSpacing: '0.15em',
+                          fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
+                          color: 'rgba(255,255,255,0.4)',
+                          textDecoration: 'none',
+                          padding: '3px 10px',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          transition: 'all 0.3s',
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.background = 'rgba(255,255,255,0.12)';
+                          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)';
+                          e.currentTarget.style.color = '#fff';
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                          e.currentTarget.style.color = 'rgba(255,255,255,0.4)';
+                        }}
+                      >
+                        View on OpenSea
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -542,11 +581,11 @@ export default function DroneCinema() {
           color: 'rgba(255,255,255,0.35)', fontFamily: 'Georgia, serif',
           fontStyle: 'italic', maxWidth: '480px', margin: '0 auto 36px',
         }}>
-          The Diamond Drone films were collected on SuperRare and exhibited at Sotheby's.
-          Their soundtracks became The Drones of Suburbia album.
+          The Diamond Drone films premiere here in the world and are on-chain on Ethereum.
+          The soundtrack — Diamond Drones Are a Girl's Best Friend — is available now as a single.
         </p>
         <button
-          onClick={() => navigate('/drones/studio')}
+          onClick={() => navigate('/studio')}
           style={{
             background: 'transparent',
             border: '1px solid rgba(255,255,255,0.3)',
@@ -564,7 +603,7 @@ export default function DroneCinema() {
             e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)';
           }}
         >
-          Listen to the Album →
+          Listen to the Single →
         </button>
       </section>
     </div>

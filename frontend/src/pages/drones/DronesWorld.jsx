@@ -11,14 +11,14 @@ const SOCIALS = [
 ];
 
 const NAV_ITEMS = [
-  { path: '/drones',               label: 'World',   end: true },
-  { path: '/drones/vault',         label: 'Vault' },
-  { path: '/drones/cinema',        label: 'Cinema' },
-  { path: '/drones/studio',        label: 'Studio' },
-  { path: '/drones/lounge',        label: 'The Lounge' },
-  { path: '/drones/lore',          label: 'Lore' },
-  { path: '/drones/prints',       label: 'Prints' },
-  { path: '/drones/contact',      label: 'Contact' },
+  { path: '/',               label: 'World',   end: true },
+  { path: '/vault',          label: 'Vault' },
+  { path: '/cinema',         label: 'Cinema' },
+  { path: '/studio',         label: 'Studio' },
+  { path: '/lounge',         label: 'The Lounge' },
+  { path: '/lore',           label: 'Lore' },
+  { path: '/prints',         label: 'Prints' },
+  { path: '/contact',        label: 'Contact' },
 ];
 
 export default function DronesWorld() {
@@ -46,13 +46,13 @@ export default function DronesWorld() {
   const audioStartedRef = useRef(false);
 
   // Zones where ambient music should play
-  const audioZones = ['/drones/vault', '/drones/lounge'];
+  const audioZones = ['/vault', '/lounge'];
   const isAudioZone = audioZones.some(z => location.pathname.startsWith(z));
 
   // Gateway, Cinema and Studio have their own audio — auto-pause ambient music when entering
-  const isMuteZone = location.pathname === '/drones'
-    || location.pathname.startsWith('/drones/cinema')
-    || location.pathname.startsWith('/drones/studio');
+  const isMuteZone = location.pathname === '/'
+    || location.pathname.startsWith('/cinema')
+    || location.pathname.startsWith('/studio');
 
   useEffect(() => {
     if (isMuteZone && audioRef.current && !audioRef.current.paused) {

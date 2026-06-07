@@ -93,7 +93,23 @@ export default function DroneMuseum() {
             <meta property="og:title" content="The Vault — 1000 Diamond Drones™" />
             <meta property="og:description" content="Browse all 1000 Diamond Drones. Five rarity tiers. By Miss AL Simpson." />
             <meta property="og:image" content="https://diamonddrones.world/diamond-drones-gallery.png" />
-            <link rel="canonical" href="https://diamonddrones.world/drones/vault" />
+            <link rel="canonical" href="https://diamonddrones.world/vault" />
+            <script type="application/ld+json">{JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              "name": "The Vault — 1000 Diamond Drones",
+              "url": "https://diamonddrones.world/vault",
+              "description": "Browse all 1000 Diamond Drones — unique digital diamonds cut across five rarity tiers.",
+              "mainEntity": {
+                "@type": "VisualArtwork",
+                "name": "Diamond Drones Genesis Collection",
+                "artMedium": "Digital art, AI Ink Intervention",
+                "artform": "NFT",
+                "creator": { "@type": "Person", "name": "Miss AL Simpson" },
+                "numberOfItems": 1000,
+                "description": "1000 unique generative diamond drones at 4K resolution across 5 diamond cuts: Brilliant, Princess, Emerald, Marquise, and Pear."
+              }
+            })}</script>
           </Helmet>
           <VaultBrowser onSwitch3D={() => setViewMode('3d')} />
         </>
@@ -102,6 +118,11 @@ export default function DroneMuseum() {
           <Helmet>
             <title>The Vault — Diamond Drones | Miss AL Simpson</title>
             <meta name="description" content="Enter the Diamond Drone Vault — an immersive 3D gallery showcasing 50 unique Diamond Drone NFT artworks." />
+            <meta property="og:title" content="The Vault — Diamond Drones™" />
+            <meta property="og:description" content="Enter the Diamond Drone Vault — an immersive 3D gallery by Miss AL Simpson." />
+            <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+            <meta property="og:url" content="https://diamonddrones.world/vault" />
+            <meta name="twitter:card" content="summary_large_image" />
           </Helmet>
 
           <div style={{
@@ -187,6 +208,27 @@ export default function DroneMuseum() {
                 }}>
                   Diamond Drones{'\u2122'} {'\u00B7'} 1000 Unique Digital Diamonds
                 </span>
+                <a
+                  href="https://opensea.io/collection/diamond-drones"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: '9px',
+                    letterSpacing: '2px',
+                    textTransform: 'uppercase',
+                    padding: '5px 14px',
+                    background: 'rgba(200,230,255,0.08)',
+                    border: '1px solid rgba(200,230,255,0.25)',
+                    color: 'rgba(200,230,255,0.7)',
+                    textDecoration: 'none',
+                    transition: 'all 0.3s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.15)'; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.08)'; e.currentTarget.style.color = 'rgba(200,230,255,0.7)'; }}
+                >
+                  View on OpenSea
+                </a>
               </div>
             </div>
           </div>

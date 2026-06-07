@@ -79,8 +79,8 @@ export default function App() {
         <Route path="signal" element={<RuthvenSignal />} />
       </Route>
 
-      {/* ═══ DRONES OF SUBURBIA WORLD ═══ */}
-      <Route path="/drones" element={<ErrorBoundary><DronesWorld /></ErrorBoundary>}>
+      {/* ═══ DIAMOND DRONES WORLD ═══ */}
+      <Route path="/" element={<ErrorBoundary><DronesWorld /></ErrorBoundary>}>
         <Route index element={<DiamondDronesHome />} />
         <Route path="vault" element={<DroneMuseum />} />
         <Route path="cinema" element={<DroneCinema3D />} />
@@ -109,8 +109,9 @@ export default function App() {
       {/* Legacy mint page route (still works) */}
       <Route path="/mint/:brandSlug/:collectionSlug" element={<MintPage />} />
 
-      {/* Root redirects to the world */}
-      <Route path="/" element={<Navigate to="/drones" replace />} />
+      {/* Legacy /drones URLs redirect to new paths */}
+      <Route path="/drones" element={<Navigate to="/" replace />} />
+      <Route path="/drones/*" element={<Navigate to="/" replace />} />
 
       {/* Admin NFT Studio — accessible at /admin */}
       <Route path="/admin" element={<Layout><Dashboard /></Layout>} />

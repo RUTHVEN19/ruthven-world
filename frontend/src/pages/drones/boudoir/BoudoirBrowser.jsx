@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 const MONO = '"Space Mono", monospace';
 const DISPLAY = '"Anton", sans-serif';
 const PER_PAGE = 20;
+const OPENSEA_BASE = 'https://opensea.io/assets/ethereum/0x505348E10069D5083842532f5F5FA432631d109e';
 
 const TRAIT_FIELDS = [
   { key: 'scene',        label: 'Scene' },
@@ -24,6 +26,7 @@ const FILTER_FIELDS = [...TRAIT_FIELDS]; // All traits filterable
  * BoudoirBrowser — Browsable 2D grid of all 120 Drone Blondes with traits and filters.
  */
 export default function BoudoirBrowser({ onSwitch3D }) {
+  const navigate = useNavigate();
   const [traits, setTraits] = useState(null);
   const [filters, setFilters] = useState({});
   const [page, setPage] = useState(0);
@@ -224,6 +227,41 @@ export default function BoudoirBrowser({ onSwitch3D }) {
                     </div>
                   ))}
                 </div>
+                <a
+                  href={`${OPENSEA_BASE}/${id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    display: 'block', marginTop: '12px', padding: '8px 0',
+                    fontFamily: MONO, fontSize: '10px', letterSpacing: '2px',
+                    textTransform: 'uppercase', textAlign: 'center',
+                    color: 'rgba(200,230,255,0.5)', textDecoration: 'none',
+                    border: '1px solid rgba(200,230,255,0.15)',
+                    background: 'rgba(200,230,255,0.04)',
+                    transition: 'all 0.3s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.12)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(200,230,255,0.4)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.04)'; e.currentTarget.style.color = 'rgba(200,230,255,0.5)'; e.currentTarget.style.borderColor = 'rgba(200,230,255,0.15)'; }}
+                >
+                  View on OpenSea
+                </a>
+                <button
+                  onClick={(e) => { e.stopPropagation(); navigate(`/prints?blonde=${id}`); }}
+                  style={{
+                    display: 'block', width: '100%', marginTop: '6px', padding: '8px 0',
+                    fontFamily: MONO, fontSize: '10px', letterSpacing: '2px',
+                    textTransform: 'uppercase', textAlign: 'center',
+                    color: 'rgba(200,230,255,0.5)', cursor: 'pointer',
+                    border: '1px solid rgba(200,230,255,0.15)',
+                    background: 'rgba(200,230,255,0.04)',
+                    transition: 'all 0.3s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.12)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(200,230,255,0.4)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(200,230,255,0.04)'; e.currentTarget.style.color = 'rgba(200,230,255,0.5)'; e.currentTarget.style.borderColor = 'rgba(200,230,255,0.15)'; }}
+                >
+                  Order as Print
+                </button>
               </div>
             </div>
           );

@@ -1,12 +1,22 @@
 import { useState, useRef, useEffect, useMemo, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Canvas } from '@react-three/fiber';
-import { ALBUM, ZONES } from '../../config/dronesContent';
+import { ZONES } from '../../config/dronesContent';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import StudioScene from './studio/StudioScene';
 import { CAMERA } from './studio/studioLayout';
 
 const zone = ZONES.find(z => z.slug === 'studio');
+
+const SINGLE = {
+  title: "Diamond Drones Are a Girl's Best Friend",
+  artist: 'Miss AL Simpson',
+  label: 'Drones of Suburbia Music Studios',
+  year: '2026',
+  number: '01',
+  file: '/album/11-Diamond-Drones-Are-a-Girls-Best-Friend.mp3',
+  film: '/films/dd-jewellery-box.mp4',
+};
 
 const keyframes = `
   @keyframes fadeUp {
@@ -68,46 +78,11 @@ const DRONE_BARS = Array.from({ length: 40 }, (_, i) => {
   return { height: seed, delay: i * 0.06, speed: 1 + (i % 5) * 0.35 };
 });
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
-const UPLOADS_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001';
-
-// Map track indices to album file paths (MP3 320kbps served from /public)
-const TRACK_FILES = [
-  '/album/01-The-Drones-of-Suburbia.mp3',
-  '/album/02-Les-Drones-de-la-Banlieue.mp3',
-  '/album/03-The-Drones-of-Suburbia-Roma.mp3',
-  '/album/04-The-Drones-of-Suburbia-Roma-Summer-2025-Edit.mp3',
-  '/album/05-Hollywood-Drones.mp3',
-  '/album/06-The-Drones-of-Suburbia-Frequency-Edit.mp3',
-  '/album/07-Drone-Driver.mp3',
-  '/album/08-Suburbia-Was-Never-Out-There.mp3',
-  '/album/09-Surveillance-Subway.mp3',
-  '/album/10-Heist.mp3',
-  '/album/11-Diamond-Drones-Are-a-Girls-Best-Friend.mp3',
-];
-
-// Map track indices to their short film videos (drop files into /public/films/)
-const TRACK_FILMS = [
-  '/films/01-the-drones-of-suburbia.mp4',
-  '/films/02-les-drones-de-la-banlieue.mp4',
-  '/films/03-the-drones-of-suburbia-roma.mp4',
-  '/films/04-roma-summer-edit.mp4',
-  '/films/HOLLYWOOD DRONES FINAL.mp4',
-  '/films/06-frequency-edit.mp4',
-  '/films/07-drone-driver.mp4',
-  '/films/08-suburbia-was-never-out-there.mp4',
-  '/films/09-surveillance-subway.mp4',
-  '/films/10-heist.mp4',
-  '/films/dd-jewellery-box.mp4',
-];
-
 export default function DroneStudio() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const audioRef = useRef(null);
   const filmRef = useRef(null);
   const [playing, setPlaying] = useState(false);
-  const [hoveredTrack, setHoveredTrack] = useState(null);
-  const [playingTrack, setPlayingTrack] = useState(null);
   const [sceneReady, setSceneReady] = useState(false);
   const [filmLoaded, setFilmLoaded] = useState(false);
 
@@ -119,12 +94,11 @@ export default function DroneStudio() {
     } catch { return false; }
   }, []);
 
-  // Sync film video to playing track
+  // Sync film video to playing state
   useEffect(() => {
-    if (filmRef.current && playingTrack !== null) {
-      const filmSrc = TRACK_FILMS[playingTrack];
-      if (filmRef.current.src !== filmSrc) {
-        filmRef.current.src = filmSrc;
+    if (filmRef.current && playing) {
+      if (!filmRef.current.src.endsWith(SINGLE.film)) {
+        filmRef.current.src = SINGLE.film;
         filmRef.current.load();
         setFilmLoaded(false);
       }
@@ -132,40 +106,42 @@ export default function DroneStudio() {
     } else if (filmRef.current && !playing) {
       filmRef.current.pause();
     }
-  }, [playingTrack, playing]);
+  }, [playing]);
 
-  const toggleAudio = (trackIndex) => {
+  const toggleAudio = () => {
     if (!audioRef.current) return;
-    if (playing && playingTrack === trackIndex) {
+    if (playing) {
       audioRef.current.pause();
       setPlaying(false);
-      setPlayingTrack(null);
     } else {
-      const trackFile = TRACK_FILES[trackIndex];
-      if (trackFile) {
-        if (!audioRef.current.src.endsWith(trackFile)) {
-          audioRef.current.src = trackFile;
-          audioRef.current.load();
-        }
+      if (!audioRef.current.src.endsWith(SINGLE.file)) {
+        audioRef.current.src = SINGLE.file;
+        audioRef.current.load();
       }
       audioRef.current.play().then(() => {
         setPlaying(true);
-        setPlayingTrack(trackIndex);
       }).catch(() => {});
     }
   };
 
-  const currentTrack = playingTrack !== null ? ALBUM.tracks[playingTrack] : null;
-
   return (
     <div style={{ background: '#3a3a3a', minHeight: '100vh', color: '#fff', position: 'relative' }}>
       <Helmet>
-        <title>Recording Studio — The Drones of Suburbia Album</title>
-        <meta name="description" content="Stream The Drones of Suburbia album. 11 tracks by Miss AL Simpson." />
-        <meta property="og:title" content="The Album — Diamond Drones™" />
-        <meta property="og:description" content="11 tracks. The Drones of Suburbia album by Miss AL Simpson." />
+        <title>Recording Studio — Diamond Drones Are a Girl's Best Friend</title>
+        <meta name="description" content="Diamond Drones Are a Girl's Best Friend — the debut single by Miss AL Simpson." />
+        <meta property="og:title" content="The Single — Diamond Drones™" />
+        <meta property="og:description" content="Diamond Drones Are a Girl's Best Friend. The debut single by Miss AL Simpson." />
         <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
-        <link rel="canonical" href="https://diamonddrones.world/drones/studio" />
+        <link rel="canonical" href="https://diamonddrones.world/studio" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "MusicRecording",
+          "name": "Diamond Drones Are a Girl's Best Friend",
+          "url": "https://diamonddrones.world/studio",
+          "byArtist": { "@type": "Person", "name": "Miss AL Simpson" },
+          "description": "The debut single from the Diamond Drones cinematic universe by Miss AL Simpson.",
+          "genre": "Electronic / Cinematic"
+        })}</script>
       </Helmet>
       <style>{keyframes}</style>
 
@@ -173,7 +149,7 @@ export default function DroneStudio() {
       <audio
         ref={audioRef}
         style={{ display: 'none' }}
-        onEnded={() => { setPlaying(false); setPlayingTrack(null); }}
+        onEnded={() => { setPlaying(false); }}
       />
 
       {/* ── FULL-PAGE FILM BACKGROUND (fixed, covers entire page) ── */}
@@ -181,7 +157,7 @@ export default function DroneStudio() {
         position: 'fixed', inset: 0, zIndex: 0,
         pointerEvents: 'none', overflow: 'hidden',
       }}>
-        {/* Default hero video — visible when no track is playing */}
+        {/* Default hero video — visible when not playing */}
         <video autoPlay muted loop playsInline style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
           objectFit: 'cover', objectPosition: 'center',
@@ -192,7 +168,7 @@ export default function DroneStudio() {
           <source src="/drones-hero.mp4" type="video/mp4" />
         </video>
 
-        {/* Short film — fades in when a track is playing */}
+        {/* Short film — fades in when playing */}
         <video
           ref={filmRef}
           muted loop playsInline
@@ -283,8 +259,8 @@ export default function DroneStudio() {
           background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(58,58,58,0.5) 75%, rgba(58,58,58,0.95) 100%)',
         }} />
 
-        {/* Now-showing film title at very top */}
-        {playing && currentTrack && (
+        {/* Now-playing indicator at very top */}
+        {playing && (
           <div style={{
             position: 'absolute', top: '24px', left: '50%',
             transform: 'translateX(-50%)', zIndex: 5,
@@ -292,7 +268,7 @@ export default function DroneStudio() {
             textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)',
             whiteSpace: 'nowrap', animation: 'fadeUp 0.8s ease both',
           }}>
-            ▶ Now Showing — {currentTrack.title}
+            ▶ Now Playing — {SINGLE.title}
           </div>
         )}
 
@@ -329,7 +305,7 @@ export default function DroneStudio() {
         </div>
       </div>
 
-      {/* ── OWN THE ALBUM CTA — moved to top ── */}
+      {/* ── THE SINGLE — hero CTA ── */}
       <section style={{
         padding: 'clamp(80px, 10vw, 140px) clamp(24px, 6vw, 80px)',
         textAlign: 'center',
@@ -341,10 +317,10 @@ export default function DroneStudio() {
           fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
           color: 'rgba(255,255,255,0.2)', marginBottom: '28px',
         }}>
-          11 Tracks
+          Single Track Release
         </div>
         <div style={{
-          fontSize: 'clamp(52px, 10vw, 140px)',
+          fontSize: 'clamp(42px, 8vw, 120px)',
           fontFamily: '"Anton", sans-serif',
           textTransform: 'uppercase', letterSpacing: '0.04em',
           lineHeight: 0.9, marginBottom: '28px',
@@ -354,7 +330,7 @@ export default function DroneStudio() {
           backgroundClip: 'text',
           animation: 'crystalShimmer 5s linear infinite',
         }}>
-          The<br />Album
+          The<br />Single
         </div>
 
         <p style={{
@@ -362,15 +338,14 @@ export default function DroneStudio() {
           color: 'rgba(255,255,255,0.35)', fontFamily: 'Georgia, serif',
           fontStyle: 'italic', maxWidth: '480px', margin: '0 auto 20px',
         }}>
-          11 original tracks by Miss AL Simpson.
-          The complete Drones of Suburbia{'\u2122'} soundtrack.
+          Diamond Drones Are a Girl{'\u2019'}s Best Friend {'\u00B7'} Miss AL Simpson
         </p>
       </section>
 
-      {/* ── VINYL + TRACKLIST ── */}
+      {/* ── VINYL + SINGLE TRACK ── */}
       <section style={{
         position: 'relative',
-        minHeight: '80vh',
+        minHeight: '60vh',
       }}>
         <div style={{
           padding: 'clamp(60px, 8vw, 100px) clamp(24px, 6vw, 80px)',
@@ -381,7 +356,7 @@ export default function DroneStudio() {
           maxWidth: '1200px', margin: '0 auto',
         }}>
           {/* White Diamond Vinyl Record */}
-          <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => toggleAudio(playingTrack ?? 0)}>
+          <div style={{ position: 'relative', cursor: 'pointer' }} onClick={toggleAudio}>
             <div style={{
               position: 'relative',
               width: isMobile ? 'min(280px, 80vw)' : 'clamp(340px, 45vw, 560px)',
@@ -435,27 +410,28 @@ export default function DroneStudio() {
                     fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
                     color: 'rgba(255,255,255,0.5)', marginBottom: '6px',
                   }}>
-                    {ALBUM.label}
+                    {SINGLE.label}
                   </div>
                   <div style={{
                     width: '60%', height: '1px',
                     background: 'rgba(255,255,255,0.15)', marginBottom: '6px',
                   }} />
                   <div style={{
-                    fontSize: '8px', letterSpacing: '0.15em',
+                    fontSize: '7px', letterSpacing: '0.12em',
                     fontFamily: '"Anton", sans-serif',
                     textTransform: 'uppercase',
                     color: 'rgba(255,255,255,0.8)', marginBottom: '3px',
-                    textAlign: 'center', lineHeight: 1.2,
+                    textAlign: 'center', lineHeight: 1.3,
+                    padding: '0 8px',
                   }}>
-                    {playing && currentTrack ? currentTrack.title : ALBUM.title}
+                    {SINGLE.title}
                   </div>
                   <div style={{
                     fontSize: '6px', letterSpacing: '0.2em',
                     fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
                     color: 'rgba(255,255,255,0.35)',
                   }}>
-                    {playing ? '▶ Now Playing' : `Vol. I · ${ALBUM.artist}`}
+                    {playing ? '▶ Now Playing' : SINGLE.artist}
                   </div>
                   {/* Center hole */}
                   <div style={{
@@ -501,14 +477,14 @@ export default function DroneStudio() {
             </div>
           </div>
 
-          {/* Tracklist beside diamond */}
+          {/* Single track details */}
           <div>
             <div style={{
               fontSize: '11px', letterSpacing: '0.4em', fontFamily: "'Space Mono', monospace",
               textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
               marginBottom: '6px',
             }}>
-              Album
+              Single
             </div>
             <div style={{
               fontFamily: '"Anton", sans-serif',
@@ -521,70 +497,58 @@ export default function DroneStudio() {
               backgroundClip: 'text',
               animation: 'shimmerSlow 6s linear infinite',
             }}>
-              {ALBUM.title}
+              {SINGLE.title}
             </div>
 
-            {ALBUM.tracks.map((track, i) => (
-              <div
-                key={i}
-                onMouseEnter={() => setHoveredTrack(i)}
-                onMouseLeave={() => setHoveredTrack(null)}
-                onClick={() => toggleAudio(i)}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '28px 1fr auto',
-                  gap: '12px', alignItems: 'center',
-                  borderBottom: '1px solid rgba(255,255,255,0.06)',
-                  cursor: 'pointer',
-                  background: (playing && playingTrack === i) ? 'rgba(200,230,255,0.04)' : hoveredTrack === i ? 'rgba(255,255,255,0.03)' : 'transparent',
-                  transition: 'background 0.2s',
-                  padding: '12px 8px',
-                }}
-              >
-                <div style={{
-                  fontSize: '11px', letterSpacing: '0.1em',
-                  fontFamily: "'Space Mono', monospace", textAlign: 'right',
-                  color: (playing && playingTrack === i) ? 'rgba(200,230,255,0.7)' : 'rgba(255,255,255,0.3)',
-                }}>
-                  {playing && playingTrack === i
-                    ? <span style={{ animation: 'pulse 1s ease-in-out infinite' }}>▶</span>
-                    : hoveredTrack === i
-                    ? <span style={{ color: 'rgba(255,255,255,0.5)' }}>▶</span>
-                    : track.number}
-                </div>
-                <div style={{
-                  fontSize: 'clamp(12px, 1.2vw, 15px)',
-                  fontFamily: track.featured ? '"Anton", sans-serif' : 'Georgia, serif',
-                  fontStyle: track.featured ? 'normal' : 'italic',
-                  textTransform: track.featured ? 'uppercase' : 'none',
-                  letterSpacing: track.featured ? '0.04em' : '0.01em',
-                  color: (playing && playingTrack === i) ? 'rgba(200,230,255,0.8)' : track.featured
-                    ? (hoveredTrack === i ? '#fff' : 'rgba(255,255,255,0.85)')
-                    : (hoveredTrack === i ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.5)'),
-                  transition: 'color 0.2s',
-                }}>
-                  {track.title}
-                  {track.featured && (
-                    <span style={{
-                      marginLeft: '8px', fontSize: '8px', letterSpacing: '0.3em',
-                      fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
-                      color: 'rgba(200,230,255,0.4)', verticalAlign: 'middle',
-                    }}>
-                      Title Track
-                    </span>
-                  )}
-                </div>
-                {(hoveredTrack === i || (playing && playingTrack === i)) && (
-                  <div style={{
-                    fontSize: '9px', letterSpacing: '0.2em',
-                    fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
-                    color: (playing && playingTrack === i) ? 'rgba(200,230,255,0.5)' : 'rgba(255,255,255,0.3)',
-                  }}>
-                    {playing && playingTrack === i ? 'Playing' : 'Play'}
-                  </div>
-                )}
+            {/* Single track row */}
+            <div
+              onClick={toggleAudio}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '28px 1fr auto',
+                gap: '12px', alignItems: 'center',
+                borderTop: '1px solid rgba(255,255,255,0.06)',
+                borderBottom: '1px solid rgba(255,255,255,0.06)',
+                cursor: 'pointer',
+                background: playing ? 'rgba(200,230,255,0.04)' : 'transparent',
+                transition: 'background 0.2s',
+                padding: '16px 8px',
+              }}
+            >
+              <div style={{
+                fontSize: '11px', letterSpacing: '0.1em',
+                fontFamily: "'Space Mono', monospace", textAlign: 'right',
+                color: playing ? 'rgba(200,230,255,0.7)' : 'rgba(255,255,255,0.3)',
+              }}>
+                {playing
+                  ? <span style={{ animation: 'pulse 1s ease-in-out infinite' }}>▶</span>
+                  : '01'}
               </div>
-            ))}
+              <div style={{
+                fontSize: 'clamp(14px, 1.4vw, 18px)',
+                fontFamily: '"Anton", sans-serif',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                color: playing ? 'rgba(200,230,255,0.8)' : 'rgba(255,255,255,0.85)',
+                transition: 'color 0.2s',
+              }}>
+                {SINGLE.title}
+                <span style={{
+                  marginLeft: '10px', fontSize: '8px', letterSpacing: '0.3em',
+                  fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
+                  color: 'rgba(200,230,255,0.4)', verticalAlign: 'middle',
+                }}>
+                  Single
+                </span>
+              </div>
+              <div style={{
+                fontSize: '9px', letterSpacing: '0.2em',
+                fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
+                color: playing ? 'rgba(200,230,255,0.5)' : 'rgba(255,255,255,0.3)',
+              }}>
+                {playing ? 'Playing' : 'Play'}
+              </div>
+            </div>
 
             <div style={{
               marginTop: '16px',
@@ -592,8 +556,17 @@ export default function DroneStudio() {
               fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
               color: 'rgba(255,255,255,0.2)',
             }}>
-              {ALBUM.year} {'\u00B7'} Miss AL Simpson
+              {SINGLE.year} {'\u00B7'} Miss AL Simpson
             </div>
+
+            <p style={{
+              marginTop: '28px',
+              fontSize: 'clamp(13px,1.3vw,16px)', lineHeight: 1.8,
+              color: 'rgba(255,255,255,0.35)', fontFamily: 'Georgia, serif',
+              fontStyle: 'italic', maxWidth: '420px',
+            }}>
+              The debut single from the Diamond Drones{'\u2122'} cinematic universe.
+            </p>
           </div>
         </div>
       </section>
@@ -633,7 +606,7 @@ export default function DroneStudio() {
 
         {/* Play/pause control */}
         <button
-          onClick={() => toggleAudio(playingTrack ?? 0)}
+          onClick={toggleAudio}
           style={{
             marginLeft: '16px', background: 'transparent',
             border: '1px solid rgba(255,255,255,0.25)',
@@ -713,14 +686,14 @@ export default function DroneStudio() {
                 color: playing ? 'rgba(200,230,255,0.85)' : 'rgba(255,255,255,0.3)',
                 transition: 'color 0.3s',
               }}>
-                {playing && currentTrack ? currentTrack.title : 'Select a track above'}
+                {playing ? SINGLE.title : 'Press play'}
               </div>
             </div>
             <div style={{
               fontSize: '10px', letterSpacing: '0.15em', fontFamily: "'Space Mono', monospace",
               color: playing ? 'rgba(200,230,255,0.5)' : 'rgba(255,255,255,0.15)',
             }}>
-              {playing && currentTrack ? `Track ${currentTrack.number} of 11` : '—'}
+              {playing ? 'Single' : '—'}
             </div>
           </div>
 
@@ -729,17 +702,7 @@ export default function DroneStudio() {
             display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '20px',
           }}>
             <button
-              onClick={() => { if (playingTrack !== null && playingTrack > 0) toggleAudio(playingTrack - 1); }}
-              style={{
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-                color: 'rgba(255,255,255,0.4)', padding: '10px 16px',
-                fontSize: '10px', fontFamily: "'Space Mono', monospace", cursor: 'pointer', transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
-            >◁◁</button>
-            <button
-              onClick={() => toggleAudio(playingTrack ?? 0)}
+              onClick={toggleAudio}
               style={{
                 background: playing ? 'rgba(200,230,255,0.06)' : 'rgba(255,255,255,0.05)',
                 border: `1px solid ${playing ? 'rgba(200,230,255,0.3)' : 'rgba(255,255,255,0.15)'}`,
@@ -752,16 +715,6 @@ export default function DroneStudio() {
             >
               {playing ? '▐▐  Pause' : '▶  Play'}
             </button>
-            <button
-              onClick={() => { if (playingTrack !== null && playingTrack < 10) toggleAudio(playingTrack + 1); }}
-              style={{
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-                color: 'rgba(255,255,255,0.4)', padding: '10px 16px',
-                fontSize: '10px', fontFamily: "'Space Mono', monospace", cursor: 'pointer', transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
-            >▷▷</button>
 
             <div style={{ flex: 1 }} />
 
@@ -796,12 +749,12 @@ export default function DroneStudio() {
             textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)',
           }}>
             <span>MP3 · 320kbps · Stereo</span>
-            <span>{ALBUM.artist} · {ALBUM.year}</span>
+            <span>{SINGLE.artist} · {SINGLE.year}</span>
           </div>
         </div>
       </section>
 
-      {/* ── Album Drop Notice ── */}
+      {/* ── Single Release Notice ── */}
       <section style={{
         padding: 'clamp(60px, 8vw, 100px) clamp(20px, 5vw, 60px)',
         borderTop: '1px solid rgba(255,255,255,0.05)',
@@ -829,7 +782,7 @@ export default function DroneStudio() {
           letterSpacing: '0.05em',
           lineHeight: 1.7,
         }}>
-          The Drones of Suburbia{'\u2122'} Album {'\u00B7'} Miss AL Simpson
+          Diamond Drones Are a Girl{'\u2019'}s Best Friend {'\u00B7'} Single {'\u00B7'} Miss AL Simpson
         </p>
       </section>
 

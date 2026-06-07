@@ -216,7 +216,7 @@ export default function DronesGateway() {
         if (beatboxFilmRef.current) { beatboxFilmRef.current.muted = true; beatboxFilmRef.current.play().catch(() => {}); }
       }).catch(() => {});
     } else {
-      playBeatboxTrack(0);
+      playBeatboxTrack(10);
     }
   };
 
@@ -325,13 +325,29 @@ export default function DronesGateway() {
     <div style={{ background: '#3a3a3a', minHeight: '100vh', color: '#fff', overflowX: 'hidden' }}>
       <Helmet>
         <title>DIAMOND DRONES™ — Genesis Collection · A Girl's Best Friend</title>
-        <meta name="description" content="DIAMOND DRONES™ Genesis Collection. 1000 unique digital diamonds on Ethereum. Films, drone artworks, and album by Miss AL Simpson." />
+        <meta name="description" content="DIAMOND DRONES™ Genesis Collection. 1000 unique digital diamonds on Ethereum. Films, drone artworks, and debut single by Miss AL Simpson." />
         <meta property="og:title" content="Diamond Drones™ Are a Girl's Best Friend" />
-        <meta property="og:description" content="Glamour has taken flight. The diamond has become a machine. 1000 Diamond Drones · 120 Drone Blondes · The Album." />
+        <meta property="og:description" content="Glamour has taken flight. The diamond has become a machine. 1000 Diamond Drones · 120 Drone Blondes · The Single." />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="/og-image.png" />
+        <meta name="twitter:image" content="https://diamonddrones.world/og-image.png" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Diamond Drones™",
+          "url": "https://diamonddrones.world",
+          "logo": "https://diamonddrones.world/og-image.png",
+          "description": "A digital diamond house by Miss AL Simpson. 1000 Diamond Drones, 120 Drone Blondes, and debut single on Ethereum.",
+          "founder": {
+            "@type": "Person",
+            "name": "Miss AL Simpson",
+            "jobTitle": "Contemporary Artist",
+            "address": { "@type": "PostalAddress", "addressLocality": "Edinburgh", "addressCountry": "GB" },
+            "sameAs": ["https://twitter.com/missalsimpson", "https://instagram.com/missalsimpson"]
+          },
+          "sameAs": ["https://opensea.io/collection/diamond-drones", "https://opensea.io/collection/drone-blondes", "https://twitter.com/diamonddronesco", "https://instagram.com/diamonddrones"]
+        })}</script>
       </Helmet>
       <style>{keyframes}</style>
 
@@ -499,7 +515,7 @@ export default function DronesGateway() {
         }} />
 
         {/* Translucent logo watermark behind text */}
-        <img src="/Translucent Logo.png" alt="" style={{
+        <img src="/Translucent Logo.png" alt="Diamond Drones logo" style={{
           position: 'absolute',
           top: '50%', left: '50%',
           transform: 'translate(-50%, -50%)',
@@ -592,7 +608,7 @@ export default function DronesGateway() {
               margin: '0 0 20px',
               animation: 'fadeUp 0.8s ease both',
             }}>
-              1000 Diamond Drones. 120 Drone Blondes. 11-track album. 4 films.
+              1000 Diamond Drones. 120 Drone Blondes. The Single. 4 films.
             </p>
 
             {/* Diamond divider */}
@@ -742,7 +758,7 @@ export default function DronesGateway() {
             textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
             marginBottom: '24px',
           }}>
-            Collector's Album · Exclusive Airdrop
+            The Single · Debut Release
           </div>
           {/* Album title */}
           <h3 style={{
@@ -763,7 +779,7 @@ export default function DronesGateway() {
             textTransform: 'uppercase', color: 'rgba(200,230,255,0.4)',
             marginBottom: '24px',
           }}>
-            The Album · {ALBUM.tracks.length} Tracks
+            The Single · Miss AL Simpson
           </div>
           <div style={{
             fontFamily: '"Anton", sans-serif',
@@ -782,7 +798,7 @@ export default function DronesGateway() {
           </div>
           <div
             data-hoverable
-            onClick={() => navigate('/drones/studio')}
+            onClick={() => navigate('/studio')}
             style={{
               fontSize: '11px', letterSpacing: '0.3em', fontFamily: "'Space Mono', monospace",
               textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)',
@@ -806,7 +822,7 @@ export default function DronesGateway() {
               textShadow: '0 0 20px rgba(200,230,255,0.3)',
               animation: 'filmCrossfade 0.6s ease both',
             }}>
-              ◆ Now Playing — {ALBUM.tracks[bbTrack].title}
+              ◆ Now Playing — Diamond Drones Are a Girl's Best Friend
             </div>
           )}
 
@@ -936,7 +952,7 @@ export default function DronesGateway() {
                     textAlign: 'center', lineHeight: 1.4,
                     padding: '0 10%',
                   }}>
-                    {ALBUM.label}
+                    {ALBUM.label || 'Drones of Suburbia Music Studios'}
                   </div>
                   <div style={{ width: '50%', height: '1px', background: 'rgba(255,255,255,0.15)', marginBottom: '5px' }} />
                   <div style={{
@@ -947,14 +963,14 @@ export default function DronesGateway() {
                     textAlign: 'center', lineHeight: 1.2,
                     padding: '0 8%',
                   }}>
-                    {bbPlaying ? ALBUM.tracks[bbTrack].title : ALBUM.title}
+                    {bbPlaying ? "Diamond Drones Are a Girl's Best Friend" : "Diamond Drones Are a Girl's Best Friend"}
                   </div>
                   <div style={{
                     fontSize: 'clamp(5px, 0.6vw, 7px)', letterSpacing: '0.2em',
                     fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
                     color: 'rgba(255,255,255,0.35)',
                   }}>
-                    {bbPlaying ? '▶ Now Playing' : `Vol. I · ${ALBUM.artist}`}
+                    {bbPlaying ? '▶ Now Playing' : 'Single · Miss AL Simpson'}
                   </div>
                   {/* Center hole */}
                   <div style={{
@@ -1008,16 +1024,6 @@ export default function DronesGateway() {
               display: 'flex', alignItems: 'center', gap: '16px',
               marginBottom: '16px',
             }}>
-              {/* Prev */}
-              <button data-hoverable onClick={prevTrack} style={{
-                background: 'none', border: '1px solid rgba(255,255,255,0.1)',
-                color: 'rgba(255,255,255,0.35)', fontSize: '11px', padding: '8px 12px',
-                cursor: 'pointer', fontFamily: "'Space Mono', monospace", transition: 'all 0.2s',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(200,230,255,0.4)'; e.currentTarget.style.color = '#fff'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'rgba(255,255,255,0.35)'; }}
-              >◁ Prev</button>
-
               {/* Progress bar */}
               <div style={{
                 flex: 1, height: '3px', background: 'rgba(255,255,255,0.06)',
@@ -1037,68 +1043,60 @@ export default function DronesGateway() {
                 }} />
               </div>
 
-              {/* Next */}
-              <button data-hoverable onClick={nextTrack} style={{
-                background: 'none', border: '1px solid rgba(255,255,255,0.1)',
-                color: 'rgba(255,255,255,0.35)', fontSize: '11px', padding: '8px 12px',
-                cursor: 'pointer', fontFamily: "'Space Mono', monospace", transition: 'all 0.2s',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(200,230,255,0.4)'; e.currentTarget.style.color = '#fff'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'rgba(255,255,255,0.35)'; }}
-              >Next ▷</button>
             </div>
 
-            {/* Tracklist */}
+            {/* Single track */}
             <div style={{
               borderTop: '1px solid rgba(255,255,255,0.12)',
-              maxHeight: '260px', overflowY: 'auto',
             }}>
-              {ALBUM.tracks.map((track, ti) => {
-                const isActive = ti === bbTrack;
-                return (
-                  <div
-                    key={ti} data-hoverable
-                    onClick={() => playBeatboxTrack(ti)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '12px',
-                      padding: '9px 16px',
-                      cursor: 'pointer',
-                      background: isActive ? 'rgba(200,230,255,0.05)' : 'transparent',
-                      borderLeft: isActive ? '2px solid rgba(200,230,255,0.5)' : '2px solid transparent',
-                      borderBottom: '1px solid rgba(255,255,255,0.08)',
-                      transition: 'all 0.2s',
-                      textAlign: 'left',
-                    }}
-                    onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
-                    onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = isActive ? 'rgba(200,230,255,0.05)' : 'transparent'; }}
-                  >
-                    <span style={{
-                      fontSize: '10px', fontFamily: "'Space Mono', monospace",
-                      color: isActive && bbPlaying ? 'rgba(200,230,255,0.9)' : 'rgba(255,255,255,0.4)',
-                      width: '22px', textAlign: 'right', flexShrink: 0,
-                      animation: isActive && bbPlaying ? 'pulse 1.5s ease-in-out infinite' : 'none',
-                    }}>
-                      {isActive && bbPlaying ? '◆' : track.number}
-                    </span>
-                    <span style={{
-                      fontSize: '12px', fontFamily: 'Georgia, serif', fontStyle: 'italic',
-                      color: isActive ? '#fff' : 'rgba(255,255,255,0.55)',
-                      transition: 'color 0.2s',
-                    }}>
-                      {track.title}
-                    </span>
-                  </div>
-                );
-              })}
+              <div
+                data-hoverable
+                onClick={() => playBeatboxTrack(10)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                  padding: '12px 16px',
+                  cursor: 'pointer',
+                  background: bbPlaying ? 'rgba(200,230,255,0.05)' : 'transparent',
+                  borderLeft: bbPlaying ? '2px solid rgba(200,230,255,0.5)' : '2px solid transparent',
+                  borderBottom: '1px solid rgba(255,255,255,0.08)',
+                  transition: 'all 0.2s',
+                  textAlign: 'left',
+                }}
+                onMouseEnter={e => { if (!bbPlaying) e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = bbPlaying ? 'rgba(200,230,255,0.05)' : 'transparent'; }}
+              >
+                <span style={{
+                  fontSize: '10px', fontFamily: "'Space Mono', monospace",
+                  color: bbPlaying ? 'rgba(200,230,255,0.9)' : 'rgba(255,255,255,0.4)',
+                  width: '22px', textAlign: 'right', flexShrink: 0,
+                  animation: bbPlaying ? 'pulse 1.5s ease-in-out infinite' : 'none',
+                }}>
+                  {bbPlaying ? '◆' : '01'}
+                </span>
+                <span style={{
+                  fontSize: '12px', fontFamily: 'Georgia, serif', fontStyle: 'italic',
+                  color: bbPlaying ? '#fff' : 'rgba(255,255,255,0.55)',
+                  transition: 'color 0.2s',
+                }}>
+                  Diamond Drones Are a Girl's Best Friend
+                </span>
+                <span style={{
+                  marginLeft: 'auto', fontSize: '8px', letterSpacing: '0.3em',
+                  fontFamily: "'Space Mono', monospace", textTransform: 'uppercase',
+                  color: 'rgba(200,230,255,0.3)',
+                }}>
+                  Single
+                </span>
+              </div>
             </div>
 
-            {/* Album credit */}
+            {/* Credit */}
             <div style={{
               marginTop: '16px',
               fontSize: '9px', letterSpacing: '0.3em', fontFamily: "'Space Mono', monospace",
               textTransform: 'uppercase', color: 'rgba(255,255,255,0.1)',
             }}>
-              {ALBUM.title} · {ALBUM.artist} · {ALBUM.year}
+              Miss AL Simpson · 2026
             </div>
           </div>
         </div>
@@ -1181,7 +1179,7 @@ export default function DronesGateway() {
           <div style={{ animation: 'fadeUp 1s ease 0.6s both', marginTop: '48px' }}>
             <button
               data-hoverable
-              onClick={() => navigate('/drones/cinema')}
+              onClick={() => navigate('/cinema')}
               style={{
                 background: 'rgba(255,255,255,0.08)',
                 border: '1px solid rgba(200,230,255,0.4)',
@@ -1235,7 +1233,7 @@ export default function DronesGateway() {
           ].map((row, ri) => (
             <div key={ri} style={{ display: 'flex', width: 'max-content', animation: `${row.anim} ${row.dur} linear infinite` }}>
               {[...row.imgs, ...row.imgs].map((src, i) => (
-                <img key={`r${ri}-${i}`} src={src} alt="" loading="lazy" style={{
+                <img key={`r${ri}-${i}`} src={src} alt="Diamond Drone artwork" loading="lazy" style={{
                   width: 'clamp(100px, 12vw, 160px)', height: 'clamp(100px, 12vw, 160px)', objectFit: 'cover',
                   marginRight: '6px', borderRadius: '2px',
                 }} />
@@ -1428,7 +1426,7 @@ export default function DronesGateway() {
               <div
                 key={id}
                 data-hoverable
-                onClick={() => navigate('/drones/lounge')}
+                onClick={() => navigate('/lounge')}
                 style={{
                   position: 'relative',
                   aspectRatio: '16/9',
@@ -1472,7 +1470,7 @@ export default function DronesGateway() {
           }}>
             <button
               data-hoverable
-              onClick={() => navigate('/drones/lounge')}
+              onClick={() => navigate('/lounge')}
               style={{
                 background: 'transparent',
                 border: '1px solid rgba(255,255,255,0.15)',
@@ -1521,13 +1519,13 @@ export default function DronesGateway() {
             fontFamily: 'Georgia, serif', fontStyle: 'italic',
             color: 'rgba(255,255,255,0.4)', margin: '0 0 20px',
           }}>
-            Three collections form the universe — 1000 generative Diamond Drones, 120 Drone Blondes photographs, and an 11-track album. A complete artistic world by Miss AL Simpson.
+            Three collections form the universe — 1000 generative Diamond Drones, 120 Drone Blondes photographs, and the debut single. A complete artistic world by Miss AL Simpson.
           </p>
           <div style={{
             fontSize: '10px', letterSpacing: '0.3em', fontFamily: "'Space Mono', monospace",
             color: 'rgba(255,255,255,0.2)',
           }}>
-            1000 Diamond Drones {'\u00B7'} 120 Drone Blondes {'\u00B7'} The Album
+            1000 Diamond Drones {'\u00B7'} 120 Drone Blondes {'\u00B7'} The Single
           </div>
         </div>
       </section>
@@ -1634,7 +1632,7 @@ export default function DronesGateway() {
         }}>
           <button
             data-hoverable
-            onClick={() => navigate('/drones/lore')}
+            onClick={() => navigate('/lore')}
             style={{
               background: 'transparent',
               border: '1px solid rgba(255,255,255,0.15)',

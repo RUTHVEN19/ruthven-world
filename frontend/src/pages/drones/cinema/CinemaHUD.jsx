@@ -168,71 +168,95 @@ export default function CinemaHUD({ activeFilmIndex, onSelectFilm, onNavigate, o
             const available = !!film.file;
 
             return (
-              <button
-                key={i}
-                onClick={() => available && onSelectFilm?.(i)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  width: '100%',
-                  padding: '12px 20px',
-                  background: isActive ? 'rgba(200,230,255,0.06)' : 'transparent',
-                  border: 'none',
-                  borderBottom: '1px solid rgba(255,255,255,0.03)',
-                  cursor: available ? 'pointer' : 'default',
-                  opacity: available ? 1 : 0.35,
-                  textAlign: 'left',
-                  transition: 'background 0.2s',
-                }}
-                onMouseEnter={e => {
-                  if (available) e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = isActive ? 'rgba(200,230,255,0.06)' : 'transparent';
-                }}
-              >
-                <span style={{
-                  fontFamily: MONO,
-                  fontSize: '10px',
-                  letterSpacing: '1px',
-                  color: isActive ? 'rgba(200,230,255,0.7)' : 'rgba(255,255,255,0.25)',
-                  minWidth: '20px',
-                }}>
-                  {film.track}
-                </span>
-                <span style={{
-                  fontFamily: '"Anton", sans-serif',
-                  fontSize: '12px',
-                  letterSpacing: '0.5px',
-                  textTransform: 'uppercase',
-                  color: isActive ? 'rgba(200,230,255,0.9)' : (available ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.3)'),
-                  flex: 1,
-                }}>
-                  {film.title}
-                </span>
-                {isActive && (
+              <div key={i}>
+                <button
+                  onClick={() => available && onSelectFilm?.(i)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    width: '100%',
+                    padding: '12px 20px',
+                    background: isActive ? 'rgba(200,230,255,0.06)' : 'transparent',
+                    border: 'none',
+                    borderBottom: '1px solid rgba(255,255,255,0.03)',
+                    cursor: available ? 'pointer' : 'default',
+                    opacity: available ? 1 : 0.35,
+                    textAlign: 'left',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={e => {
+                    if (available) e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = isActive ? 'rgba(200,230,255,0.06)' : 'transparent';
+                  }}
+                >
                   <span style={{
                     fontFamily: MONO,
-                    fontSize: '8px',
-                    color: 'rgba(200,230,255,0.5)',
+                    fontSize: '10px',
                     letterSpacing: '1px',
+                    color: isActive ? 'rgba(200,230,255,0.7)' : 'rgba(255,255,255,0.25)',
+                    minWidth: '20px',
                   }}>
-                    ▶
+                    {film.track}
                   </span>
-                )}
-                {!available && (
                   <span style={{
-                    fontFamily: MONO,
-                    fontSize: '7px',
-                    color: 'rgba(255,255,255,0.2)',
-                    letterSpacing: '1px',
+                    fontFamily: '"Anton", sans-serif',
+                    fontSize: '12px',
+                    letterSpacing: '0.5px',
                     textTransform: 'uppercase',
+                    color: isActive ? 'rgba(200,230,255,0.9)' : (available ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.3)'),
+                    flex: 1,
                   }}>
-                    Soon
+                    {film.title}
                   </span>
+                  {isActive && (
+                    <span style={{
+                      fontFamily: MONO,
+                      fontSize: '8px',
+                      color: 'rgba(200,230,255,0.5)',
+                      letterSpacing: '1px',
+                    }}>
+                      ▶
+                    </span>
+                  )}
+                  {!available && (
+                    <span style={{
+                      fontFamily: MONO,
+                      fontSize: '7px',
+                      color: 'rgba(255,255,255,0.2)',
+                      letterSpacing: '1px',
+                      textTransform: 'uppercase',
+                    }}>
+                      Soon
+                    </span>
+                  )}
+                </button>
+                {film.opensea && (
+                  <a
+                    href={film.opensea}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                    style={{
+                      display: 'block',
+                      padding: '0 20px 10px 50px',
+                      fontFamily: MONO,
+                      fontSize: '8px',
+                      letterSpacing: '2px',
+                      textTransform: 'uppercase',
+                      color: 'rgba(200,230,255,0.4)',
+                      textDecoration: 'none',
+                      transition: 'color 0.2s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'rgba(200,230,255,0.8)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(200,230,255,0.4)'}
+                  >
+                    View on OpenSea ↗
+                  </a>
                 )}
-              </button>
+              </div>
             );
           })}
         </div>

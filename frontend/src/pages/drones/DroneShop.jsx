@@ -151,6 +151,11 @@ export default function DroneShop() {
       <Helmet>
         <title>Diamond Drones Vault — 1000 Drones · 5 Diamond Cuts</title>
         <meta name="description" content="1000 unique generative diamond drones at 4K resolution across 5 diamond cuts." />
+        <meta property="og:title" content="Diamond Drones Vault — 1000 Drones™" />
+        <meta property="og:description" content="1000 unique generative diamond drones at 4K resolution across 5 diamond cuts." />
+        <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+        <meta property="og:url" content="https://diamonddrones.world/vault" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
       <style>{keyframes}</style>
 
@@ -274,6 +279,28 @@ export default function DroneShop() {
           }}>
             {zone.tagline}
           </p>
+          <a
+            href="https://opensea.io/collection/diamond-drones"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-block',
+              marginTop: '20px',
+              padding: '10px 24px',
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '10px',
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              color: 'rgba(200,230,255,0.7)',
+              border: '1px solid rgba(200,230,255,0.2)',
+              background: 'rgba(200,230,255,0.06)',
+              textDecoration: 'none',
+              transition: 'all 0.3s',
+              animation: 'fadeUp 0.8s ease 0.3s both',
+            }}
+          >
+            View on OpenSea
+          </a>
         </div>
       </div>
 

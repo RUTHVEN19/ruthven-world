@@ -64,6 +64,12 @@ export default function DroneBoudoir() {
       <>
         <Helmet>
           <title>The Drone Blondes | Miss AL Simpson</title>
+          <meta name="description" content="120 unique Drone Blondes — AI ink interventions on B&W photography by Miss AL Simpson." />
+          <meta property="og:title" content="The Drone Blondes — Diamond Drones™" />
+          <meta property="og:description" content="120 unique Drone Blondes. AI ink interventions on B&W photography by Miss AL Simpson." />
+          <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+          <meta property="og:url" content="https://diamonddrones.world/lounge" />
+          <meta name="twitter:card" content="summary_large_image" />
         </Helmet>
         <style>{`
           @keyframes blondeFadeUp {
@@ -103,6 +109,27 @@ export default function DroneBoudoir() {
             }}>
               AI Ink Interventions with hand-drawn bespoke tattoos by Miss AL Simpson
             </div>
+            <a
+              href="https://opensea.io/collection/drone-blondes"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-block',
+                marginTop: '20px',
+                padding: '10px 24px',
+                fontFamily: '"Space Mono", monospace',
+                fontSize: '10px',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                color: 'rgba(200,230,255,0.7)',
+                border: '1px solid rgba(200,230,255,0.2)',
+                background: 'rgba(200,230,255,0.06)',
+                textDecoration: 'none',
+                transition: 'all 0.3s',
+              }}
+            >
+              View on OpenSea
+            </a>
           </div>
 
           {/* Image grid */}
@@ -114,15 +141,23 @@ export default function DroneBoudoir() {
             margin: '0 auto',
           }}>
             {BLONDE_IDS.map((id, i) => (
-              <div key={id} style={{
-                position: 'relative',
-                aspectRatio: '1',
-                overflow: 'hidden',
-                background: '#1a1a1e',
-                animation: `blondeFadeUp 0.6s ease ${i * 0.05}s both`,
-              }}>
+              <a
+                key={id}
+                href={`https://opensea.io/assets/ethereum/0x505348E10069D5083842532f5F5FA432631d109e/${id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  position: 'relative',
+                  aspectRatio: '1',
+                  overflow: 'hidden',
+                  background: '#1a1a1e',
+                  animation: `blondeFadeUp 0.6s ease ${i * 0.05}s both`,
+                  display: 'block',
+                  textDecoration: 'none',
+                }}
+              >
                 <img
-                  src={`/marilyns/Drone%20Blonde%20${id}.png`}
+                  src={`/marilyns/web/Drone%20Blonde%20${id}.jpg`}
                   alt={`Drone Blonde #${id}`}
                   loading="lazy"
                   style={{
@@ -143,7 +178,7 @@ export default function DroneBoudoir() {
                 }}>
                   #{id}
                 </div>
-              </div>
+              </a>
             ))}
           </div>
 
@@ -175,6 +210,27 @@ export default function DroneBoudoir() {
         <Helmet>
           <title>The Lounge — Browse All 120 Drone Blondes | Miss AL Simpson</title>
           <meta name="description" content="Browse all 120 Drone Blonde NFTs with traits, filters, and rarity data." />
+          <meta property="og:title" content="Browse All 120 Drone Blondes — Diamond Drones™" />
+          <meta property="og:description" content="Browse all 120 Drone Blonde NFTs with traits, filters, and rarity data." />
+          <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+          <meta property="og:url" content="https://diamonddrones.world/lounge" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <script type="application/ld+json">{JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "The Drone Blondes — 120 Unique AI Ink Interventions",
+            "url": "https://diamonddrones.world/lounge",
+            "description": "120 unique 1/1 AI ink interventions on black-and-white photography by Miss AL Simpson.",
+            "mainEntity": {
+              "@type": "VisualArtwork",
+              "name": "Drone Blondes",
+              "artMedium": "AI Ink Intervention on B&W photography",
+              "artform": "NFT",
+              "creator": { "@type": "Person", "name": "Miss AL Simpson" },
+              "numberOfItems": 120,
+              "description": "120 unique Drone Blondes. Each features hand-drawn bespoke tattoos — AI ink interventions on black-and-white photography."
+            }
+          })}</script>
         </Helmet>
         <BoudoirBrowser onSwitch3D={() => setViewMode('3d')} />
       </>
@@ -186,6 +242,11 @@ export default function DroneBoudoir() {
       <Helmet>
         <title>The Drone Blondes | Miss AL Simpson</title>
         <meta name="description" content="Enter The Drone Blondes — an immersive gallery showcasing 120 unique 1/1 AI Ink Interventions by Miss AL Simpson." />
+        <meta property="og:title" content="The Drone Blondes — Diamond Drones™" />
+        <meta property="og:description" content="An immersive 3D gallery showcasing 120 unique 1/1 AI Ink Interventions by Miss AL Simpson." />
+        <meta property="og:image" content="https://diamonddrones.world/og-image.png" />
+        <meta property="og:url" content="https://diamonddrones.world/lounge" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
       <div style={{
