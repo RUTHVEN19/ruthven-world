@@ -9,12 +9,13 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Allow localhost in dev, ruthven.world in production
     allowed_origins = [
         'http://localhost:5173',
         'http://localhost:3000',
         'https://ruthven.world',
         'https://www.ruthven.world',
+        'https://diamonddrones.world',
+        'https://www.diamonddrones.world',
     ]
     CORS(app, origins=allowed_origins)
 
@@ -38,6 +39,12 @@ def create_app():
     from routes.deploy import deploy_bp
     from routes.wishlist import wishlist_bp
     from routes.video_generate import video_gen_bp
+    from routes.album import album_bp
+    from routes.print import print_bp
+    from routes.download import download_bp
+    from routes.commission import commission_bp
+    from routes.instagram import instagram_bp
+    from routes.androids import androids_bp
 
     app.register_blueprint(brands_bp, url_prefix='/api')
     app.register_blueprint(collections_bp, url_prefix='/api')
@@ -47,6 +54,12 @@ def create_app():
     app.register_blueprint(deploy_bp, url_prefix='/api')
     app.register_blueprint(wishlist_bp, url_prefix='/api')
     app.register_blueprint(video_gen_bp, url_prefix='/api')
+    app.register_blueprint(album_bp, url_prefix='/api')
+    app.register_blueprint(print_bp, url_prefix='/api')
+    app.register_blueprint(download_bp, url_prefix='/api')
+    app.register_blueprint(commission_bp, url_prefix='/api')
+    app.register_blueprint(instagram_bp, url_prefix='/api')
+    app.register_blueprint(androids_bp, url_prefix='/api')
 
     # Serve uploaded files
     @app.route('/uploads/<path:filename>')
