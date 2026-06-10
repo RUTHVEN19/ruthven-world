@@ -16,6 +16,8 @@ def create_app():
         'https://www.ruthven.world',
         'https://diamonddrones.world',
         'https://www.diamonddrones.world',
+        'https://porcelainandroid.com',
+        'https://www.porcelainandroid.com',
     ]
     CORS(app, origins=allowed_origins)
 
@@ -45,6 +47,7 @@ def create_app():
     from routes.commission import commission_bp
     from routes.instagram import instagram_bp
     from routes.androids import androids_bp
+    from routes.android_print import android_print_bp
 
     app.register_blueprint(brands_bp, url_prefix='/api')
     app.register_blueprint(collections_bp, url_prefix='/api')
@@ -60,6 +63,7 @@ def create_app():
     app.register_blueprint(commission_bp, url_prefix='/api')
     app.register_blueprint(instagram_bp, url_prefix='/api')
     app.register_blueprint(androids_bp, url_prefix='/api')
+    app.register_blueprint(android_print_bp, url_prefix='/api')
 
     # Serve uploaded files
     @app.route('/uploads/<path:filename>')
