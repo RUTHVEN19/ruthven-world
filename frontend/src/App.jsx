@@ -1,6 +1,8 @@
-import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
+
+const isAndroidsDomain = ['porcelainandroid.com', 'www.porcelainandroid.com', 'porcelain-android.netlify.app'].includes(window.location.hostname);
 
 // ── Lazy-loaded routes (code-split per page) ──
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -34,7 +36,9 @@ const AndroidsNightclub = lazy(() => import('./pages/androids/AndroidsCinema'));
 const AndroidsGraffiti = lazy(() => import('./pages/androids/AndroidsGraffiti'));
 const AndroidsPrintShop = lazy(() => import('./pages/androids/AndroidsPrintShop'));
 const AndroidsLore = lazy(() => import('./pages/androids/AndroidsLore'));
+const RestrictedZone = lazy(() => import('./components/RestrictedZone'));
 const AndroidsSocial = lazy(() => import('./pages/androids/AndroidsSocial'));
+const AndroidsAbout = lazy(() => import('./pages/androids/AndroidsAbout'));
 
 function Layout({ children }) {
   return (
@@ -79,29 +83,49 @@ export default function App() {
         <Route path="signal" element={<RuthvenSignal />} />
       </Route>
 
-      {/* ═══ DIAMOND DRONES WORLD ═══ */}
-      <Route path="/" element={<ErrorBoundary><DronesWorld /></ErrorBoundary>}>
-        <Route index element={<DiamondDronesHome />} />
-        <Route path="vault" element={<DroneMuseum />} />
-        <Route path="cinema" element={<DroneCinema3D />} />
-        <Route path="studio" element={<DroneStudio />} />
-        <Route path="lore" element={<DroneLore />} />
-        <Route path="lounge" element={<DroneBoudoir />} />
-        <Route path="prints" element={<DronePrintShop />} />
-        <Route path="contact" element={<DroneContact />} />
-      </Route>
+      {/* ═══ DIAMOND DRONES WORLD (diamonddrones.world) ═══ */}
+      {!isAndroidsDomain && (
+        <Route path="/" element={<ErrorBoundary><DronesWorld /></ErrorBoundary>}>
+          <Route index element={<DiamondDronesHome />} />
+          <Route path="vault" element={<DroneMuseum />} />
+          <Route path="cinema" element={<DroneCinema3D />} />
+          <Route path="studio" element={<DroneStudio />} />
+          <Route path="lore" element={<DroneLore />} />
+          <Route path="lounge" element={<DroneBoudoir />} />
+          <Route path="prints" element={<DronePrintShop />} />
+          <Route path="contact" element={<DroneContact />} />
+        </Route>
+      )}
 
       {/* ═══ PORCELAIN ANDROIDS WORLD ═══ */}
-      <Route path="/androids" element={<ErrorBoundary><AndroidsWorld /></ErrorBoundary>}>
-        <Route index element={<PorcelainAndroidsHome />} />
-        <Route path="originals" element={<AndroidsOriginals />} />
-        <Route path="manga-machine" element={<MangaMachine />} />
-        <Route path="nightclub" element={<AndroidsNightclub />} />
-        <Route path="graffiti" element={<AndroidsGraffiti />} />
-        <Route path="prints" element={<AndroidsPrintShop />} />
-        <Route path="lore" element={<AndroidsLore />} />
-        <Route path="social" element={<AndroidsSocial />} />
-      </Route>
+      {/* On porcelainandroid.com: mounted at / */}
+      {isAndroidsDomain && (
+        <Route path="/" element={<ErrorBoundary><AndroidsWorld /></ErrorBoundary>}>
+          <Route index element={<PorcelainAndroidsHome />} />
+          <Route path="originals" element={<RestrictedZone zoneName="PORCELAIN ANDROIDS" zoneNameJp="磁器"><AndroidsOriginals /></RestrictedZone>} />
+          <Route path="manga-machine" element={<MangaMachine />} />
+          <Route path="nightclub" element={<AndroidsNightclub />} />
+          <Route path="graffiti" element={<AndroidsGraffiti />} />
+          <Route path="prints" element={<RestrictedZone zoneName="PRINT ARCHIVE" zoneNameJp="印刷"><AndroidsPrintShop /></RestrictedZone>} />
+          <Route path="lore" element={<AndroidsLore />} />
+          <Route path="social" element={<AndroidsSocial />} />
+          <Route path="about" element={<AndroidsAbout />} />
+        </Route>
+      )}
+      {/* On diamonddrones.world: mounted at /androids */}
+      {!isAndroidsDomain && (
+        <Route path="/androids" element={<ErrorBoundary><AndroidsWorld /></ErrorBoundary>}>
+          <Route index element={<PorcelainAndroidsHome />} />
+          <Route path="originals" element={<RestrictedZone zoneName="PORCELAIN ANDROIDS" zoneNameJp="磁器"><AndroidsOriginals /></RestrictedZone>} />
+          <Route path="manga-machine" element={<MangaMachine />} />
+          <Route path="nightclub" element={<AndroidsNightclub />} />
+          <Route path="graffiti" element={<AndroidsGraffiti />} />
+          <Route path="prints" element={<RestrictedZone zoneName="PRINT ARCHIVE" zoneNameJp="印刷"><AndroidsPrintShop /></RestrictedZone>} />
+          <Route path="lore" element={<AndroidsLore />} />
+          <Route path="social" element={<AndroidsSocial />} />
+          <Route path="about" element={<AndroidsAbout />} />
+        </Route>
+      )}
 
       {/* ═══ COMMISSION ROOMS ═══ */}
       <Route path="/commission/:roomId" element={<CommissionRoom />} />
