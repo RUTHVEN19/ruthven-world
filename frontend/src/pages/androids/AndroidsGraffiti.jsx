@@ -23,9 +23,9 @@ const GRAFFITI_IMAGES = COLLAGES.map((c, i) => ({
 
 // ── Detail crops scattered along corridor walls ──
 const DETAIL_CROPS = [
-  'PINK 1.png', 'PINK 2.png', 'PINK 3.png', 'PINK 4.png', 'PINK 5.png',
-  'NEON CHRUB 1.png', 'NEON CHERUB 2.png', 'NEON CHERUB 3.png', 'NEON CHERUB CHAOS 4.png', 'NEON CHRUB CHAOS 5.png',
-  'RED ROUGE 1.png', 'RED ROUGE 2.png', 'RED ROUGE 3.png', 'RED ROUGE 4.png', 'RED ROUGE 5.png', 'RED ROUGE 6.png',
+  'PINK 1.jpg', 'PINK 2.jpg', 'PINK 3.jpg', 'PINK 4.jpg', 'PINK 5.jpg',
+  'NEON CHRUB 1.jpg', 'NEON CHERUB 2.jpg', 'NEON CHERUB 3.jpg', 'NEON CHERUB CHAOS 4.jpg', 'NEON CHRUB CHAOS 5.jpg',
+  'RED ROUGE 1.jpg', 'RED ROUGE 2.jpg', 'RED ROUGE 3.jpg', 'RED ROUGE 4.jpg', 'RED ROUGE 5.jpg', 'RED ROUGE 6.jpg',
 ].map(f => `/androids/graffiti/details/${f}`);
 
 // ── Layout ──
