@@ -17,7 +17,7 @@ export const SITE_META = {
 export const COLLECTIONS = {
   diamondDrones: { totalSupply: 1000, label: 'Diamond Drones' },
   droneBlondes:  { totalSupply: 120,  label: 'Drone Blondes' },
-  album:         { label: 'The Album' },
+  album:         { label: 'The Single' },
 };
 
 // ── Hero copy ────────────────────────────────────────────────────────────────
@@ -63,8 +63,8 @@ export const ZONES = [
     numeral: 'II',
     title: 'DRONE CINEMA',
     subtitle: 'The Films',
-    tagline: 'The films by Miss AL Simpson — collected on SuperRare, exhibited and sold at Sotheby\'s, one shown in LA.',
-    description: 'The films that inspired the album. Each film was created by Miss AL Simpson, collected on SuperRare, exhibited and sold at Sotheby\'s, with one exhibited in LA. The soundtracks became the eleven tracks of The Drones of Suburbia album.',
+    tagline: 'The films by Miss AL Simpson — premiering at diamonddrones.world, on-chain on Ethereum.',
+    description: 'Each film was created by Miss AL Simpson and premiered at diamonddrones.world. The soundtrack — Diamond Drones Are a Girl\'s Best Friend — is available now as a single. Now on-chain on Ethereum via OpenSea.',
     image: '/dd-cinema.png',
     heroStatement: 'Cinema as collectible property.',
   },
@@ -73,9 +73,9 @@ export const ZONES = [
     nav: 'Studio',
     numeral: 'III',
     title: 'RECORDING STUDIO',
-    subtitle: 'The Album',
-    tagline: 'Eleven tracks. Eleven films. One album. The soundtrack to a world where glamour took flight and the diamond became a machine.',
-    description: 'The complete Drones of Suburbia soundtrack. 11 original tracks by Miss AL Simpson.',
+    subtitle: 'The Single',
+    tagline: 'Diamond Drones Are a Girl\'s Best Friend. The debut single by Miss AL Simpson.',
+    description: 'The debut single from the Diamond Drones cinematic universe. By Miss AL Simpson.',
     image: '/dd-shop.png',
     heroStatement: 'Sound as sovereign object.',
   },
@@ -129,7 +129,7 @@ export const ABOUT = {
     title: 'About the Collection',
     body: [
       'DIAMOND DRONES ARE A GIRL\'S BEST FRIEND™ is the final New York chapter of The Drones of Suburbia — a major limited edition release combining sound, AI image, and drone technology into one unified collector object.',
-      'Three drops form the universe: 1000 generative Diamond Drones, 120 Drone Blondes photographs, and an 11-track album — each minted independently and owned outright by the collector.',
+      'Three drops form the universe: 1000 generative Diamond Drones, 120 Drone Blondes photographs, and the debut single — each minted independently and owned outright by the collector.',
       'Token-gated 4K archival downloads. An immersive world at dronesofsuburbia.com. One universe.',
     ],
   },
@@ -201,7 +201,7 @@ export const LORE_PAGE = {
       {
         city: 'New York City',
         year: '2025/2026',
-        text: 'Four new films on SuperRare Art \u2014 \u201cDrone Driver\u201d, \u201cSuburbia Was Never Out There\u201d, \u201cSurveillance Subway\u201d and \u201cHeist\u201d. The Drones of Suburbia\u2122 in the streets of New York.',
+        text: 'Four new films \u2014 \u201cDrone Driver\u201d, \u201cSuburbia Was Never Out There\u201d, \u201cSurveillance Subway\u201d and \u201cHeist\u201d. The Drones of Suburbia\u2122 in the streets of New York.',
       },
     ],
   },
