@@ -3,6 +3,8 @@ import { lazy, Suspense } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 
 const isAndroidsDomain = ['porcelainandroid.com', 'www.porcelainandroid.com', 'porcelain-android.netlify.app'].includes(window.location.hostname);
+const isRuthvenDomain = ['ruthven.world', 'www.ruthven.world'].includes(window.location.hostname);
+const isArtistDomain = ['missalsimpson.com', 'www.missalsimpson.com'].includes(window.location.hostname);
 
 // ── Lazy-loaded routes (code-split per page) ──
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -16,6 +18,7 @@ const RuthvenGateway = lazy(() => import('./pages/RuthvenGateway'));
 const RuthvenStudio = lazy(() => import('./pages/RuthvenStudio'));
 const RuthvenSignal = lazy(() => import('./pages/RuthvenSignal'));
 const RuthvenArtist = lazy(() => import('./pages/RuthvenArtist'));
+const RuthvenPrintShop = lazy(() => import('./pages/RuthvenPrintShop'));
 const BatchStudio = lazy(() => import('./pages/BatchStudio'));
 const CommissionRoom = lazy(() => import('./pages/CommissionRoom'));
 const CommissionAdmin = lazy(() => import('./pages/CommissionAdmin'));
@@ -39,6 +42,17 @@ const AndroidsLore = lazy(() => import('./pages/androids/AndroidsLore'));
 const RestrictedZone = lazy(() => import('./components/RestrictedZone'));
 const AndroidsSocial = lazy(() => import('./pages/androids/AndroidsSocial'));
 const AndroidsAbout = lazy(() => import('./pages/androids/AndroidsAbout'));
+const PortfolioSite = lazy(() => import('./pages/PortfolioSite'));
+const PortfolioHome = lazy(() => import('./pages/portfolio/PortfolioHome'));
+const PortfolioWorks = lazy(() => import('./pages/portfolio/PortfolioWorks'));
+const PortfolioProjects = lazy(() => import('./pages/portfolio/PortfolioProjects'));
+const PortfolioProject = lazy(() => import('./pages/portfolio/PortfolioProject'));
+const PortfolioAbout = lazy(() => import('./pages/portfolio/PortfolioAbout'));
+const PortfolioCinema = lazy(() => import('./pages/portfolio/PortfolioCinema'));
+const PortfolioWorlds = lazy(() => import('./pages/portfolio/PortfolioWorlds'));
+const PortfolioOriginals = lazy(() => import('./pages/portfolio/PortfolioOriginals'));
+const PortfolioExhibitions = lazy(() => import('./pages/portfolio/PortfolioExhibitions'));
+const PortfolioFeed = lazy(() => import('./pages/portfolio/PortfolioFeed'));
 
 function Layout({ children }) {
   return (
@@ -81,10 +95,35 @@ export default function App() {
         <Route path="studio" element={<RuthvenStudio />} />
         <Route path="artist" element={<RuthvenArtist />} />
         <Route path="signal" element={<RuthvenSignal />} />
+        <Route path="prints" element={<RuthvenPrintShop />} />
       </Route>
 
+      {/* On ruthven.world: root serves the Ruthven world */}
+      {isRuthvenDomain && (
+        <Route path="/" element={<Navigate to="/ruthven" replace />} />
+      )}
+
+      {/* ═══ ARTIST SITE — Miss AL Simpson (missalsimpson.com) ═══ */}
+      <Route path="/portfolio" element={<ErrorBoundary><PortfolioSite /></ErrorBoundary>}>
+        <Route index element={<PortfolioHome />} />
+        <Route path="cinema" element={<PortfolioCinema />} />
+        <Route path="worlds" element={<PortfolioWorlds />} />
+        <Route path="originals" element={<PortfolioOriginals />} />
+        <Route path="works" element={<PortfolioWorks />} />
+        <Route path="projects" element={<PortfolioProjects />} />
+        <Route path="projects/:slug" element={<PortfolioProject />} />
+        <Route path="exhibitions" element={<PortfolioExhibitions />} />
+        <Route path="feed" element={<PortfolioFeed />} />
+        <Route path="about" element={<PortfolioAbout />} />
+      </Route>
+
+      {/* On missalsimpson.com: root serves the artist site */}
+      {isArtistDomain && (
+        <Route path="/" element={<Navigate to="/portfolio" replace />} />
+      )}
+
       {/* ═══ DIAMOND DRONES WORLD (diamonddrones.world) ═══ */}
-      {!isAndroidsDomain && (
+      {!isAndroidsDomain && !isRuthvenDomain && !isArtistDomain && (
         <Route path="/" element={<ErrorBoundary><DronesWorld /></ErrorBoundary>}>
           <Route index element={<DiamondDronesHome />} />
           <Route path="vault" element={<DroneMuseum />} />
