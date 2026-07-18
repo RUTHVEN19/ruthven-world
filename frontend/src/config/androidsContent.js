@@ -138,6 +138,14 @@ export const MINT_LINKS = {
   mangaMachine: '', // On-chain contract address
 };
 
+// ── On-chain collection: THE MANGA MACHINE - PORCELAIN ANDROIDS (Ethereum) ──
+// 116 tokens: 1–50 Porcelain Androids · 51–83 Manga Doubles · 84–116 Transformations.
+export const PORCELAIN_CONTRACT = '0xE7C62655148B86f8829608378C638a03E73342bA';
+export const openseaTokenUrl = (tokenId) =>
+  `https://opensea.io/assets/ethereum/${PORCELAIN_CONTRACT}/${tokenId}`;
+// STILLS[i] (Porcelain Androids gallery) maps to on-chain token i + 1.
+export const stillTokenId = (index) => index + 1;
+
 // ── Domain-aware base path ──
 const isAndroidsDomain = ['porcelainandroid.com', 'www.porcelainandroid.com', 'porcelain-android.netlify.app'].includes(window.location.hostname);
 export const ANDROIDS_BASE = isAndroidsDomain ? '' : '/androids';
@@ -150,7 +158,7 @@ export const ZONES = [
   { path: `${ANDROIDS_BASE}/manga-machine`, label: 'The Manga Machine' },
   { path: `${ANDROIDS_BASE}/nightclub`, label: 'The Nightclub' },
   { path: `${ANDROIDS_BASE}/lore`, label: 'The Lore' },
-  { path: `${ANDROIDS_BASE}/graffiti`, label: 'The Originals' },
+  { path: `${ANDROIDS_BASE}/graffiti`, label: 'Graffiti Wall' },
   { path: `${ANDROIDS_BASE}/prints`, label: 'Print Archive', locked: !MACHINE_DEPLETED },
   { path: `${ANDROIDS_BASE}/social`, label: 'Social Wall' },
   { path: `${ANDROIDS_BASE}/about`, label: 'About' },

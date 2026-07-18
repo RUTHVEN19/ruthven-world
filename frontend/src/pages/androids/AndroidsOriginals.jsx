@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { STILLS, DISCOVERY_FRAGMENTS, ANDROIDS_BASE } from '../../config/androidsContent';
+import { STILLS, DISCOVERY_FRAGMENTS, ANDROIDS_BASE, openseaTokenUrl, stillTokenId } from '../../config/androidsContent';
 
 // Warm amber palette
 const FRAME_COLORS = ['#ffd700', '#ff9d00', '#e8a87c', '#d4a574', '#c9956b'];
@@ -202,6 +202,16 @@ export default function AndroidsOriginals() {
                     <div className="ao-card-sub">
                       {s.mintable ? 'MANGA MACHINE ANDROID' : `GENESIS #${String(i + 1).padStart(3, '0')}`}
                     </div>
+                    <a
+                      className="ao-card-opensea"
+                      href={openseaTokenUrl(stillTokenId(i))}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <span style={{ fontFamily: 'serif', fontSize: '13px' }}>マシン</span>
+                      MINT ON OPENSEA ↗
+                    </a>
                     {s.mintable ? (
                       <button
                         className="ao-card-mint-link"
@@ -344,14 +354,26 @@ export default function AndroidsOriginals() {
                 </div>
               </div>
 
-              {/* CTA — enter the Manga Machine with this android */}
-              <button
-                className="ao-cta-machine"
-                onClick={() => handleMint(lightbox)}
-              >
-                <span style={{ fontFamily: 'serif', fontSize: '16px' }}>マシン</span>
-                <span>ENTER THE MACHINE</span>
-              </button>
+              {/* CTAs — mint on OpenSea + enter the Manga Machine */}
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '8px' }}>
+                <a
+                  className="ao-cta-mint"
+                  href={openseaTokenUrl(stillTokenId(lightbox))}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <span style={{ fontFamily: 'serif', fontSize: '16px' }}>マシン</span>
+                  <span>MINT ON OPENSEA ↗</span>
+                </a>
+                <button
+                  className="ao-cta-machine"
+                  onClick={() => handleMint(lightbox)}
+                >
+                  <span style={{ fontFamily: 'serif', fontSize: '16px' }}>マシン</span>
+                  <span>ENTER THE MACHINE</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -502,7 +524,7 @@ export default function AndroidsOriginals() {
         /* Machine CTA */
         .ao-cta-machine {
           display: flex; align-items: center; justify-content: center; gap: 12px;
-          margin: 24px auto 0; padding: 14px 32px;
+          margin: 0; padding: 14px 32px;
           background: transparent;
           border: 1px solid rgba(255,45,120,0.3);
           color: #ff2d78; cursor: pointer;
@@ -560,6 +582,40 @@ export default function AndroidsOriginals() {
           background: rgba(255,215,0,0.15);
           border-color: #ffd700;
           box-shadow: 0 0 15px rgba(255,215,0,0.3);
+        }
+
+        /* MINT ON OPENSEA — primary collect button (card) */
+        .ao-card-opensea {
+          display: inline-flex; align-items: center; gap: 6px; margin-top: 8px;
+          padding: 6px 14px;
+          background: #ff2d78;
+          border: 1px solid #ff2d78;
+          color: #fff; cursor: pointer; text-decoration: none;
+          font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+          letter-spacing: 0.2em; text-transform: uppercase;
+          transition: all 0.3s;
+          box-shadow: 0 0 12px rgba(255,45,120,0.35);
+        }
+        .ao-card-opensea:hover {
+          background: #ff5192;
+          box-shadow: 0 0 22px rgba(255,45,120,0.6);
+          transform: translateY(-1px);
+        }
+        /* MINT ON OPENSEA — primary collect button (lightbox) */
+        .ao-cta-mint {
+          display: flex; align-items: center; justify-content: center; gap: 12px;
+          margin: 0; padding: 14px 32px;
+          background: #ff2d78;
+          border: 1px solid #ff2d78;
+          color: #fff; cursor: pointer; text-decoration: none;
+          font-family: 'Space Mono', monospace; font-size: 12px;
+          letter-spacing: 0.2em; text-transform: uppercase;
+          transition: all 0.3s;
+          box-shadow: 0 0 20px rgba(255,45,120,0.4);
+        }
+        .ao-cta-mint:hover {
+          background: #ff5192;
+          box-shadow: 0 0 34px rgba(255,45,120,0.6);
         }
 
         /* Neon brand sign */
