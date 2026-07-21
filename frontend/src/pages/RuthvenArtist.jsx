@@ -131,7 +131,7 @@ export default function RuthvenArtist() {
     <div className="relative min-h-screen" style={{ backgroundColor: '#001A10' }}>
       <Helmet>
         <title>The Artist — Ruthven</title>
-        <meta name="description" content="Meet the artist behind Ruthven — Miss AL Simpson, cryptoartist, painter, and walker of Scottish hills." />
+        <meta name="description" content="Meet Ruthven — painter, cryptoartist, and walker of Scottish hills." />
         <meta property="og:title" content="The Artist — Ruthven" />
         <meta property="og:description" content="Meet the artist behind Ruthven" />
       </Helmet>

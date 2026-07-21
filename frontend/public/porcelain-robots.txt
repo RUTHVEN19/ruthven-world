@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://porcelainandroid.com/sitemap.xml
+
+# AI search engines
+# See https://porcelainandroid.com/llms.txt for structured site information

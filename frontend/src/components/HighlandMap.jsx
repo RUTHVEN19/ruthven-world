@@ -61,8 +61,9 @@ const SMALL_ISLANDS = [
 
 const ALL_PATHS = [MAINLAND, LEWIS_HARRIS, SHETLAND, SKYE, MULL, ORKNEY, ...SMALL_ISLANDS];
 
-export default function HighlandMap({ nfts = [], onLocationSelect, activeLocation }) {
+export default function HighlandMap({ nfts = [], onLocationSelect, activeLocation, prints = [], onPrintSelect }) {
   const [hoveredLocation, setHoveredLocation] = useState(null);
+  const [hoveredPrint, setHoveredPrint] = useState(null);
 
   // Build a case-insensitive lookup: lowercase -> canonical name
   const locationLookup = useMemo(() => {
@@ -121,6 +122,10 @@ export default function HighlandMap({ nfts = [], onLocationSelect, activeLocatio
           <radialGradient id="selectedGlow" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.7" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="printGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#E8C66B" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#E8C66B" stopOpacity="0" />
           </radialGradient>
         </defs>
 
@@ -224,6 +229,45 @@ export default function HighlandMap({ nfts = [], onLocationSelect, activeLocatio
           );
         })}
 
+        {/* Print markers — purchasable prints, distinct gold diamonds */}
+        {prints.map(print => {
+          const isHovered = hoveredPrint === print.id;
+          return (
+            <g key={print.id} className="cursor-pointer"
+              onClick={() => onPrintSelect?.(print)}
+              onMouseEnter={() => setHoveredPrint(print.id)}
+              onMouseLeave={() => setHoveredPrint(null)}>
+              {/* soft glow */}
+              <circle cx={print.mx} cy={print.my} r={isHovered ? 9 : 6} fill="url(#printGlow)" />
+              {/* gold diamond marker */}
+              <rect
+                x={print.mx - 2.6} y={print.my - 2.6} width="5.2" height="5.2"
+                transform={`rotate(45 ${print.mx} ${print.my})`}
+                fill={isHovered ? '#FFE9A8' : '#E8C66B'}
+                stroke="rgba(0,40,26,0.7)" strokeWidth="0.5"
+                filter={isHovered ? 'url(#glow)' : undefined}
+                style={{ transition: 'all 0.2s ease' }} />
+            </g>
+          );
+        })}
+
+        {/* Print hover tooltip */}
+        {hoveredPrint && (() => {
+          const print = prints.find(p => p.id === hoveredPrint);
+          if (!print) return null;
+          const w = print.title.length * 3.4 + 14;
+          return (
+            <g style={{ pointerEvents: 'none' }}>
+              <rect x={print.mx - w/2} y={print.my - 22} width={w} height="11" rx="1"
+                fill="rgba(0,40,26,0.92)" stroke="rgba(232,198,107,0.4)" strokeWidth="0.5" />
+              <text x={print.mx} y={print.my - 14} textAnchor="middle" fill="#E8C66B" fontSize="5"
+                style={{ fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+                {print.title.toUpperCase()}
+              </text>
+            </g>
+          );
+        })()}
+
         {/* Hover tooltip */}
         {hoveredLocation && hoveredLocation !== activeLocation && (() => {
           const loc = LOCATION_COORDS[hoveredLocation];
@@ -251,6 +295,18 @@ export default function HighlandMap({ nfts = [], onLocationSelect, activeLocatio
 
         <text x="330" y="545" textAnchor="end" fill="rgba(0,232,150,0.05)" fontSize="5"
           style={{ fontFamily: 'monospace', letterSpacing: '0.2em' }}>RUTHVEN_SCOTLAND</text>
+
+        {/* Legend — only when prints are plotted */}
+        {prints.length > 0 && (
+          <g style={{ pointerEvents: 'none' }}>
+            <circle cx="24" cy="528" r="2" fill="#00E896" />
+            <text x="30" y="530" fill="rgba(255,255,255,0.3)" fontSize="5.5"
+              style={{ fontFamily: 'monospace', letterSpacing: '0.1em' }}>PAINTINGS</text>
+            <rect x="80" y="526" width="3.4" height="3.4" transform="rotate(45 81.7 527.7)" fill="#E8C66B" />
+            <text x="88" y="530" fill="rgba(255,255,255,0.3)" fontSize="5.5"
+              style={{ fontFamily: 'monospace', letterSpacing: '0.1em' }}>PRINTS</text>
+          </g>
+        )}
       </svg>
 
       {activeLocation && (

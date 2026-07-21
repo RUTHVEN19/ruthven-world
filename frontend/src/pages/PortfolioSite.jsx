@@ -1,13 +1,11 @@
-import { useState, useEffect, Suspense, lazy } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { PortfolioProvider } from './portfolio/PortfolioContext';
 import { c, serif, mono, SOCIALS } from './portfolio/portfolioStyle';
 
-const PortfolioGallery = lazy(() => import('./portfolio/PortfolioGallery'));
-
 const NAV = [
   { to: '/portfolio', label: 'Home', end: true },
+  // { to: '/portfolio/drop', label: 'Drop' }, // hidden for launch — re-enable when the Graffiti Stilettos drop is ready
   { to: '/portfolio/worlds', label: 'Worlds' },
   { to: '/portfolio/cinema', label: 'AI Cinema' },
   { to: '/portfolio/works', label: 'Works' },
@@ -18,35 +16,46 @@ const NAV = [
   { to: '/portfolio/about', label: 'About' },
 ];
 
-// The artist site. A quiet museum catalogue with one switch: flip the whole
-// thing into a walkable white-cube gallery of the same works (a room per
-// collection).
+// The artist site — a quiet museum catalogue.
 export default function PortfolioSite() {
-  const [gallery, setGallery] = useState(() => localStorage.getItem('portfolio-gallery') === '1');
   const { pathname } = useLocation();
 
-  // Home, the AI Cinema reel and the Worlds page are dark, cinematic, full-bleed
+  // Home, the AI Cinema room and the Worlds page are dark, cinematic, full-bleed
   // (films/covers behind white lettering); every other view stays on quiet paper.
-  const isCinema = pathname === '/portfolio/cinema' && !gallery;
-  const isWorlds = pathname === '/portfolio/worlds' && !gallery;
-  const isHome = pathname === '/portfolio' && !gallery;
-  const isDark = isHome || isCinema || isWorlds;
-  const fullBleed = isCinema || isWorlds;
+  const isCinema = pathname === '/portfolio/cinema';
+  const isWorlds = pathname === '/portfolio/worlds';
+  const isHome = pathname === '/portfolio';
+  const isShop = pathname === '/portfolio/shop';
+  const isDrift = pathname === '/portfolio/drift';
+  const isDrop = pathname === '/portfolio/drop';
+  const isDark = isHome || isShop || isCinema || isWorlds || isDrift || isDrop;
+  // Home is the flat editorial landing (constrained + footer); the immersive
+  // shop corridor and the other 3D routes stay full-bleed.
+  const fullBleed = isShop || isCinema || isWorlds || isDrift || isDrop;
   const pageBg = isDark ? '#05060a' : c.paper;
   const headerBg = isDark ? 'rgba(5,6,10,0.72)' : 'rgba(255,255,255,0.92)';
   const headerInk = isDark ? '#ffffff' : c.ink;
   const headerFaint = isDark ? 'rgba(255,255,255,0.6)' : c.faint;
   const headerLine = isDark ? 'rgba(255,255,255,0.16)' : c.line;
 
-  useEffect(() => { localStorage.setItem('portfolio-gallery', gallery ? '1' : '0'); }, [gallery]);
-  // Leaving the gallery when navigating museum links.
-  useEffect(() => { if (!gallery) document.body.style.overflow = ''; }, [gallery, pathname]);
-
   return (
     <PortfolioProvider>
       <Helmet>
-        <title>Miss AL Simpson — Works</title>
-        <meta name="description" content="The catalogue of Miss AL Simpson — cryptoartist. 1/1 works by year and the worlds she has built, 2019–present." />
+        {/* Brand default (Home/Originals/Projects use this; other pages override). */}
+        <title>Miss AL Simpson — Artist</title>
+        <meta name="description" content="Miss AL Simpson is an award-winning Scottish cryptoartist working at the threshold of collage, ink and machine intelligence. Exhibited and sold at Sotheby’s, New York, and Bonhams, London." />
+        <link rel="canonical" href={`https://missalsimpson.com${pathname}`} />
+        {/* Open Graph / Twitter — shared defaults for the artist site. */}
+        <meta property="og:site_name" content="Miss AL Simpson" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Miss AL Simpson — Scottish Cryptoartist" />
+        <meta property="og:description" content="Award-winning Scottish cryptoartist. Collage, ink and machine intelligence. Exhibited at Sotheby’s, New York, and Bonhams, London." />
+        <meta property="og:url" content={`https://missalsimpson.com${pathname}`} />
+        <meta property="og:image" content="https://missalsimpson.com/about-portrait.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Miss AL Simpson — Scottish Cryptoartist" />
+        <meta name="twitter:description" content="Award-winning Scottish cryptoartist. Collage, ink and machine intelligence." />
+        <meta name="twitter:image" content="https://missalsimpson.com/about-portrait.jpg" />
         <style>{`html,body{margin:0;background:${pageBg};}`}</style>
       </Helmet>
 
@@ -58,8 +67,9 @@ export default function PortfolioSite() {
           display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
           padding: '18px clamp(20px,5vw,56px)', gap: 24, flexWrap: 'wrap',
         }}>
-          <NavLink to="/portfolio" end style={{ textDecoration: 'none', color: headerInk }}>
-            <span style={{ fontFamily: serif, fontSize: 22, letterSpacing: 1, textTransform: 'uppercase' }}>Miss AL Simpson</span>
+          <NavLink to="/portfolio" end style={{ textDecoration: 'none', color: headerInk, display: 'flex', alignItems: 'center' }}>
+            {/* The logo art is white; invert it to black on the light (paper) pages. */}
+            <img src="/LOGO MISS.png" alt="Miss AL Simpson" style={{ height: 72, width: 'auto', display: 'block', filter: isDark ? 'none' : 'invert(1)' }} />
           </NavLink>
 
           <nav style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
@@ -68,46 +78,21 @@ export default function PortfolioSite() {
                 key={n.to}
                 to={n.to}
                 end={n.end}
-                onClick={() => setGallery(false)}
                 style={({ isActive }) => ({
                   fontFamily: mono, fontSize: 11, letterSpacing: 2, textTransform: 'uppercase',
                   textDecoration: 'none', paddingBottom: 3,
-                  color: isActive && !gallery ? headerInk : headerFaint,
-                  borderBottom: isActive && !gallery ? `1px solid ${headerInk}` : '1px solid transparent',
+                  color: isActive ? headerInk : headerFaint,
+                  borderBottom: isActive ? `1px solid ${headerInk}` : '1px solid transparent',
                 })}
               >
                 {n.label}
               </NavLink>
             ))}
-
-            {/* ── The toggle ── */}
-            <button
-              onClick={() => setGallery(v => !v)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
-                fontFamily: mono, fontSize: 10, letterSpacing: 2, textTransform: 'uppercase',
-                background: gallery ? headerInk : 'none', color: gallery ? pageBg : headerInk,
-                border: `1px solid ${headerInk}`, padding: '7px 14px', borderRadius: 999,
-                transition: 'all .25s',
-              }}
-              title="Switch between the catalogue and the walkable gallery"
-            >
-              <span style={{
-                width: 7, height: 7, borderRadius: '50%',
-                background: gallery ? pageBg : headerInk, display: 'inline-block',
-                boxShadow: gallery ? '0 0 8px rgba(255,255,255,0.9)' : 'none',
-              }} />
-              {gallery ? 'Exit gallery' : 'Enter gallery'}
-            </button>
           </nav>
         </header>
 
-        {/* ── Body: museum OR gallery ── */}
-        {gallery ? (
-          <Suspense fallback={<GalleryFallback />}>
-            <PortfolioGallery onExit={() => setGallery(false)} />
-          </Suspense>
-        ) : fullBleed ? (
+        {/* ── Body ── */}
+        {fullBleed ? (
           <main><Outlet /></main>
         ) : (
           <main style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(20px,5vw,56px) 120px' }}>
@@ -116,7 +101,7 @@ export default function PortfolioSite() {
         )}
 
         {/* ── Corporate footer ── */}
-        {!gallery && !fullBleed && <Footer />}
+        {!fullBleed && <Footer />}
       </div>
     </PortfolioProvider>
   );
@@ -136,7 +121,7 @@ function Footer() {
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gap: 'clamp(32px,5vh,52px)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 40, flexWrap: 'wrap' }}>
           <div style={{ maxWidth: 440 }}>
-            <div style={{ fontFamily: serif, fontSize: 22, letterSpacing: 1, textTransform: 'uppercase', color: ink }}>Miss AL Simpson</div>
+            <img src="/LOGO MISS.png" alt="Miss AL Simpson" style={{ height: 64, width: 'auto', display: 'block' }} />
             <p style={{ fontFamily: serif, fontSize: 14, lineHeight: 1.7, color: faint, marginTop: 14 }}>
               Miss AL Simpson Ltd is the holding company for the artist’s catalogue, intellectual
               property and brands.
@@ -173,17 +158,5 @@ function Footer() {
         </div>
       </div>
     </footer>
-  );
-}
-
-function GalleryFallback() {
-  return (
-    <div style={{
-      height: 'calc(100vh - 72px)', background: '#f3f1ec', color: '#8a857c',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: mono, fontSize: 11, letterSpacing: 3, textTransform: 'uppercase',
-    }}>
-      Entering the gallery…
-    </div>
   );
 }

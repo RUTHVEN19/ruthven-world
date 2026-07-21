@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getMintData } from '../utils/api';
 import HighlandMap from '../components/HighlandMap';
+import { RUTHVEN_PRINTS } from '../config/ruthvenPrints';
 
 export default function RuthvenGateway() {
   const navigate = useNavigate();
@@ -36,10 +37,10 @@ export default function RuthvenGateway() {
   return (
     <div className="relative overflow-hidden" style={{ backgroundColor: '#001A10' }}>
       <Helmet>
-        <title>Ruthven — The World of Miss AL Simpson</title>
-        <meta name="description" content="Enter the world of Ruthven. AI-augmented Highland landscapes by Miss AL Simpson — oil, algorithm, and Scottish light." />
-        <meta property="og:title" content="Ruthven — The World of Miss AL Simpson" />
-        <meta property="og:description" content="AI-augmented Highland landscapes by Miss AL Simpson" />
+        <title>Ruthven — AI-Augmented Highland Landscapes</title>
+        <meta name="description" content="Enter the world of Ruthven. AI-augmented Highland landscapes — oil, algorithm, and Scottish light." />
+        <meta property="og:title" content="Ruthven — AI-Augmented Highland Landscapes" />
+        <meta property="og:description" content="AI-augmented Highland landscapes by Ruthven" />
       </Helmet>
 
       {/* ── Hero Section — full screen video ── */}
@@ -207,6 +208,8 @@ export default function RuthvenGateway() {
             }
           }}
           activeLocation={mapLocation}
+          prints={RUTHVEN_PRINTS}
+          onPrintSelect={() => navigate('/ruthven/prints')}
         />
       </section>
 

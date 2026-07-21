@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { PHASE_CONFIG } from '../../config/wagmiConfig';
 import { ANDROIDS_BASE } from '../../config/androidsContent';
 
 function FadeIn({ children, delay = 0 }) {
@@ -30,36 +29,12 @@ function FadeIn({ children, delay = 0 }) {
   );
 }
 
-const MINT_PHASES = [
-  {
-    name: 'PHASE 1 — FRESH INK',
-    nameJa: '新鮮なインク',
-    price: '0.099 ETH',
-    description: 'The Machine is full. Every triptych prints at maximum fidelity — porcelain still, transformation video, and manga drawing. 33 unique editions.',
-    color: '#00d4ff',
-  },
-  {
-    name: 'PHASE 2 — INK DEPLETION',
-    nameJa: 'インク枯渇',
-    price: '0.066 ETH',
-    description: 'The ink runs low. The Machine degrades — sepia bleeds into the prints, glitches creep across the screen. 33 new triptychs at a reduced price.',
-    color: '#ff6b00',
-  },
-  {
-    name: 'PHASE 3 — EXHAUSTION',
-    nameJa: '消耗',
-    price: '0.033 ETH',
-    description: 'The Machine is dying. Final prints emerge through static and decay — raw, corrupted, beautiful. 33 last triptychs before the ink dries forever.',
-    color: '#ff2d78',
-  },
-];
-
 export default function AndroidsAbout() {
   return (
     <div style={{ background: '#050508', minHeight: '100vh', position: 'relative' }}>
       <Helmet>
         <title>About — Porcelain Android</title>
-        <meta name="description" content="About Porcelain Android by Miss AL Simpson. The Manga Machine, mint mechanics, and the artist behind the archive." />
+        <meta name="description" content="About Porcelain Android by Miss AL Simpson. The Manga Machine, the world, and the artist behind the archive." />
       </Helmet>
 
       <style>{`
@@ -142,135 +117,8 @@ export default function AndroidsAbout() {
               lineHeight: 2,
               color: 'rgba(255,255,255,0.6)',
             }}>
-              Each mint produces a triptych: the original porcelain still, a transformation video, and the manga drawing that emerges. As the Machine prints, its ink depletes — the art degrades, the price drops, and the aesthetic shifts from pristine to corrupted. When the ink runs out, the Machine stops forever.
+              Each artwork emerges as a triptych: the original porcelain still, a transformation video, and the manga drawing. As the Machine prints, its ink depletes — the art degrades and the aesthetic shifts from pristine to corrupted. When the ink runs out, the Machine stops forever.
             </p>
-          </section>
-        </FadeIn>
-
-        {/* ── Mint Mechanics ── */}
-        <FadeIn delay={200}>
-          <section style={{ marginBottom: '64px' }}>
-            <h2 style={{
-              fontSize: '10px', fontFamily: "'Space Mono', monospace",
-              letterSpacing: '0.4em', textTransform: 'uppercase',
-              color: '#ff2d78', marginBottom: '24px',
-            }}>
-              Mint Mechanics
-            </h2>
-            <p style={{
-              fontSize: 'clamp(13px, 1.4vw, 15px)',
-              fontFamily: "'Space Mono', monospace",
-              lineHeight: 2,
-              color: 'rgba(255,255,255,0.6)',
-              marginBottom: '32px',
-            }}>
-              ERC-1155 open editions across three phases. Each phase introduces new art with a unique visual treatment reflecting the Machine's degradation. Collect all three phases to receive <span style={{ color: '#ff2d78' }}>three bonus NFTs</span> — views from inside the Machine itself.
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {MINT_PHASES.map((phase, i) => (
-                <div key={i} style={{
-                  border: `1px solid ${phase.color}22`,
-                  background: `${phase.color}06`,
-                  padding: 'clamp(20px, 3vw, 28px)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                }}>
-                  <div style={{
-                    position: 'absolute', top: 0, left: 0, width: '3px', height: '100%',
-                    background: phase.color,
-                    opacity: 0.6,
-                  }} />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
-                    <div>
-                      <span style={{
-                        fontSize: '12px', fontFamily: "'Space Mono', monospace",
-                        letterSpacing: '0.15em', textTransform: 'uppercase',
-                        color: phase.color, fontWeight: 700,
-                      }}>
-                        {phase.name}
-                      </span>
-                      <span style={{
-                        fontSize: '13px', marginLeft: '12px',
-                        color: 'rgba(255,255,255,0.3)',
-                      }}>
-                        {phase.nameJa}
-                      </span>
-                    </div>
-                    <span style={{
-                      fontSize: '14px', fontFamily: "'Space Mono', monospace",
-                      color: phase.color, fontWeight: 700,
-                    }}>
-                      {phase.price}
-                    </span>
-                  </div>
-                  <p style={{
-                    fontSize: '13px', fontFamily: "'Space Mono', monospace",
-                    lineHeight: 1.8, color: 'rgba(255,255,255,0.5)',
-                    margin: 0,
-                  }}>
-                    {phase.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* ── Time as Scarcity ── */}
-            <div style={{
-              marginTop: '32px', padding: 'clamp(20px, 3vw, 28px)',
-              border: '1px solid rgba(255,45,120,0.12)',
-              background: 'rgba(255,45,120,0.03)',
-              position: 'relative',
-              overflow: 'hidden',
-            }}>
-              <div style={{
-                position: 'absolute', top: 0, left: 0, width: '100%', height: '3px',
-                background: 'linear-gradient(90deg, #ff2d78, #00d4ff)',
-                opacity: 0.4,
-              }} />
-              <h3 style={{
-                fontSize: '11px', fontFamily: "'Space Mono', monospace",
-                letterSpacing: '0.3em', textTransform: 'uppercase',
-                color: '#ff2d78', marginBottom: '16px', marginTop: '4px',
-              }}>
-                Time as Scarcity
-              </h3>
-              <p style={{
-                fontSize: '13px', fontFamily: "'Space Mono', monospace",
-                lineHeight: 2, color: 'rgba(255,255,255,0.6)',
-                margin: '0 0 12px',
-              }}>
-                The Manga Machine is not limited by supply — it is limited by <span style={{ color: '#ff2d78' }}>time</span>. Each phase opens and closes at the artist's discretion. There is no announced duration. No countdown to closing. The Machine simply stops when the ink runs out.
-              </p>
-              <p style={{
-                fontSize: '13px', fontFamily: "'Space Mono', monospace",
-                lineHeight: 2, color: 'rgba(255,255,255,0.6)',
-                margin: '0 0 12px',
-              }}>
-                This means the number of editions in each phase is unknown until it closes. You do not know how many others will mint alongside you, or how long the window will last. The only guarantee: when a phase ends, it never reopens.
-              </p>
-              <p style={{
-                fontSize: '13px', fontFamily: "'Space Mono', monospace",
-                lineHeight: 2, color: 'rgba(255,255,255,0.45)',
-                margin: 0, fontStyle: 'italic',
-              }}>
-                The Machine decides when it stops. Not the market.
-              </p>
-            </div>
-
-            <div style={{
-              marginTop: '24px', padding: '20px',
-              border: '1px solid rgba(255,45,120,0.15)',
-              background: 'rgba(255,45,120,0.03)',
-              textAlign: 'center',
-            }}>
-              <div style={{
-                fontSize: '11px', fontFamily: "'Space Mono', monospace",
-                letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)',
-              }}>
-                33 TRIPTYCHS PER PHASE &middot; 99 TOTAL &middot; 3 BONUS NFTS FOR FULL COLLECTORS
-              </div>
-            </div>
           </section>
         </FadeIn>
 
@@ -299,7 +147,7 @@ export default function AndroidsAbout() {
               lineHeight: 2,
               color: 'rgba(255,255,255,0.6)',
             }}>
-              When the Machine's ink is fully depleted, restricted zones unlock — the Originals gallery, the Graffiti wall, and the Print Archive — rewarding those who stayed through the full lifecycle. The Graffiti wall will house Miss AL Simpson's 1/1 original graffiti collage analogue artworks, available exclusively to collectors.
+              The Originals gallery houses Miss AL Simpson's 1/1 original digital artworks. The Graffiti wall displays her physical graffiti collage analogue artworks — collected on SuperRare and Transient.
             </p>
           </section>
         </FadeIn>

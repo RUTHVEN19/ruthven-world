@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { path: '/ruthven/first-light', label: 'First Light' },
   { path: '/ruthven/studio', label: 'Studio' },
   { path: '/ruthven/artist', label: 'The Artist' },
+  { path: '/ruthven/prints', label: 'Prints' },
   { path: '/ruthven/signal', label: 'Signal' },
 ];
 

@@ -37,6 +37,7 @@ const AndroidsOriginals = lazy(() => import('./pages/androids/AndroidsOriginals'
 const MangaMachine = lazy(() => import('./pages/androids/MangaMachine'));
 const AndroidsNightclub = lazy(() => import('./pages/androids/AndroidsCinema'));
 const AndroidsGraffiti = lazy(() => import('./pages/androids/AndroidsGraffiti'));
+const MangaMachineDrop = lazy(() => import('./pages/androids/MangaMachineDrop'));
 const AndroidsPrintShop = lazy(() => import('./pages/androids/AndroidsPrintShop'));
 const AndroidsLore = lazy(() => import('./pages/androids/AndroidsLore'));
 const RestrictedZone = lazy(() => import('./components/RestrictedZone'));
@@ -50,9 +51,11 @@ const PortfolioProject = lazy(() => import('./pages/portfolio/PortfolioProject')
 const PortfolioAbout = lazy(() => import('./pages/portfolio/PortfolioAbout'));
 const PortfolioCinema = lazy(() => import('./pages/portfolio/PortfolioCinema'));
 const PortfolioWorlds = lazy(() => import('./pages/portfolio/PortfolioWorlds'));
+const PortfolioDrift = lazy(() => import('./pages/portfolio/PortfolioDrift'));
 const PortfolioOriginals = lazy(() => import('./pages/portfolio/PortfolioOriginals'));
 const PortfolioExhibitions = lazy(() => import('./pages/portfolio/PortfolioExhibitions'));
 const PortfolioFeed = lazy(() => import('./pages/portfolio/PortfolioFeed'));
+const PortfolioShop = lazy(() => import('./pages/portfolio/PortfolioShop'));
 
 function Layout({ children }) {
   return (
@@ -106,6 +109,12 @@ export default function App() {
       {/* ═══ ARTIST SITE — Miss AL Simpson (missalsimpson.com) ═══ */}
       <Route path="/portfolio" element={<ErrorBoundary><PortfolioSite /></ErrorBoundary>}>
         <Route index element={<PortfolioHome />} />
+        {/* Immersive ink-shop corridor — kept reachable while Home is the flat landing */}
+        <Route path="shop" element={<PortfolioShop />} />
+        {/* Graffiti Stilettos drop — hidden for launch; redirect home (re-enable when ready) */}
+        <Route path="drop" element={<Navigate to="/portfolio" replace />} />
+        <Route path="drift" element={<PortfolioDrift />} />
+        <Route path="home" element={<PortfolioHome />} />
         <Route path="cinema" element={<PortfolioCinema />} />
         <Route path="worlds" element={<PortfolioWorlds />} />
         <Route path="originals" element={<PortfolioOriginals />} />
@@ -145,6 +154,7 @@ export default function App() {
           <Route path="manga-machine" element={<MangaMachine />} />
           <Route path="nightclub" element={<AndroidsNightclub />} />
           <Route path="graffiti" element={<AndroidsGraffiti />} />
+          <Route path="manga-drop" element={<MangaMachineDrop />} />
           <Route path="prints" element={<RestrictedZone zoneName="PRINT ARCHIVE" zoneNameJp="印刷"><AndroidsPrintShop /></RestrictedZone>} />
           <Route path="lore" element={<AndroidsLore />} />
           <Route path="social" element={<AndroidsSocial />} />
@@ -159,6 +169,7 @@ export default function App() {
           <Route path="manga-machine" element={<MangaMachine />} />
           <Route path="nightclub" element={<AndroidsNightclub />} />
           <Route path="graffiti" element={<AndroidsGraffiti />} />
+          <Route path="manga-drop" element={<MangaMachineDrop />} />
           <Route path="prints" element={<RestrictedZone zoneName="PRINT ARCHIVE" zoneNameJp="印刷"><AndroidsPrintShop /></RestrictedZone>} />
           <Route path="lore" element={<AndroidsLore />} />
           <Route path="social" element={<AndroidsSocial />} />

@@ -62,6 +62,24 @@
     }
     </script>
 
+    <!-- Dynamic meta for porcelainandroid.com (server-side via Edge Function) -->
+    <script>
+      if (window.location.hostname === 'porcelainandroid.com') {
+        document.querySelector('meta[name="description"]').content = 'PORCELAIN ANDROID™ — The Manga Machine. An immersive cryptoart world by Miss AL Simpson.';
+        document.querySelector('link[rel="canonical"]').href = 'https://porcelainandroid.com' + window.location.pathname;
+        document.querySelector('meta[property="og:title"]').content = 'PORCELAIN ANDROID™ — Digital Art by Miss AL Simpson';
+        document.querySelector('meta[property="og:description"]').content = 'The Manga Machine. An immersive cryptoart world by Miss AL Simpson.';
+        document.querySelector('meta[property="og:image"]').content = 'https://porcelainandroid.com/og-porcelain.png';
+        document.querySelector('meta[property="og:url"]').content = 'https://porcelainandroid.com/';
+        document.querySelector('meta[property="og:site_name"]').content = 'PORCELAIN ANDROID™';
+        document.querySelector('meta[name="twitter:title"]').content = 'PORCELAIN ANDROID™ — Digital Art by Miss AL Simpson';
+        document.querySelector('meta[name="twitter:description"]').content = 'The Manga Machine. An immersive cryptoart world by Miss AL Simpson.';
+        document.querySelector('meta[name="twitter:image"]').content = 'https://porcelainandroid.com/og-porcelain.png';
+        document.querySelector('meta[name="twitter:site"]').content = '@PorcelAndroid';
+        document.title = 'PORCELAIN ANDROID™ — Digital Art by Miss AL Simpson';
+      }
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
@@ -70,7 +88,7 @@
     <meta name="theme-color" content="#0a0c12" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Anton&family=Space+Mono:wght@400;700&family=Oswald:wght@500;700&family=Crimson+Pro:ital,wght@1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Anton&family=Permanent+Marker&family=Space+Mono:wght@400;700&family=Oswald:wght@500;700&family=Crimson+Pro:ital,wght@1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   </head>
   <body class="bg-gray-950 text-white min-h-screen">
     <div id="root"></div>

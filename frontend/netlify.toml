@@ -2,7 +2,56 @@
   command = "npm run build"
   publish = "dist"
 
+# Porcelain Android domain: serve PA-specific static files
+[[redirects]]
+  from = "/robots.txt"
+  to = "/porcelain-robots.txt"
+  status = 200
+  force = true
+  [redirects.conditions]
+    Host = "porcelainandroid.com"
+
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/porcelain-sitemap.xml"
+  status = 200
+  force = true
+  [redirects.conditions]
+    Host = "porcelainandroid.com"
+
+[[redirects]]
+  from = "/llms.txt"
+  to = "/porcelain-llms.txt"
+  status = 200
+  force = true
+  [redirects.conditions]
+    Host = "porcelainandroid.com"
+
+# Diamond Drones domain: serve DD-specific static files
+[[redirects]]
+  from = "/robots.txt"
+  to = "/dd-robots.txt"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/dd-sitemap.xml"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/llms.txt"
+  to = "/dd-llms.txt"
+  status = 200
+  force = true
+
+# SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[edge_functions]]
+  function = "og-rewrite"
+  path = "/*"

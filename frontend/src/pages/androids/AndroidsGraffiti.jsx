@@ -8,16 +8,16 @@ import { FILM } from '../../config/androidsContent';
 // ── The Graffiti Wall — the analog resistance, 1/1 phygital ──
 // "The one medium the Party can't switch off. The proof-of-hand."
 const COLLAGES = [
-  { id: 'wall-fragment-001', name: 'Neon Cherub Chaos', file: 'NEON CHERUB CHAOS.jpg', superRare: 'https://superrare.com/artwork/eth/0x4AcA802eee7e7B744a1B410fBc83edDC4D8904ab/2' },
-  { id: 'wall-fragment-002', name: 'Manga Street Shrine', file: 'MANGA STREET SHRINE.jpg', superRare: 'https://superrare.com/artwork/eth/0x4AcA802eee7e7B744a1B410fBc83edDC4D8904ab/1?tab=details' },
-  { id: 'wall-fragment-003', name: 'Rouge Red Porcelain', file: 'ROUGE RED PORCELAIN.jpg', superRare: 'https://superrare.com/artwork/eth/0x4AcA802eee7e7B744a1B410fBc83edDC4D8904ab/3' },
+  { id: 'wall-fragment-001', name: 'Neon Cherub Chaos', file: 'NEON CHERUB CHAOS.jpg', edition: '1/1 ORIGINAL', link: 'https://superrare.com/artwork/eth/0x4AcA802eee7e7B744a1B410fBc83edDC4D8904ab/2', linkLabel: 'VIEW ON SUPERRARE' },
+  { id: 'wall-fragment-002', name: 'Manga Street Shrine', file: 'MANGA STREET SHRINE.jpg', edition: '1/1 ORIGINAL', link: 'https://superrare.com/artwork/eth/0x4AcA802eee7e7B744a1B410fBc83edDC4D8904ab/1?tab=details', linkLabel: 'VIEW ON SUPERRARE' },
+  { id: 'wall-fragment-003', name: 'Rouge Red Porcelain', file: 'ROUGE RED PORCELAIN.jpg', edition: '1/1 ORIGINAL', link: 'https://superrare.com/artwork/eth/0x4AcA802eee7e7B744a1B410fBc83edDC4D8904ab/3', linkLabel: 'VIEW ON SUPERRARE' },
+  { id: 'wall-fragment-004', name: 'Pink Cherub Dreams', file: 'PINK CHERUB DREAMS.jpg', edition: 'EDITION OF 10', link: 'https://www.transient.xyz/mint/pink-cherub-dreams', linkLabel: 'COLLECT ON TRANSIENT' },
 ];
 
 const GRAFFITI_IMAGES = COLLAGES.map((c, i) => ({
   ...c,
   src: `/androids/graffiti/${c.file}`,
   fragmentNum: String(i + 1).padStart(3, '0'),
-  edition: '1/1 Phygital',
   nft: true,
 }));
 
@@ -76,7 +76,7 @@ function DustParticles({ count = 200 }) {
 }
 
 // ── Gallery Artwork — museum-grade presentation ──
-function GraffitiPiece({ src, name, position, rotation, width = 3, height = 2, index, onSelect, neonColor = '#ff6b00' }) {
+function GraffitiPiece({ src, name, edition, position, rotation, width = 3, height = 2, index, onSelect, neonColor = '#ff6b00' }) {
   const [texture, setTexture] = useState(null);
   const [hovered, setHovered] = useState(false);
   const groupRef = useRef();
@@ -169,7 +169,7 @@ function GraffitiPiece({ src, name, position, rotation, width = 3, height = 2, i
             textShadow: '0 0 6px rgba(0,0,0,0.8)',
             marginTop: '3px',
           }}>
-            GRAFFITI COLLAGE ON BOARD · 51 × 76 CM
+            {edition === 'EDITION OF 10' ? 'DIGITAL COLLAGE' : 'GRAFFITI COLLAGE ON BOARD · 51 × 76 CM'}
           </div>
           <div style={{
             fontFamily: "'Space Mono', monospace", fontSize: '9px',
@@ -177,7 +177,7 @@ function GraffitiPiece({ src, name, position, rotation, width = 3, height = 2, i
             textShadow: `0 0 8px ${neonColor}60`,
             marginTop: '2px',
           }}>
-            1/1 ORIGINAL
+            {edition || '1/1 ORIGINAL'}
           </div>
         </div>
       </Html>
@@ -356,7 +356,7 @@ function GraffitiScene({ onSelect }) {
       </mesh>
 
       {/* ── Entrance Sign — grand ── */}
-      <NeonSign text="原画" sub="THE ORIGINALS" position={[0, 7, WALL_LENGTH / 2 - 1]} color="#ff6b00" size={40} />
+      <NeonSign text="落書き" sub="GRAFFITI WALL" position={[0, 7, WALL_LENGTH / 2 - 1]} color="#ff6b00" size={40} />
       <NeonSign text="抵抗" sub="THE RESISTANCE" position={[3.7, 7, 15]} rotation={[0, -Math.PI / 2, 0]} color="#ffd700" size={40} />
 
       {/* ── Floating dust particles ── */}
@@ -374,6 +374,7 @@ function GraffitiScene({ onSelect }) {
             key={img.id}
             src={img.src}
             name={img.name}
+            edition={img.edition}
             position={[3.72, 3, z]}
             rotation={[0, -Math.PI / 2, 0]}
             width={w}
@@ -523,6 +524,47 @@ function ScrollHUD() {
   );
 }
 
+// ── Ambient Audio Player ──
+function AmbientAudio({ src = '/androids/graffiti/graffiti-soundtrack.mp3' }) {
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    const audio = new Audio(src);
+    audio.loop = true;
+    audio.volume = 0.35;
+    audioRef.current = audio;
+    return () => { audio.pause(); audio.src = ''; };
+  }, [src]);
+
+  const toggle = () => {
+    if (!audioRef.current) return;
+    if (playing) { audioRef.current.pause(); }
+    else { audioRef.current.play().catch(() => {}); }
+    setPlaying(!playing);
+  };
+
+  return (
+    <button
+      onClick={toggle}
+      style={{
+        position: 'fixed', top: '68px', right: '16px', zIndex: 50,
+        width: '40px', height: '40px', borderRadius: '50%',
+        background: playing ? 'rgba(255,107,0,0.15)' : 'rgba(255,255,255,0.06)',
+        border: `1px solid ${playing ? 'rgba(255,107,0,0.4)' : 'rgba(255,255,255,0.12)'}`,
+        color: playing ? '#ff6b00' : 'rgba(255,255,255,0.4)',
+        fontSize: '16px', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'all 0.3s',
+        backdropFilter: 'blur(10px)',
+      }}
+      title={playing ? 'Pause soundtrack' : 'Play soundtrack'}
+    >
+      {playing ? '⏸' : '♫'}
+    </button>
+  );
+}
+
 // ═══ MAIN ═══
 export default function AndroidsGraffiti() {
   const [selected, setSelected] = useState(null);
@@ -534,9 +576,21 @@ export default function AndroidsGraffiti() {
   return (
     <div style={{ background: '#0a0a10' }}>
       <Helmet>
-        <title>The Originals — Porcelain Androids</title>
-        <meta name="description" content="Original 1/1 artworks by Miss AL Simpson. The analog resistance — the one medium the Party can't switch off. Phygital wall fragments paired with on-chain certificates." />
+        <title>The Originals — Porcelain Android</title>
+        <meta name="description" content="Original 1/1 graffiti collage artworks and digital editions by Miss AL Simpson. Collected on SuperRare and Transient." />
+        <meta property="og:title" content="The Originals — Porcelain Android" />
+        <meta property="og:description" content="Original 1/1 graffiti collage artworks and digital editions by Miss AL Simpson." />
+        <meta property="og:image" content="https://porcelainandroid.com/og-porcelain.png" />
+        <meta property="og:url" content="https://porcelainandroid.com/graffiti" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@PorcelAndroid" />
+        <meta name="twitter:creator" content="@missalsimpson" />
+        <meta name="twitter:title" content="The Originals — Porcelain Android" />
+        <meta name="twitter:description" content="Original 1/1 graffiti collage artworks and digital editions by Miss AL Simpson." />
+        <meta name="twitter:image" content="https://porcelainandroid.com/og-porcelain.png" />
       </Helmet>
+
+      <AmbientAudio />
 
       <div style={{ height: '300vh', position: 'relative' }}>
         <div style={{ position: 'fixed', inset: 0, top: '52px', zIndex: 1 }}>
@@ -589,7 +643,7 @@ export default function AndroidsGraffiti() {
                 border: `1px solid ${col}60`, padding: '4px 12px',
                 marginBottom: '10px',
               }}>
-                WALL FRAGMENT {piece.fragmentNum} · 1/1 PHYGITAL
+                WALL FRAGMENT {piece.fragmentNum} · {piece.edition === 'EDITION OF 10' ? 'DIGITAL EDITION' : '1/1 PHYGITAL'}
               </div>
 
               <div style={{
@@ -603,7 +657,7 @@ export default function AndroidsGraffiti() {
                 fontFamily: "'Space Mono', monospace", fontSize: '10px',
                 color: 'rgba(255,255,255,0.5)', marginTop: '8px', letterSpacing: '0.12em',
               }}>
-                GRAFFITI COLLAGE ON BOARD · 51 × 76 CM
+                {piece.edition === 'EDITION OF 10' ? 'DIGITAL COLLAGE' : 'GRAFFITI COLLAGE ON BOARD · 51 × 76 CM'}
               </div>
 
               <div style={{
@@ -611,9 +665,10 @@ export default function AndroidsGraffiti() {
                 color: 'rgba(255,255,255,0.35)', marginTop: '8px', letterSpacing: '0.1em',
                 lineHeight: 1.8,
               }}>
-                The analog resistance — the one medium the Party can't switch off. Original collage by
-                Miss AL Simpson. Paired with a 1/1 NFT on Ethereum. The canvas is the only physical instance
-                ever produced. This composition will never be re-minted or re-printed.
+                {piece.edition === 'EDITION OF 10'
+                  ? 'A digital collage by Miss AL Simpson. Edition of 10, collected on Transient.'
+                  : 'The analog resistance — the one medium the Party can\'t switch off. Original collage by Miss AL Simpson. Paired with a 1/1 NFT on Ethereum. The canvas is the only physical instance ever produced. This composition will never be re-minted or re-printed.'
+                }
               </div>
 
               <div style={{
@@ -626,21 +681,21 @@ export default function AndroidsGraffiti() {
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '20px', flexWrap: 'wrap' }}>
                 <a
-                  href={piece.superRare || '#'}
+                  href={piece.link || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => { if (!piece.superRare) e.preventDefault(); }}
+                  onClick={(e) => { if (!piece.link) e.preventDefault(); }}
                   style={{
                     display: 'inline-block', textDecoration: 'none',
-                    background: piece.superRare ? `linear-gradient(135deg, ${col}, ${col}80)` : `linear-gradient(135deg, ${col}40, ${col}20)`,
+                    background: piece.link ? `linear-gradient(135deg, ${col}, ${col}80)` : `linear-gradient(135deg, ${col}40, ${col}20)`,
                     border: 'none', color: '#fff', padding: '14px 32px',
                     fontFamily: '"Anton", sans-serif', fontSize: '15px',
-                    letterSpacing: '0.2em', cursor: piece.superRare ? 'pointer' : 'default',
-                    boxShadow: piece.superRare ? `0 0 24px ${col}35` : 'none',
-                    opacity: piece.superRare ? 1 : 0.5,
+                    letterSpacing: '0.2em', cursor: piece.link ? 'pointer' : 'default',
+                    boxShadow: piece.link ? `0 0 24px ${col}35` : 'none',
+                    opacity: piece.link ? 1 : 0.5,
                   }}
                 >
-                  {piece.superRare ? 'VIEW ON SUPERRARE' : 'COMING SOON'}
+                  {piece.link ? piece.linkLabel : 'COMING SOON'}
                 </a>
                 <button onClick={() => setViewFull(true)} style={{
                   background: 'transparent', border: `1px solid ${col}60`,
@@ -727,7 +782,7 @@ export default function AndroidsGraffiti() {
               fontFamily: "'Space Mono', monospace", fontSize: '11px',
               color: `${col}cc`, marginTop: '6px', letterSpacing: '0.2em',
             }}>
-              WALL FRAGMENT {piece.fragmentNum} · 1/1 PHYGITAL
+              WALL FRAGMENT {piece.fragmentNum} · {piece.edition === 'EDITION OF 10' ? 'DIGITAL EDITION' : '1/1 PHYGITAL'}
             </div>
           </div>
           <button

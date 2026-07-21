@@ -1,0 +1,22 @@
+# PORCELAIN ANDROID — The Manga Machine
+
+> An immersive cryptoart world by Miss AL Simpson, a Scottish cryptoartist, award-winning artist and founder. Neon-lit Roppongi nightlife rendered in manga: porcelain figures, cherubs, showgirls, latex and light. Built with a LoRA trained on the artist's own body of work.
+
+## About
+- Artist: Miss AL Simpson — Scottish cryptoartist, AI filmmaker, founder. Her film "Les Drones de la Banlieue" was exhibited at Sotheby's.
+- Porcelain Android is one of her worlds. "The Manga Machine" is its central project: still artworks and AI short films of a Tokyo-after-dark district.
+- Everything is made and built by the artist: the trained LoRA, the generation and upscaling pipeline, the smart contracts, the minting tools, and the interactive 3D galleries that house the work.
+
+## Collections
+- THE MANGA MACHINE - PORCELAIN ANDROIDS (Ethereum): a fixed, permanent 116-piece on-chain archive. Contract 0xE7C62655148B86f8829608378C638a03E73342bA. Royalties to the artist; intellectual property retained by Miss AL Simpson Limited.
+- The Manga Machine (Tezos / Objkt): an open collection of curated works and AI films. https://objkt.com/collection/KT1CghJjhk5g7cd3kr6E1aY5edL6gChPYFDP
+
+## Key pages
+- /manga-drop — The Drop: an interactive 3D gallery you walk through, works floating and parting, films playing large, linking to Objkt.
+- /manga-machine — the Manga Machine arcade.
+- /originals — the Genesis collection of Porcelain Androids.
+- /prints — print archive.
+- /lore, /nightclub, /graffiti, /social, /about — the wider world.
+
+## Contact
+- Instagram: @annalouisesimpson · X / TikTok: @missalsimpson

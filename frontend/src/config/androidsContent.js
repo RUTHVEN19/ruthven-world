@@ -156,6 +156,7 @@ export const ZONES = [
   { path: `${ANDROIDS_BASE}/`, label: 'The Alley', end: true },
   { path: `${ANDROIDS_BASE}/originals`, label: 'Porcelain Androids', locked: !MACHINE_DEPLETED },
   { path: `${ANDROIDS_BASE}/manga-machine`, label: 'The Manga Machine' },
+  { path: `${ANDROIDS_BASE}/manga-drop`, label: 'The Drop' },
   { path: `${ANDROIDS_BASE}/nightclub`, label: 'The Nightclub' },
   { path: `${ANDROIDS_BASE}/lore`, label: 'The Lore' },
   { path: `${ANDROIDS_BASE}/graffiti`, label: 'Graffiti Wall' },
