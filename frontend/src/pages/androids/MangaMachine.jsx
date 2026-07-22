@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
-import { TRANSFORMATIONS, PHASE_TRANSFORMATIONS, STILLS, MINT_LINKS, ANDROIDS_BASE, objktEditionUrl } from '../../config/androidsContent';
+import { TRANSFORMATIONS, PHASE_TRANSFORMATIONS, STILLS, MINT_LINKS, ANDROIDS_BASE, objktEditionUrl, LIMITED_EDITION_SLUG } from '../../config/androidsContent';
 import { PHASE_CONFIG } from '../../config/wagmiConfig';
 
 // ── Room constants ──
@@ -397,7 +397,16 @@ function MachineUI({ activePhase, machineState }) {
 
   const handleVideoRef = useCallback((el) => {
     videoRef.current = el;
-    if (el && state === STATES.TRANSFORMING) el.play().catch(() => {});
+    if (!el || state !== STATES.TRANSFORMING) return;
+    // Play WITH sound: pulling the lever is a user gesture, so autoplay-with-audio
+    // is permitted. If a stricter policy still blocks it, retry muted so the
+    // transformation always plays visually rather than failing silently.
+    el.muted = false;
+    el.volume = 1;
+    el.play().catch(() => {
+      el.muted = true;
+      el.play().catch(() => {});
+    });
   }, [state]);
 
   return (
@@ -654,14 +663,17 @@ function MachineUI({ activePhase, machineState }) {
                       <span className="mm-ui-bk" style={{ color: '#00d4ff', textShadow: '0 0 10px #00d4ff' }}>もう一度</span>
                       <span className="mm-ui-be">AGAIN</span>
                     </button>
-                    <a
-                      href={`${ANDROIDS_BASE}/prints?artwork=${selected?.slug || ''}`}
-                      className="mm-ui-transform mm-ui-again"
-                      style={{ flex: 1, textDecoration: 'none', textAlign: 'center', borderColor: '#ffd700' }}
-                    >
-                      <span className="mm-ui-bk" style={{ color: '#ffd700', textShadow: '0 0 10px #ffd700' }}>印刷</span>
-                      <span className="mm-ui-be">BUY PRINT</span>
-                    </a>
+                    {/* The limited edition is Objkt-only — no print for it. */}
+                    {selected?.slug !== LIMITED_EDITION_SLUG && (
+                      <a
+                        href={`${ANDROIDS_BASE}/prints?artwork=${selected?.slug || ''}`}
+                        className="mm-ui-transform mm-ui-again"
+                        style={{ flex: 1, textDecoration: 'none', textAlign: 'center', borderColor: '#ffd700' }}
+                      >
+                        <span className="mm-ui-bk" style={{ color: '#ffd700', textShadow: '0 0 10px #ffd700' }}>印刷</span>
+                        <span className="mm-ui-be">BUY PRINT</span>
+                      </a>
+                    )}
                   </div>
                 </div>
               )}

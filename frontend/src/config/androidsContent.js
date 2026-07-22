@@ -151,6 +151,10 @@ export const MINT_LINKS = {
 // Always-valid link to the limited edition (token if set, else the collection).
 export const objktEditionUrl = () => MINT_LINKS.objktEdition || OBJKT_COLLECTION;
 
+// The Manga Machine's featured limited edition. It's sold only as an Objkt
+// edition — no print — so the machine hides "BUY PRINT" for this one.
+export const LIMITED_EDITION_SLUG = 'neon-graffiti-girl';
+
 // ── On-chain collection: THE MANGA MACHINE - PORCELAIN ANDROIDS (Ethereum) ──
 // 116 tokens: 1–50 Porcelain Androids · 51–83 Manga Doubles · 84–116 Transformations.
 export const PORCELAIN_CONTRACT = '0xE7C62655148B86f8829608378C638a03E73342bA';
