@@ -91,6 +91,28 @@ def main():
     if boot not in html:
         html = html.replace("</body>", boot + "\n</body>", 1)
 
+    # ── Frame-sequence fallback ───────────────────────────────────────────
+    # The video has failed on Objkt in ways I cannot reproduce (data: URI, then
+    # blob: in a sandboxed iframe). So the transformation must not DEPEND on
+    # video at all: extract frames and flipbook them if the film doesn't start.
+    # Images are the one thing that has never failed anywhere.
+    import glob, tempfile
+    fdir = tempfile.mkdtemp()
+    subprocess.run(["ffmpeg", "-y", "-i", os.path.join(src, "transform.mp4"),
+                    "-vf", "fps=6,scale=640:-2", "-q:v", "7",
+                    os.path.join(fdir, "f%03d.jpg")],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    frames = sorted(glob.glob(os.path.join(fdir, "*.jpg")))
+    if not frames:
+        die("could not extract fallback frames")
+    frames_js = ",".join('"' + data_uri(f, "image/jpeg") + '"' for f in frames)
+    fallback = (
+        "<script>window.__FRAMES=[" + frames_js + "];window.__FPS=6;</script>"
+    )
+    html = html.replace("</body>", fallback + "\n</body>", 1)
+    print(f"  fallback frames: {len(frames)} @6fps")
+    # ──────────────────────────────────────────────────────────────────────
+
     # nothing external must remain
     leftovers = re.findall(r'src="(?!data:)[^"]+"', html)
     if leftovers:

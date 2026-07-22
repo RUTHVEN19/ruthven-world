@@ -213,6 +213,7 @@
     <div id="screen">
       <div class="lyr on" id="l-still"><img src="still.jpg" alt="{{TITLE}} — porcelain" /></div>
       <div class="lyr" id="l-video"><video id="vid" src="transform.mp4" playsinline preload="auto"></video></div>
+      <div class="lyr" id="l-flip"><img id="flipimg" alt="" /></div>
       <div id="l-print"><img src="manga.jpg" alt="{{TITLE}} — manga" /></div>
       <div id="edge"></div>
       <div id="flash"></div>
@@ -268,16 +269,17 @@
       lk=document.getElementById('lk'), le=document.getElementById('le'),
       stext=document.getElementById('stext'),
       capk=document.getElementById('capk'), cape=document.getElementById('cape'),
-      neon=document.getElementById('neon'), snd=document.getElementById('snd');
+      neon=document.getElementById('neon'), snd=document.getElementById('snd'),
+      lflip=document.getElementById('l-flip'), flipimg=document.getElementById('flipimg');
 
   var soundOn=true, state='porcelain', timers=[];
   function clear(){timers.forEach(clearTimeout);timers=[]}
   function later(fn,ms){timers.push(setTimeout(fn,ms))}
   function cap(k,e){capk.textContent=k;cape.textContent=e}
-  function show(el){[still,lvid].forEach(function(f){f.classList.toggle('on',f===el)})}
+  function show(el){[still,lvid,lflip].forEach(function(f){f.classList.toggle('on',f===el)})}
 
   function toPorcelain(){
-    clear();state='porcelain';body.dataset.state=state;
+    clear();stopFlip();state='porcelain';body.dataset.state=state;
     vid.pause();vid.currentTime=0;
     print.classList.remove('on','go');edge.classList.remove('go');flash.classList.remove('go');
     rewards.classList.remove('on');neon.classList.remove('on');
@@ -300,6 +302,27 @@
     later(transform,3400);
   }
 
+  var flipTimer=null;
+  function stopFlip(){ if(flipTimer){clearInterval(flipTimer);flipTimer=null;} }
+
+  // If the film cannot play (codec, autoplay policy, sandbox — it has failed
+  // several ways on Objkt), flipbook the frames instead so the transformation
+  // ALWAYS happens. Images are the one thing that has never failed.
+  function flipbook(){
+    var F=window.__FRAMES||[];
+    if(!F.length) return reveal();
+    try{vid.pause()}catch(e){}
+    stopFlip();
+    var i=0, fps=window.__FPS||6;
+    flipimg.src=F[0];
+    show(lflip);
+    flipTimer=setInterval(function(){
+      i++;
+      if(i>=F.length){ stopFlip(); reveal(); return; }
+      flipimg.src=F[i];
+    }, 1000/fps);
+  }
+
   function transform(){
     state='transforming';body.dataset.state=state;
     cap('変換中','RECOVERING MEMORY');stext.textContent='変換中 · RECOVERING MEMORY';
@@ -307,13 +330,17 @@
     var p=vid.play();
     if(p&&p.catch){p.catch(function(){
       vid.muted=true;soundOn=false;snd.textContent='♪';
-      vid.play().catch(reveal);
+      vid.play().catch(function(){});
     })}
+    // watchdog — if the film hasn't actually advanced, run the frames
+    later(function(){
+      if(state==='transforming' && !(vid.currentTime>0.15)) flipbook();
+    }, 1100);
   }
 
   // the bit she loves: flash, then the manga prints out, then the three appear
   function reveal(){
-    clear();state='manga';body.dataset.state=state;
+    clear();stopFlip();state='manga';body.dataset.state=state;
     flash.classList.remove('go');void flash.offsetWidth;flash.classList.add('go');
     print.classList.add('on');void print.offsetWidth;print.classList.add('go');
     edge.classList.remove('go');void edge.offsetWidth;edge.classList.add('go');
