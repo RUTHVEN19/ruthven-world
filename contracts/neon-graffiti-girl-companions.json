@@ -1,0 +1,23 @@
+{
+  "porcelain": {
+    "cid": "bafybeigbare5rwjqmeaeaavb3cdvor6uulvoxdvl5hwuf2pyosa4dxd66a",
+    "mime": "image/png",
+    "kanji": "磁器",
+    "label": "Porcelain",
+    "bytes": 26649569
+  },
+  "manga": {
+    "cid": "bafybeiee27ejfb3inblskxzyrb2phluxw2pk7m26p3mof6cbs34sddx6hi",
+    "mime": "image/png",
+    "kanji": "漫画",
+    "label": "Manga",
+    "bytes": 5713171
+  },
+  "transformation": {
+    "cid": "bafybeifgmxm6b2gymvfqzjvr3gynycvd2gvum5xnuavxwskqtp2ylz4rvq",
+    "mime": "video/mp4",
+    "kanji": "変換",
+    "label": "Transformation",
+    "bytes": 6406834
+  }
+}
