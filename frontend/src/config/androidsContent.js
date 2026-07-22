@@ -151,6 +151,54 @@ export const MINT_LINKS = {
 // Always-valid link to the limited edition (token if set, else the collection).
 export const objktEditionUrl = () => MINT_LINKS.objktEdition || OBJKT_COLLECTION;
 
+// ── On-chain token IDs per android (Ethereum contract above) ──
+// Every android in the Manga Machine except the Objkt limited edition is
+// already minted on the artist's own Ethereum contract. Maps slug ->
+// { still 1-50, manga 51-83, transformation 84-116 } from porcelain-manifest.json.
+export const ANDROID_TOKENS = {
+  'blue-cherub-girls': { still: 1, manga: 51, transformation: 84 },
+  'blue-manga-reflections': { still: 2, manga: 52, transformation: 85 },
+  'blue-pinky-tech': { still: 3, manga: 53, transformation: 86 },
+  'blue-reflections': { still: 4, manga: 80, transformation: 113 },
+  'blue-shiny-heart': { still: 5, manga: 54, transformation: 87 },
+  'cherub-disco': { still: 6, manga: 55, transformation: 88 },
+  'cherub-hunter': { still: 7, manga: 56, transformation: 89 },
+  'convertible-blue': { still: 9, manga: 57, transformation: 90 },
+  'dance-troupe': { still: 10, manga: 82, transformation: 115 },
+  'dj-manga-techy': { still: 11, manga: 58, transformation: 91 },
+  'drive-manga': { still: 12, manga: 59, transformation: 92 },
+  'glamour-manga': { still: 14, manga: 83, transformation: 116 },
+  'glitch-angels': { still: 15, manga: 60, transformation: 93 },
+  'i-heart-cherubs': { still: 19, manga: 61, transformation: 94 },
+  'madame-of-the-porcelain': { still: 20, manga: 62, transformation: 95 },
+  'manga-dance-troupe': { still: 22, manga: 63, transformation: 96 },
+  'manga-disco-chicks': { still: 23, manga: 64, transformation: 97 },
+  'manga-machine-beauties': { still: 25, manga: 81, transformation: 114 },
+  'manga-pop-art': { still: 27, manga: 65, transformation: 98 },
+  'manga-twins': { still: 30, manga: 66, transformation: 99 },
+  'miss-grassmarket': { still: 32, manga: 67, transformation: 100 },
+  'miss-velvet-warnings': { still: 33, manga: 68, transformation: 101 },
+  'neon-green-girlies': { still: 35, manga: 69, transformation: 102 },
+  'neon-pink-rainy': { still: 36, manga: 70, transformation: 103 },
+  'orange-lovelies': { still: 37, manga: 71, transformation: 104 },
+  'orange-manga-girls': { still: 38, manga: 72, transformation: 105 },
+  'pink-cherub-veils': { still: 41, manga: 73, transformation: 106 },
+  'pink-petal-bomber': { still: 42, manga: 74, transformation: 107 },
+  'pinky-cherub-twins': { still: 43, manga: 75, transformation: 108 },
+  'punk-manga': { still: 44, manga: 76, transformation: 109 },
+  'queen-green-ghost-taxis': { still: 45, manga: 77, transformation: 110 },
+  'techno-girl': { still: 48, manga: 78, transformation: 111 },
+  'the-machine-pixie': { still: 49, manga: 79, transformation: 112 },
+};
+
+// The transformation is what the machine just played, so that's what its
+// "collect" button points at. Returns null for pieces not on the ETH contract
+// (e.g. the Objkt-only limited edition).
+export const androidOpenseaUrl = (slug) => {
+  const t = ANDROID_TOKENS[slug];
+  return t ? openseaTokenUrl(t.transformation) : null;
+};
+
 // The Manga Machine's featured limited edition. It's sold only as an Objkt
 // edition — no print — so the machine hides "BUY PRINT" for this one.
 export const LIMITED_EDITION_SLUG = 'neon-graffiti-girl';

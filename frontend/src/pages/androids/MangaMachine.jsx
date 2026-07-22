@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
-import { TRANSFORMATIONS, PHASE_TRANSFORMATIONS, STILLS, MINT_LINKS, ANDROIDS_BASE, objktEditionUrl } from '../../config/androidsContent';
+import { TRANSFORMATIONS, PHASE_TRANSFORMATIONS, STILLS, MINT_LINKS, ANDROIDS_BASE, objktEditionUrl, LIMITED_EDITION_SLUG, androidOpenseaUrl } from '../../config/androidsContent';
 import { PHASE_CONFIG } from '../../config/wagmiConfig';
 
 // ── Room constants ──
@@ -662,25 +662,52 @@ function MachineUI({ activePhase, machineState }) {
                     </div>
                   </div>
 
-                  {/* Limited edition on Objkt (Tezos) — the primary CTA after a transformation */}
-                  <a
-                    href={objktEditionUrl()}
-                    target="_blank" rel="noopener noreferrer"
-                    className="mm-ui-transform mm-ui-again"
-                    style={{
-                      width: '100%', textDecoration: 'none', textAlign: 'center',
-                      borderColor: '#00e6a7', marginBottom: '8px',
-                    }}
-                  >
-                    <span className="mm-ui-bk" style={{ color: '#00e6a7', textShadow: '0 0 10px #00e6a7' }}>限定版</span>
-                    <span className="mm-ui-be">COLLECT THE LIMITED EDITION</span>
-                  </a>
+                  {/* Collect: the limited edition lives on Objkt (Tezos); every other
+                      android is already minted on the artist's own Ethereum contract. */}
+                  {selected?.slug === LIMITED_EDITION_SLUG ? (
+                    <a
+                      href={objktEditionUrl()}
+                      target="_blank" rel="noopener noreferrer"
+                      className="mm-ui-transform mm-ui-again"
+                      style={{
+                        width: '100%', textDecoration: 'none', textAlign: 'center',
+                        borderColor: '#00e6a7', marginBottom: '8px',
+                      }}
+                    >
+                      <span className="mm-ui-bk" style={{ color: '#00e6a7', textShadow: '0 0 10px #00e6a7' }}>限定版</span>
+                      <span className="mm-ui-be">COLLECT THE LIMITED EDITION</span>
+                    </a>
+                  ) : androidOpenseaUrl(selected?.slug) ? (
+                    <a
+                      href={androidOpenseaUrl(selected?.slug)}
+                      target="_blank" rel="noopener noreferrer"
+                      className="mm-ui-transform mm-ui-again"
+                      style={{
+                        width: '100%', textDecoration: 'none', textAlign: 'center',
+                        borderColor: '#2081e2', marginBottom: '8px',
+                      }}
+                    >
+                      <span className="mm-ui-bk" style={{ color: '#2081e2', textShadow: '0 0 10px #2081e2' }}>収集</span>
+                      <span className="mm-ui-be">COLLECT ON OPENSEA</span>
+                    </a>
+                  ) : null}
 
                   <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
                     <button className="mm-ui-transform mm-ui-again" onClick={handleReset} style={{ flex: 1 }}>
                       <span className="mm-ui-bk" style={{ color: '#00d4ff', textShadow: '0 0 10px #00d4ff' }}>もう一度</span>
                       <span className="mm-ui-be">AGAIN</span>
                     </button>
+                    {/* The limited edition is Objkt-only — no print for it. */}
+                    {selected?.slug !== LIMITED_EDITION_SLUG && (
+                      <a
+                        href={`${ANDROIDS_BASE}/prints?artwork=${selected?.slug || ''}`}
+                        className="mm-ui-transform mm-ui-again"
+                        style={{ flex: 1, textDecoration: 'none', textAlign: 'center', borderColor: '#ffd700' }}
+                      >
+                        <span className="mm-ui-bk" style={{ color: '#ffd700', textShadow: '0 0 10px #ffd700' }}>印刷</span>
+                        <span className="mm-ui-be">BUY PRINT</span>
+                      </a>
+                    )}
                   </div>
                 </div>
               )}
