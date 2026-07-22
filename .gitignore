@@ -34,6 +34,24 @@ frontend/public/ruthven-bg-video.mp4
 # Allow compressed hero video (54MB — within GitHub limit)
 !frontend/public/artist/hero.mp4
 
+# Large art assets — live on the Backup Plus archive, NOT in git (multi-GB).
+# Restore with: rsync -a --exclude 'originals_backup/' \
+#   "/Volumes/Backup Plus/NFT-GENERATOR-archive/frontend-public/<dir>" frontend/public/
+# ⚠️ `netlify deploy --dir=dist` REPLACES the whole site — if these folders are
+# empty locally the deploy DELETES them from the live site (this broke
+# porcelainandroid.com once). Always confirm they're populated before deploying.
+frontend/public/androids/stills/
+frontend/public/androids/manga/
+frontend/public/androids/transformations/
+frontend/public/androids/film/
+frontend/public/films/
+frontend/public/marilyns/
+frontend/public/vault/
+frontend/public/originals/
+frontend/public/portfolio/
+frontend/public/album/
+frontend/public/lore/
+
 # OS
 .DS_Store
 Thumbs.db
