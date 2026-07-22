@@ -212,7 +212,8 @@
   <div id="bezel">
     <div id="screen">
       <div class="lyr on" id="l-still"><img src="still.jpg" alt="NEON GRAFFITI GIRL — porcelain" /></div>
-      <div class="lyr" id="l-video"><video id="vid" src="transform.mp4" playsinline preload="auto"></video></div>
+      <div class="lyr" id="l-video"><video id="vid" playsinline preload="auto"></video></div>
+      <div class="lyr" id="l-flip"><img id="flipimg" alt="" /></div>
       <div id="l-print"><img src="manga.jpg" alt="NEON GRAFFITI GIRL — manga" /></div>
       <div id="edge"></div>
       <div id="flash"></div>
@@ -232,7 +233,7 @@
       <span class="rw-k" style="color:#00d4ff">漫画</span><span class="rw-e">MANGA</span>
     </div>
     <div class="rw">
-      <div class="rw-img"><video id="rwvid" src="transform.mp4" muted loop autoplay playsinline></video></div>
+      <div class="rw-img"><img id="rwimg" alt="Transformation" /></div>
       <span class="rw-k" style="color:#39ff14">変換</span><span class="rw-e">TRANSFORMATION</span>
     </div>
   </div>
@@ -263,21 +264,23 @@
       still=document.getElementById('l-still'), lvid=document.getElementById('l-video'),
       print=document.getElementById('l-print'), edge=document.getElementById('edge'),
       flash=document.getElementById('flash'), vid=document.getElementById('vid'),
-      rewards=document.getElementById('rewards'), rwvid=document.getElementById('rwvid'),
+      rewards=document.getElementById('rewards'),
       lever=document.getElementById('lever'), knob=document.getElementById('knob'),
       lk=document.getElementById('lk'), le=document.getElementById('le'),
       stext=document.getElementById('stext'),
       capk=document.getElementById('capk'), cape=document.getElementById('cape'),
-      neon=document.getElementById('neon'), snd=document.getElementById('snd');
+      neon=document.getElementById('neon'), snd=document.getElementById('snd'),
+      lflip=document.getElementById('l-flip'), flipimg=document.getElementById('flipimg'),
+      rwimg=document.getElementById('rwimg');
 
   var soundOn=true, state='porcelain', timers=[];
   function clear(){timers.forEach(clearTimeout);timers=[]}
   function later(fn,ms){timers.push(setTimeout(fn,ms))}
   function cap(k,e){capk.textContent=k;cape.textContent=e}
-  function show(el){[still,lvid].forEach(function(f){f.classList.toggle('on',f===el)})}
+  function show(el){[still,lvid,lflip].forEach(function(f){f.classList.toggle('on',f===el)})}
 
   function toPorcelain(){
-    clear();state='porcelain';body.dataset.state=state;
+    clear();stopFlip();stopReward();stopFallbackAudio();state='porcelain';body.dataset.state=state;
     vid.pause();vid.currentTime=0;
     print.classList.remove('on','go');edge.classList.remove('go');flash.classList.remove('go');
     rewards.classList.remove('on');neon.classList.remove('on');
@@ -300,20 +303,121 @@
     later(transform,3400);
   }
 
+  var flipTimer=null, rwTimer=null, audio=null;
+  function stopFlip(){ if(flipTimer){clearTimeout(flipTimer);clearInterval(flipTimer);flipTimer=null;} }
+  function stopReward(){ if(rwTimer){clearInterval(rwTimer);rwTimer=null;} }
+
+  // The 変換 card loops the same frames, so it shows the transformation even
+  // where video is blocked.
+  function startRewardLoop(){
+    if(!rwimg||!window.__ANIM) return;
+    rwimg.src=window.__ANIM;   // animated webp loops on its own
+  }
+
+  // Music without a media element. Objkt's iframe blocks <video> AND <audio>,
+  // so try the Web Audio API too — it's a different API and the lever click
+  // supplies the user gesture it needs. Silent if that's blocked as well;
+  // it never blocks the transformation.
+  var actx=null, abuf=null, asrc=null;
+  function playFallbackAudio(){
+    if(!window.__AUDIO||!soundOn) return;
+    try{
+      if(!audio){ audio=new Audio(window.__AUDIO); audio.preload='auto'; }
+      audio.currentTime=0; audio.volume=1;
+      var pr=audio.play();
+      if(pr&&pr.catch) pr.catch(webAudioPlay);   // element blocked -> Web Audio
+    }catch(e){ webAudioPlay(); }
+  }
+  function webAudioPlay(){
+    try{
+      var AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC) return;
+      if(!actx) actx=new AC();
+      if(actx.state==='suspended'){ try{actx.resume()}catch(e){} }
+      if(abuf){ startBuf(); return; }
+      fetch(window.__AUDIO).then(function(r){return r.arrayBuffer()})
+        .then(function(b){ return actx.decodeAudioData(b) })
+        .then(function(buf){ abuf=buf; startBuf(); })
+        .catch(function(){});
+    }catch(e){}
+  }
+  function startBuf(){
+    try{
+      stopFallbackAudio();
+      asrc=actx.createBufferSource(); asrc.buffer=abuf;
+      asrc.connect(actx.destination); asrc.start(0);
+    }catch(e){}
+  }
+  function stopFallbackAudio(){
+    try{ if(audio){audio.pause();audio.currentTime=0;} }catch(e){}
+    try{ if(asrc){asrc.stop(0);asrc.disconnect();asrc=null;} }catch(e){}
+  }
+
+  // If the film cannot play (Objkt's artifact iframe blocks <video> however the
+  // source is supplied), show an ANIMATED WEBP instead — an image the browser
+  // animates natively, so it stays smooth. Images always render there.
+  function flipbook(){
+    if(!window.__ANIM) return reveal();
+    try{vid.pause()}catch(e){}
+    stopFlip();
+    flipimg.src=window.__ANIM;
+    show(lflip);
+    playFallbackAudio();
+    flipTimer=setTimeout(reveal, window.__ANIM_MS||15000);
+  }
+
+  // Objkt's artifact CSP is: media-src *  — any HOST is allowed, but the `*`
+  // wildcard does NOT cover data: or blob: schemes. So the film must be loaded
+  // over https. Several gateways are tried in turn; if all fail the animated
+  // webp takes over, so the transformation always happens.
+  function attachFilm(){
+    if(vid.dataset.wired) return;
+    vid.dataset.wired='1';
+    var cid=window.__FILM_CID;
+    if(!cid) return;
+    vid.preload='auto';
+    ['https://ipfs.io/ipfs/','https://dweb.link/ipfs/','https://cloudflare-ipfs.com/ipfs/',
+     'https://gateway.pinata.cloud/ipfs/'].forEach(function(g){
+      var so=document.createElement('source');
+      so.src=g+cid; so.type='video/mp4';
+      vid.appendChild(so);
+    });
+    try{vid.load()}catch(e){}
+  }
+
+  var gaveUp=false;
+  function startFilm(){
+    if(gaveUp||state!=='transforming') return;
+    try{ vid.currentTime=0; }catch(e){}
+    vid.muted=!soundOn;
+    var p=vid.play();
+    if(p&&p.catch){p.catch(function(){          // sound refused -> try muted
+      vid.muted=true;soundOn=false;snd.textContent='♪';
+      vid.play().catch(function(){});
+    })}
+  }
+
   function transform(){
+    attachFilm();
+    gaveUp=false;
     state='transforming';body.dataset.state=state;
     cap('変換中','RECOVERING MEMORY');stext.textContent='変換中 · RECOVERING MEMORY';
-    show(lvid);vid.currentTime=0;vid.muted=!soundOn;
-    var p=vid.play();
-    if(p&&p.catch){p.catch(function(){
-      vid.muted=true;soundOn=false;snd.textContent='♪';
-      vid.play().catch(reveal);
-    })}
+    show(lvid);
+
+    // The film streams from an IPFS gateway, so it may need a few seconds.
+    // Play as soon as it can, and only fall back if it truly never starts.
+    if(vid.readyState>=3) startFilm();
+    else { vid.addEventListener('canplay',startFilm,{once:true});
+           vid.addEventListener('loadeddata',startFilm,{once:true}); }
+
+    later(function(){
+      if(state==='transforming' && !(vid.currentTime>0.15)){ gaveUp=true; flipbook(); }
+    }, 9000);
   }
 
   // the bit she loves: flash, then the manga prints out, then the three appear
   function reveal(){
-    clear();state='manga';body.dataset.state=state;
+    clear();stopFlip();state='manga';body.dataset.state=state;
     flash.classList.remove('go');void flash.offsetWidth;flash.classList.add('go');
     print.classList.add('on');void print.offsetWidth;print.classList.add('go');
     edge.classList.remove('go');void edge.offsetWidth;edge.classList.add('go');
@@ -322,7 +426,7 @@
     neon.classList.remove('on');void neon.offsetWidth;neon.classList.add('on');
     later(function(){
       rewards.classList.add('on');
-      if(rwvid){rwvid.muted=true;rwvid.play().catch(function(){})}
+      startRewardLoop();
       lk.textContent='もう一度';le.textContent='AGAIN';
       lever.disabled=false;knob.classList.remove('down');
     },2200);
@@ -340,6 +444,7 @@
     if(e.code==='Space'||e.code==='Enter'){e.preventDefault();lever.click()}
   });
 
+  setTimeout(attachFilm,0);   // __FILM_CID is defined in a later script
   toPorcelain();
 })();
 </script>

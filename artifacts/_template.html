@@ -212,7 +212,7 @@
   <div id="bezel">
     <div id="screen">
       <div class="lyr on" id="l-still"><img src="still.jpg" alt="{{TITLE}} — porcelain" /></div>
-      <div class="lyr" id="l-video"><video id="vid" playsinline preload="auto" crossorigin="anonymous"></video></div>
+      <div class="lyr" id="l-video"><video id="vid" playsinline preload="auto"></video></div>
       <div class="lyr" id="l-flip"><img id="flipimg" alt="" /></div>
       <div id="l-print"><img src="manga.jpg" alt="{{TITLE}} — manga" /></div>
       <div id="edge"></div>
@@ -375,6 +375,7 @@
     vid.dataset.wired='1';
     var cid=window.__FILM_CID;
     if(!cid) return;
+    vid.preload='auto';
     ['https://ipfs.io/ipfs/','https://dweb.link/ipfs/','https://cloudflare-ipfs.com/ipfs/',
      'https://gateway.pinata.cloud/ipfs/'].forEach(function(g){
       var so=document.createElement('source');
@@ -384,20 +385,34 @@
     try{vid.load()}catch(e){}
   }
 
-  function transform(){
-    attachFilm();
-    state='transforming';body.dataset.state=state;
-    cap('変換中','RECOVERING MEMORY');stext.textContent='変換中 · RECOVERING MEMORY';
-    show(lvid);vid.currentTime=0;vid.muted=!soundOn;
+  var gaveUp=false;
+  function startFilm(){
+    if(gaveUp||state!=='transforming') return;
+    try{ vid.currentTime=0; }catch(e){}
+    vid.muted=!soundOn;
     var p=vid.play();
-    if(p&&p.catch){p.catch(function(){
+    if(p&&p.catch){p.catch(function(){          // sound refused -> try muted
       vid.muted=true;soundOn=false;snd.textContent='♪';
       vid.play().catch(function(){});
     })}
-    // watchdog — if the film hasn't actually advanced, run the frames
+  }
+
+  function transform(){
+    attachFilm();
+    gaveUp=false;
+    state='transforming';body.dataset.state=state;
+    cap('変換中','RECOVERING MEMORY');stext.textContent='変換中 · RECOVERING MEMORY';
+    show(lvid);
+
+    // The film streams from an IPFS gateway, so it may need a few seconds.
+    // Play as soon as it can, and only fall back if it truly never starts.
+    if(vid.readyState>=3) startFilm();
+    else { vid.addEventListener('canplay',startFilm,{once:true});
+           vid.addEventListener('loadeddata',startFilm,{once:true}); }
+
     later(function(){
-      if(state==='transforming' && !(vid.currentTime>0.15)) flipbook();
-    }, 1100);
+      if(state==='transforming' && !(vid.currentTime>0.15)){ gaveUp=true; flipbook(); }
+    }, 9000);
   }
 
   // the bit she loves: flash, then the manga prints out, then the three appear
