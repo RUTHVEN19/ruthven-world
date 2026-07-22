@@ -74,7 +74,11 @@ async function main() {
   const cid = art.cid;
   const title = titleArg || art.name.replace(/-/g, " ").toUpperCase();
 
-  const artifactUri = `ipfs://${cid}/index.html`;
+  // Objkt serves a multi-file HTML artwork ONLY when the artifactUri is the
+  // DIRECTORY root with mime application/x-directory. Pointing at
+  // <cid>/index.html makes it serve the page at <cid>/index.html/artifact,
+  // where the sibling files don't resolve and every image breaks.
+  const artifactUri = `ipfs://${cid}`;
   const stillUri = `ipfs://${cid}/still.jpg`;
   const mangaUri = `ipfs://${cid}/manga.jpg`;
   const filmUri = `ipfs://${cid}/transform.mp4`;
@@ -97,7 +101,7 @@ async function main() {
     thumbnailUri: machineUri,
     creators: [ARTIST],
     formats: [
-      { uri: artifactUri, mimeType: "text/html" },
+      { uri: artifactUri, mimeType: "application/x-directory" },
       { uri: machineUri, mimeType: "image/png" },
       { uri: stillUri, mimeType: "image/jpeg" },
       { uri: mangaUri, mimeType: "image/jpeg" },

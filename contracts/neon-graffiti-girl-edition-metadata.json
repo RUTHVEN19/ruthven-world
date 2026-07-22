@@ -10,7 +10,7 @@
     "tezos"
   ],
   "symbol": "MANGA",
-  "artifactUri": "ipfs://bafybeifiizxnm6vxels7jitaa75dxqkrwqm4ebd5pobc7pxxetddg4ldzu/index.html",
+  "artifactUri": "ipfs://bafybeifiizxnm6vxels7jitaa75dxqkrwqm4ebd5pobc7pxxetddg4ldzu",
   "displayUri": "ipfs://bafybeifiizxnm6vxels7jitaa75dxqkrwqm4ebd5pobc7pxxetddg4ldzu/machine-porcelain.png",
   "thumbnailUri": "ipfs://bafybeifiizxnm6vxels7jitaa75dxqkrwqm4ebd5pobc7pxxetddg4ldzu/machine-porcelain.png",
   "creators": [
@@ -18,8 +18,8 @@
   ],
   "formats": [
     {
-      "uri": "ipfs://bafybeifiizxnm6vxels7jitaa75dxqkrwqm4ebd5pobc7pxxetddg4ldzu/index.html",
-      "mimeType": "text/html"
+      "uri": "ipfs://bafybeifiizxnm6vxels7jitaa75dxqkrwqm4ebd5pobc7pxxetddg4ldzu",
+      "mimeType": "application/x-directory"
     },
     {
       "uri": "ipfs://bafybeifiizxnm6vxels7jitaa75dxqkrwqm4ebd5pobc7pxxetddg4ldzu/machine-porcelain.png",
