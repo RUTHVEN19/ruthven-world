@@ -18,8 +18,8 @@
     -webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;padding:1.5vmin;
   }
   #room{position:fixed;inset:0;pointer-events:none;
-    background:radial-gradient(ellipse at 50% 40%,rgba(255,45,120,.24),transparent 60%),
-               radial-gradient(ellipse at 15% 90%,rgba(0,212,255,.14),transparent 55%)}
+    background:radial-gradient(ellipse at 50% 40%,rgba(255,45,120,.26),transparent 60%),
+               radial-gradient(ellipse at 15% 90%,rgba(255,122,176,.13),transparent 55%)}
 
   /* ── CABINET ─────────────────────────── */
   #cab{
@@ -31,22 +31,14 @@
     border:4px solid var(--pink);
     border-radius:56px 56px 34px 34px;
     padding:13px 13px 11px;
-    animation:bob 6s ease-in-out infinite, neonCase 4.5s linear infinite;
+    animation:bob 6s ease-in-out infinite, neonCase 2.8s ease-in-out infinite;
   }
-  /* the casing itself flashes through neon colours */
+  /* casing stays BRIGHT PINK — the neon just breathes, it never changes colour */
   @keyframes neonCase{
-    0%,100%{border-color:#ff2d78;
-      box-shadow:0 0 26px rgba(255,45,120,.75),0 0 62px rgba(255,45,120,.42),
-                 0 26px 70px rgba(0,0,0,.8),inset 0 2px 0 rgba(255,255,255,.18)}
-    25%{border-color:#00d4ff;
-      box-shadow:0 0 26px rgba(0,212,255,.75),0 0 62px rgba(0,212,255,.42),
-                 0 26px 70px rgba(0,0,0,.8),inset 0 2px 0 rgba(255,255,255,.18)}
-    50%{border-color:#c07bff;
-      box-shadow:0 0 26px rgba(192,123,255,.75),0 0 62px rgba(192,123,255,.42),
-                 0 26px 70px rgba(0,0,0,.8),inset 0 2px 0 rgba(255,255,255,.18)}
-    75%{border-color:#ffe14d;
-      box-shadow:0 0 26px rgba(255,225,77,.7),0 0 62px rgba(255,225,77,.38),
-                 0 26px 70px rgba(0,0,0,.8),inset 0 2px 0 rgba(255,255,255,.18)}
+    0%,100%{box-shadow:0 0 22px rgba(255,45,120,.62),0 0 52px rgba(255,45,120,.32),
+                       0 26px 70px rgba(0,0,0,.8),inset 0 2px 0 rgba(255,255,255,.18)}
+    50%    {box-shadow:0 0 34px rgba(255,45,120,.92),0 0 78px rgba(255,45,120,.55),
+                       0 26px 70px rgba(0,0,0,.8),inset 0 2px 0 rgba(255,255,255,.18)}
   }
   @keyframes bob{0%,100%{transform:translateY(0) rotate(-.4deg)}50%{transform:translateY(-8px) rotate(.4deg)}}
 
@@ -59,9 +51,9 @@
   .spark{position:absolute;z-index:4;pointer-events:none;color:#fff;
     font-size:16px;text-shadow:0 0 10px #fff,0 0 20px var(--pink);animation:kira 2.4s infinite}
   .spark.s1{top:-10px;left:12%;animation-delay:0s}
-  .spark.s2{top:16%;right:-12px;animation-delay:.5s;color:#bff4ff;text-shadow:0 0 10px #bff4ff}
+  .spark.s2{top:16%;right:-12px;animation-delay:.5s}
   .spark.s3{bottom:14%;left:-12px;animation-delay:1s;color:#ffe6f2}
-  .spark.s4{bottom:-8px;right:16%;animation-delay:1.6s;color:#fff2a8;text-shadow:0 0 10px #fff2a8}
+  .spark.s4{bottom:-8px;right:16%;animation-delay:1.6s}
   @keyframes kira{0%,100%{opacity:0;transform:scale(.4) rotate(0)}
                   50%{opacity:1;transform:scale(1.15) rotate(90deg)}}
 

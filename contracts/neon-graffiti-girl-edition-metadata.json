@@ -1,0 +1,61 @@
+{
+  "name": "NEON GRAFFITI GIRL — The Manga Machine",
+  "description": "An interactive Manga Machine. Pull the lever: the porcelain android is read, processed and transformed — the film plays, the manga memory prints out, and all three works are revealed. Porcelain, manga and transformation, held inside one machine you can run as often as you like. From THE MANGA MACHINE, the neon-lit archive of Roppongi's porcelain androids by Miss AL Simpson.",
+  "tags": [
+    "porcelain androids",
+    "the manga machine",
+    "interactive",
+    "manga",
+    "miss al simpson",
+    "tezos"
+  ],
+  "symbol": "MANGA",
+  "artifactUri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/index.html",
+  "displayUri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/manga.jpg",
+  "thumbnailUri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/manga.jpg",
+  "creators": [
+    "tz1WKakHeqcemhukM7iDm15gaQN6byivaU5o"
+  ],
+  "formats": [
+    {
+      "uri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/index.html",
+      "mimeType": "text/html"
+    },
+    {
+      "uri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/still.jpg",
+      "mimeType": "image/jpeg"
+    },
+    {
+      "uri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/manga.jpg",
+      "mimeType": "image/jpeg"
+    },
+    {
+      "uri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/transform.mp4",
+      "mimeType": "video/mp4"
+    }
+  ],
+  "attributes": [
+    {
+      "name": "Type",
+      "value": "Interactive"
+    },
+    {
+      "name": "Edition size",
+      "value": "100"
+    },
+    {
+      "name": "Contains",
+      "value": "Porcelain · Manga · Transformation"
+    }
+  ],
+  "decimals": 0,
+  "isBooleanAmount": false,
+  "shouldPreferSymbol": false,
+  "royalties": {
+    "decimals": 4,
+    "shares": {
+      "tz1WKakHeqcemhukM7iDm15gaQN6byivaU5o": 750
+    }
+  },
+  "rights": "All intellectual property, copyright and reproduction rights in this artwork, and in the names 'Porcelain Androids' and 'The Manga Machine', are retained by MISS AL SIMPSON LIMITED. No IP or copyright transfers to the holder."
+}
