@@ -7,17 +7,18 @@
     "bytes": 26649569
   },
   "manga": {
-    "cid": "bafybeiee27ejfb3inblskxzyrb2phluxw2pk7m26p3mof6cbs34sddx6hi",
+    "cid": "bafybeie77qmq3t2xa27tggdm4d5q5rovjdnw4d7naebpzn76lv7npkm2nm",
     "mime": "image/png",
     "kanji": "漫画",
     "label": "Manga",
-    "bytes": 5713171
+    "bytes": 12052033
   },
   "transformation": {
     "cid": "bafybeifgmxm6b2gymvfqzjvr3gynycvd2gvum5xnuavxwskqtp2ylz4rvq",
     "mime": "video/mp4",
     "kanji": "変換",
     "label": "Transformation",
-    "bytes": 6406834
+    "bytes": 6406834,
+    "posterCid": "bafkreif2tg44gbtakukbynvvm7ffcnj6l62det5ugzk5p4ieket3bpcls4"
   }
 }

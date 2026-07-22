@@ -1,0 +1,42 @@
+[
+  {
+    "order": 1,
+    "title": "NEON GRAFFITI GIRL — interactive (edition of 100)",
+    "type": "interactive",
+    "metadataUri": "ipfs://bafkreicr4ii5fzzqalgsqrcoqogfembgkkj3taqlg7f34232innpou2cii",
+    "target": "tz1WKakHeqcemhukM7iDm15gaQN6byivaU5o",
+    "fa2": "KT1Awrso9NUZvdB97uEXicSb7SqFEsdecPoc",
+    "collection_id": 113300,
+    "editions": 100
+  },
+  {
+    "order": 2,
+    "title": "NEON GRAFFITI GIRL — 磁器 Porcelain (edition of 100)",
+    "type": "companion-porcelain",
+    "metadataUri": "ipfs://bafkreidltvjbi5eshiwc7v3ji3epv6rzone2hopuezf77hm6of3fqwn3qm",
+    "target": "tz1WKakHeqcemhukM7iDm15gaQN6byivaU5o",
+    "fa2": "KT1Awrso9NUZvdB97uEXicSb7SqFEsdecPoc",
+    "collection_id": 113300,
+    "editions": 100
+  },
+  {
+    "order": 3,
+    "title": "NEON GRAFFITI GIRL — 漫画 Manga (edition of 100)",
+    "type": "companion-manga",
+    "metadataUri": "ipfs://bafkreibk6pvnlf5o2aha7atio4gs3d2xy43wmcgqo3sbpbzfk6cypyyqfa",
+    "target": "tz1WKakHeqcemhukM7iDm15gaQN6byivaU5o",
+    "fa2": "KT1Awrso9NUZvdB97uEXicSb7SqFEsdecPoc",
+    "collection_id": 113300,
+    "editions": 100
+  },
+  {
+    "order": 4,
+    "title": "NEON GRAFFITI GIRL — 変換 Transformation (edition of 100)",
+    "type": "companion-transformation",
+    "metadataUri": "ipfs://bafkreiaqmdbctp5o4ak3o3q735xxqwalzaddw6h552nr3wco3mzvuc5jba",
+    "target": "tz1WKakHeqcemhukM7iDm15gaQN6byivaU5o",
+    "fa2": "KT1Awrso9NUZvdB97uEXicSb7SqFEsdecPoc",
+    "collection_id": 113300,
+    "editions": 100
+  }
+]

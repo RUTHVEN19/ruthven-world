@@ -10,27 +10,27 @@
     "tezos"
   ],
   "symbol": "MANGA",
-  "artifactUri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/index.html",
-  "displayUri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/manga.jpg",
-  "thumbnailUri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/manga.jpg",
+  "artifactUri": "ipfs://bafybeig4ehvnrnpwt2utda63acvkww2d3wsu7fql5gums5vltlc5azrj4u/index.html",
+  "displayUri": "ipfs://bafybeig4ehvnrnpwt2utda63acvkww2d3wsu7fql5gums5vltlc5azrj4u/manga.jpg",
+  "thumbnailUri": "ipfs://bafybeig4ehvnrnpwt2utda63acvkww2d3wsu7fql5gums5vltlc5azrj4u/manga.jpg",
   "creators": [
     "tz1WKakHeqcemhukM7iDm15gaQN6byivaU5o"
   ],
   "formats": [
     {
-      "uri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/index.html",
+      "uri": "ipfs://bafybeig4ehvnrnpwt2utda63acvkww2d3wsu7fql5gums5vltlc5azrj4u/index.html",
       "mimeType": "text/html"
     },
     {
-      "uri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/still.jpg",
+      "uri": "ipfs://bafybeig4ehvnrnpwt2utda63acvkww2d3wsu7fql5gums5vltlc5azrj4u/still.jpg",
       "mimeType": "image/jpeg"
     },
     {
-      "uri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/manga.jpg",
+      "uri": "ipfs://bafybeig4ehvnrnpwt2utda63acvkww2d3wsu7fql5gums5vltlc5azrj4u/manga.jpg",
       "mimeType": "image/jpeg"
     },
     {
-      "uri": "ipfs://bafybeihdczsziozhyy53zwpswthhzrnwba32vnefi25sge6jsryesrtwza/transform.mp4",
+      "uri": "ipfs://bafybeig4ehvnrnpwt2utda63acvkww2d3wsu7fql5gums5vltlc5azrj4u/transform.mp4",
       "mimeType": "video/mp4"
     }
   ],
