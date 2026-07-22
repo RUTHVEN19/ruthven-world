@@ -89,6 +89,8 @@ export const STILLS = [
 // ── Manga Machine transformations — per-phase triptych sets ──
 // Phase 1 (Fresh Ink): 33 complete triplets
 const TRIPLET_NAMES_P1 = [
+  // ── Featured: the limited edition (first so it's what visitors transform) ──
+  'neon-graffiti-girl',
   'blue-cherub-girls', 'blue-manga-reflections', 'blue-pinky-tech', 'blue-shiny-heart',
   'cherub-disco', 'cherub-hunter', 'convertible-blue', 'dj-manga-techy', 'drive-manga',
   'glitch-angels', 'i-heart-cherubs', 'madame-of-the-porcelain', 'manga-dance-troupe',
