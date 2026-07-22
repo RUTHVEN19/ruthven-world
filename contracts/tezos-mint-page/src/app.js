@@ -10,6 +10,10 @@ const FACTORY = 'KT1Aq4wWmVanpQhq4TTfjZXB5AjFpx15iQMM';
 const DEFAULT_COLLECTION = 'KT1CghJjhk5g7cd3kr6E1aY5edL6gChPYFDP';
 let COLLECTION = DEFAULT_COLLECTION;
 const LIST_FILE = new URLSearchParams(location.search).get('list') || 'tezos-mint-list.json';
+// ?force=1 mints EVERY entry in the list, ignoring the on-chain count. Needed
+// when a list is a one-off correction rather than the full history of the
+// contract (otherwise the count says "all minted" and nothing happens).
+const FORCE = new URLSearchParams(location.search).get('force') === '1';
 const BATCH_SIZE = 8;
 
 const $ = (id) => document.getElementById(id);
@@ -66,8 +70,9 @@ $('disconnect').onclick = async () => { await wallet.clearActiveAccount(); locat
 $('mint').onclick = async () => {
   $('mint').disabled = true;
   try {
-    const already = await mintedCount();
-    if (already > 0) log(`Resuming — ${already} already minted, skipping those.`, 'warn');
+    const already = FORCE ? 0 : await mintedCount();
+    if (FORCE) log('FORCE mode — minting every entry in this list, ignoring the on-chain count.', 'warn');
+    else if (already > 0) log(`Resuming — ${already} already minted, skipping those.`, 'warn');
     const todo = list.slice(already);
     if (!todo.length) { setStatus('All pieces already minted. ✓'); log('Nothing to do.', 'ok'); return; }
 

@@ -89002,6 +89002,7 @@ ${e7.length}`, n6 = new TextEncoder().encode(t2 + e7);
   var DEFAULT_COLLECTION = "KT1CghJjhk5g7cd3kr6E1aY5edL6gChPYFDP";
   var COLLECTION = DEFAULT_COLLECTION;
   var LIST_FILE = new URLSearchParams(location.search).get("list") || "tezos-mint-list.json";
+  var FORCE = new URLSearchParams(location.search).get("force") === "1";
   var BATCH_SIZE = 8;
   var $3 = (id2) => document.getElementById(id2);
   var log2 = (m3, cls = "") => {
@@ -89069,8 +89070,9 @@ ${e7.length}`, n6 = new TextEncoder().encode(t2 + e7);
   $3("mint").onclick = async () => {
     $3("mint").disabled = true;
     try {
-      const already = await mintedCount();
-      if (already > 0) log2(`Resuming \u2014 ${already} already minted, skipping those.`, "warn");
+      const already = FORCE ? 0 : await mintedCount();
+      if (FORCE) log2("FORCE mode \u2014 minting every entry in this list, ignoring the on-chain count.", "warn");
+      else if (already > 0) log2(`Resuming \u2014 ${already} already minted, skipping those.`, "warn");
       const todo = list.slice(already);
       if (!todo.length) {
         setStatus("All pieces already minted. \u2713");
