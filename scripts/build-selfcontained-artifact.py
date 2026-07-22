@@ -66,13 +66,30 @@ def main():
         die("ffmpeg failed to shrink the video")
 
     html = open(html_path).read()
-    swaps = {
-        "still.jpg": data_uri(os.path.join(src, "still.jpg"), "image/jpeg"),
-        "manga.jpg": data_uri(os.path.join(src, "manga.jpg"), "image/jpeg"),
-        "transform.mp4": data_uri(small, "video/mp4"),
-    }
-    for name, uri in swaps.items():
-        html = html.replace(f'src="{name}"', f'src="{uri}"')
+
+    # Images inline as data: URIs — every browser handles those fine.
+    for name, mime in (("still.jpg", "image/jpeg"), ("manga.jpg", "image/jpeg")):
+        html = html.replace(f'src="{name}"', f'src="{data_uri(os.path.join(src, name), mime)}"')
+
+    # The VIDEO must NOT be a data: URI — Safari won't reliably play those, which
+    # is how the minted machine ended up silent with no transformation. Carry the
+    # bytes as base64 and convert to a Blob URL at runtime instead; that works
+    # everywhere, including inside Objkt's sandboxed iframe.
+    with open(small, "rb") as f:
+        vid_b64 = base64.b64encode(f.read()).decode("ascii")
+    html = html.replace('src="transform.mp4"', "")          # set by script below
+    boot = (
+        "<script>(function(){var b64=\"" + vid_b64 + "\";"
+        "var bin=atob(b64),n=bin.length,u=new Uint8Array(n);"
+        "for(var i=0;i<n;i++)u[i]=bin.charCodeAt(i);"
+        "var url=URL.createObjectURL(new Blob([u],{type:'video/mp4'}));"
+        "document.getElementById('vid').src=url;"
+        "var r=document.getElementById('rwvid'); if(r) r.src=url;"
+        "})();</script>"
+    )
+    html = html.replace("<script>\n(function(){", boot + "\n<script>\n(function(){", 1)
+    if boot not in html:
+        html = html.replace("</body>", boot + "\n</body>", 1)
 
     # nothing external must remain
     leftovers = re.findall(r'src="(?!data:)[^"]+"', html)
