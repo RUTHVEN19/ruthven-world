@@ -1,10 +1,22 @@
 {
   "fa2": "KT1Awrso9NUZvdB97uEXicSb7SqFEsdecPoc",
   "artist": "tz1WKakHeqcemhukM7iDm15gaQN6byivaU5o",
-  "machineTokenId": 0,
+  "machineTokenId": 5,
   "companions": [
-    { "tokenId": 1, "kanji": "磁器", "label": "Porcelain" },
-    { "tokenId": 2, "kanji": "漫画", "label": "Manga" },
-    { "tokenId": 3, "kanji": "変換", "label": "Transformation" }
+    {
+      "tokenId": 1,
+      "kanji": "磁器",
+      "label": "Porcelain"
+    },
+    {
+      "tokenId": 2,
+      "kanji": "漫画",
+      "label": "Manga"
+    },
+    {
+      "tokenId": 3,
+      "kanji": "変換",
+      "label": "Transformation"
+    }
   ]
 }
