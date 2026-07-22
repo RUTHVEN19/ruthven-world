@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{{TITLE}} — The Manga Machine</title>
+<style>
+  :root {
+    --pink: #ff2d78;
+    --cyan: #00d4ff;
+    --green: #00e6a7;
+    --ink: #07060a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: var(--ink); overflow: hidden; }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #fff; -webkit-font-smoothing: antialiased;
+    user-select: none; -webkit-user-select: none;
+  }
+
+  /* ── Stage ─────────────────────────────────────────── */
+  #stage {
+    position: relative; width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .frame {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity .55s ease;
+    pointer-events: none;
+  }
+  .frame.on { opacity: 1; }
+  .frame img, .frame video {
+    max-width: 100%; max-height: 100%;
+    width: auto; height: auto; object-fit: contain;
+    display: block;
+  }
+
+  /* glow wash behind the art */
+  #glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 55%, rgba(255,45,120,.16), transparent 62%);
+    transition: background .6s ease;
+  }
+  body[data-state="manga"] #glow {
+    background: radial-gradient(ellipse at 50% 55%, rgba(0,212,255,.14), transparent 62%);
+  }
+
+  /* scanlines — the machine's screen */
+  #scan {
+    position: absolute; inset: 0; pointer-events: none; opacity: .16;
+    background: repeating-linear-gradient(
+      to bottom, rgba(255,255,255,.10) 0 1px, transparent 1px 3px);
+    mix-blend-mode: overlay;
+  }
+  #vig {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.72) 100%);
+  }
+
+  /* ── Chrome ────────────────────────────────────────── */
+  #title {
+    position: absolute; top: 4.2%; left: 0; right: 0;
+    text-align: center; pointer-events: none; z-index: 5;
+    transition: opacity .4s ease;
+  }
+  #kanji {
+    font-size: clamp(13px, 2.1vw, 20px); letter-spacing: .42em;
+    color: var(--pink); text-shadow: 0 0 12px var(--pink), 0 0 34px rgba(255,45,120,.55);
+  }
+  #name {
+    margin-top: .5em;
+    font-size: clamp(11px, 1.5vw, 15px); letter-spacing: .30em;
+    font-weight: 700; color: rgba(255,255,255,.94);
+    text-shadow: 0 0 10px rgba(0,0,0,.9);
+  }
+  #artist {
+    margin-top: .45em;
+    font-size: clamp(8px, 1vw, 10px); letter-spacing: .22em;
+    color: rgba(255,255,255,.42);
+  }
+
+  #statelabel {
+    position: absolute; bottom: 16.5%; left: 0; right: 0;
+    text-align: center; pointer-events: none; z-index: 5;
+    font-size: clamp(9px, 1.15vw, 12px); letter-spacing: .34em;
+    transition: color .4s ease, opacity .3s ease;
+    text-shadow: 0 0 12px currentColor;
+    color: var(--pink);
+  }
+  body[data-state="manga"] #statelabel { color: var(--cyan); }
+  body[data-state="transforming"] #statelabel { color: #fff; }
+
+  /* lever */
+  #lever {
+    position: absolute; bottom: 6.5%; left: 50%; transform: translateX(-50%);
+    z-index: 6; cursor: pointer; background: rgba(10,6,14,.62);
+    border: 1px solid rgba(255,45,120,.55); border-radius: 999px;
+    padding: .78em 2.1em; color: #fff; font: inherit;
+    display: flex; flex-direction: column; align-items: center; gap: .30em;
+    backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px);
+    transition: transform .18s ease, box-shadow .3s ease, border-color .3s ease, opacity .3s ease;
+    box-shadow: 0 0 22px rgba(255,45,120,.24);
+  }
+  #lever:hover { transform: translateX(-50%) translateY(-2px); box-shadow: 0 0 32px rgba(255,45,120,.45); }
+  #lever:active { transform: translateX(-50%) translateY(1px); }
+  #lever[disabled] { opacity: .28; pointer-events: none; }
+  #lk { font-size: clamp(11px, 1.5vw, 15px); letter-spacing: .3em; color: var(--pink); text-shadow: 0 0 10px var(--pink); }
+  #le { font-size: clamp(8px, .95vw, 10px); letter-spacing: .26em; color: rgba(255,255,255,.8); }
+
+  /* sound toggle */
+  #snd {
+    position: absolute; top: 4.4%; right: 4%; z-index: 7;
+    width: 2.5em; height: 2.5em; border-radius: 50%;
+    background: rgba(10,6,14,.6); border: 1px solid rgba(255,255,255,.22);
+    color: #fff; cursor: pointer; font-size: clamp(10px, 1.2vw, 13px);
+    backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px);
+    transition: all .25s ease;
+  }
+  #snd:hover { border-color: var(--pink); color: var(--pink); }
+
+  /* edition mark */
+  #ed {
+    position: absolute; bottom: 3.6%; right: 4%; z-index: 5;
+    font-size: clamp(7px, .85vw, 9px); letter-spacing: .24em;
+    color: rgba(255,255,255,.3); pointer-events: none;
+  }
+
+  /* transform flash */
+  #flash {
+    position: absolute; inset: 0; z-index: 4; pointer-events: none;
+    background: #fff; opacity: 0;
+  }
+  #flash.fire { animation: fl .5s ease; }
+  @keyframes fl { 0% { opacity: .82 } 100% { opacity: 0 } }
+
+  @media (max-width: 640px) {
+    #statelabel { bottom: 19%; }
+    #lever { bottom: 7.5%; padding: .7em 1.6em; }
+  }
+</style>
+</head>
+<body data-state="porcelain">
+
+<div id="stage">
+  <div id="glow"></div>
+
+  <div class="frame on" id="f-still"><img src="still.jpg" alt="Neon Graffiti Girl — porcelain" /></div>
+  <div class="frame" id="f-manga"><img src="manga.jpg" alt="Neon Graffiti Girl — manga" /></div>
+  <div class="frame" id="f-video">
+    <video id="vid" src="transform.mp4" playsinline preload="auto"></video>
+  </div>
+
+  <div id="flash"></div>
+  <div id="scan"></div>
+  <div id="vig"></div>
+
+  <div id="title">
+    <div id="kanji">漫画マシン</div>
+    <div id="name">{{TITLE}}</div>
+    <div id="artist">MISS AL SIMPSON</div>
+  </div>
+
+  <button id="snd" title="Sound">♪</button>
+
+  <div id="statelabel">磁器 · PORCELAIN</div>
+
+  <button id="lever">
+    <span id="lk">変換</span>
+    <span id="le">PULL THE LEVER</span>
+  </button>
+
+  <div id="ed">THE MANGA MACHINE · LIMITED EDITION</div>
+</div>
+
+<script>
+(function () {
+  var body   = document.body;
+  var still  = document.getElementById('f-still');
+  var manga  = document.getElementById('f-manga');
+  var fvideo = document.getElementById('f-video');
+  var vid    = document.getElementById('vid');
+  var lever  = document.getElementById('lever');
+  var lk     = document.getElementById('lk');
+  var le     = document.getElementById('le');
+  var label  = document.getElementById('statelabel');
+  var flash  = document.getElementById('flash');
+  var snd    = document.getElementById('snd');
+  var titleEl= document.getElementById('title');
+
+  var soundOn = true;   // collector can mute; we try sound first
+  var state   = 'porcelain';
+
+  function show(el) {
+    [still, manga, fvideo].forEach(function (f) { f.classList.toggle('on', f === el); });
+  }
+  function setLabel(t) { label.textContent = t; }
+
+  function toPorcelain() {
+    state = 'porcelain'; body.dataset.state = state;
+    vid.pause(); vid.currentTime = 0;
+    show(still); setLabel('磁器 · PORCELAIN');
+    lk.textContent = '変換'; le.textContent = 'PULL THE LEVER';
+    lever.disabled = false;
+    titleEl.style.opacity = 1;
+  }
+
+  function toManga() {
+    state = 'manga'; body.dataset.state = state;
+    show(manga); setLabel('漫画 · MANGA MEMORY');
+    lk.textContent = 'もう一度'; le.textContent = 'AGAIN';
+    lever.disabled = false;
+    titleEl.style.opacity = 1;
+  }
+
+  function transform() {
+    state = 'transforming'; body.dataset.state = state;
+    lever.disabled = true;
+    setLabel('変換中 · RECOVERING MEMORY');
+    titleEl.style.opacity = 0.25;
+
+    flash.classList.remove('fire');
+    void flash.offsetWidth;      // restart the animation
+    flash.classList.add('fire');
+
+    show(fvideo);
+    vid.currentTime = 0;
+    vid.muted = !soundOn;
+    var p = vid.play();
+    if (p && p.catch) {
+      p.catch(function () {         // blocked with audio -> retry muted
+        vid.muted = true;
+        soundOn = false; snd.textContent = '♪';
+        vid.play().catch(function () { toManga(); });
+      });
+    }
+  }
+
+  vid.addEventListener('ended', toManga);
+  // if the file can't play at all, don't strand the collector
+  vid.addEventListener('error', toManga);
+
+  lever.addEventListener('click', function () {
+    if (state === 'porcelain') transform();
+    else if (state === 'manga') toPorcelain();
+  });
+
+  snd.addEventListener('click', function () {
+    soundOn = !soundOn;
+    vid.muted = !soundOn;
+    snd.textContent = soundOn ? '♫' : '♪';
+  });
+  snd.textContent = '♫';
+
+  // Keyboard: space / enter drives the machine too
+  window.addEventListener('keydown', function (e) {
+    if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); lever.click(); }
+  });
+
+  toPorcelain();
+})();
+</script>
+</body>
+</html>
