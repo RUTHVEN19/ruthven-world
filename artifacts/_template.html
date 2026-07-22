@@ -304,16 +304,14 @@
   }
 
   var flipTimer=null, rwTimer=null, audio=null;
-  function stopFlip(){ if(flipTimer){clearInterval(flipTimer);flipTimer=null;} }
+  function stopFlip(){ if(flipTimer){clearTimeout(flipTimer);clearInterval(flipTimer);flipTimer=null;} }
   function stopReward(){ if(rwTimer){clearInterval(rwTimer);rwTimer=null;} }
 
   // The 変換 card loops the same frames, so it shows the transformation even
   // where video is blocked.
   function startRewardLoop(){
-    var F=window.__FRAMES||[]; if(!F.length||!rwimg) return;
-    stopReward(); var i=0;
-    rwimg.src=F[0];
-    rwTimer=setInterval(function(){ i=(i+1)%F.length; rwimg.src=F[i]; }, 1000/(window.__FPS||6));
+    if(!rwimg||!window.__ANIM) return;
+    rwimg.src=window.__ANIM;   // animated webp loops on its own
   }
 
   // Best effort music: if the film is blocked its soundtrack is too, so try a
@@ -328,23 +326,17 @@
   }
   function stopFallbackAudio(){ try{ if(audio){audio.pause();audio.currentTime=0;} }catch(e){} }
 
-  // If the film cannot play (codec, autoplay policy, sandbox — it has failed
-  // several ways on Objkt), flipbook the frames instead so the transformation
-  // ALWAYS happens. Images are the one thing that has never failed.
+  // If the film cannot play (Objkt's artifact iframe blocks <video> however the
+  // source is supplied), show an ANIMATED WEBP instead — an image the browser
+  // animates natively, so it stays smooth. Images always render there.
   function flipbook(){
-    var F=window.__FRAMES||[];
-    if(!F.length) return reveal();
+    if(!window.__ANIM) return reveal();
     try{vid.pause()}catch(e){}
     stopFlip();
-    var i=0, fps=window.__FPS||6;
-    flipimg.src=F[0];
+    flipimg.src=window.__ANIM;
     show(lflip);
     playFallbackAudio();
-    flipTimer=setInterval(function(){
-      i++;
-      if(i>=F.length){ stopFlip(); reveal(); return; }
-      flipimg.src=F[i];
-    }, 1000/fps);
+    flipTimer=setTimeout(reveal, window.__ANIM_MS||15000);
   }
 
   function transform(){

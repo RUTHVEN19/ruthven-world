@@ -90,38 +90,39 @@ def main():
     if boot not in html:
         html = html.replace("</body>", boot + "\n</body>", 1)
 
-    # ── Frame-sequence fallback ───────────────────────────────────────────
-    # The video has failed on Objkt in ways I cannot reproduce (data: URI, then
-    # blob: in a sandboxed iframe). So the transformation must not DEPEND on
-    # video at all: extract frames and flipbook them if the film doesn't start.
-    # Images are the one thing that has never failed anywhere.
+    # ── Animated-WebP fallback ────────────────────────────────────────────
+    # Objkt's artifact iframe blocks <video> (tried as a sibling file, a data:
+    # URI and a blob: URL — all play on the artist's site, none on Objkt). But
+    # IMAGES always render there. An animated WebP is an image the browser
+    # animates natively, so the transformation stays smooth without <video>.
     import glob, tempfile
     fdir = tempfile.mkdtemp()
     subprocess.run(["ffmpeg", "-y", "-i", os.path.join(src, "transform.mp4"),
-                    "-vf", "fps=6,scale=640:-2", "-q:v", "7",
-                    os.path.join(fdir, "f%03d.jpg")],
+                    "-vf", "fps=12,scale=720:-2", os.path.join(fdir, "f%03d.png")],
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    frames = sorted(glob.glob(os.path.join(fdir, "*.jpg")))
-    if not frames:
-        die("could not extract fallback frames")
-    frames_js = ",".join('"' + data_uri(f, "image/jpeg") + '"' for f in frames)
+    pngs = sorted(glob.glob(os.path.join(fdir, "*.png")))
+    if not pngs:
+        die("could not extract frames for the animated fallback")
+    from PIL import Image as _I
+    ims = [_I.open(f).convert("RGB") for f in pngs]
+    anim = os.path.join(fdir, "transform.webp")
+    ims[0].save(anim, format="WEBP", save_all=True, append_images=ims[1:],
+                duration=int(1000 / 12), loop=0, quality=50, method=4)
+    anim_ms = int(len(ims) * 1000 / 12)
 
-    # standalone soundtrack — the film's audio is unreachable wherever the film
-    # itself is blocked, so carry it separately and try it with the frames
+    # the soundtrack separately — the film's audio is unreachable when the film is
     aud = os.path.join(fdir, "track.m4a")
     subprocess.run(["ffmpeg", "-y", "-i", os.path.join(src, "transform.mp4"),
                     "-vn", "-c:a", "aac", "-b:a", "96k", aud],
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     aud_js = '"' + data_uri(aud, "audio/mp4") + '"' if os.path.exists(aud) else "null"
 
-    fallback = (
-        "<script>window.__FRAMES=[" + frames_js + "];window.__FPS=6;"
-        "window.__AUDIO=" + aud_js + ";</script>"
-    )
-    if os.path.exists(aud):
-        print(f"  fallback audio : {os.path.getsize(aud)//1024} KB")
+    fallback = ("<script>window.__ANIM=\"" + data_uri(anim, "image/webp") + "\";"
+                "window.__ANIM_MS=" + str(anim_ms) + ";window.__AUDIO=" + aud_js + ";</script>")
     html = html.replace("</body>", fallback + "\n</body>", 1)
-    print(f"  fallback frames: {len(frames)} @6fps")
+    print(f"  animated fallback: {len(ims)} frames @12fps, {os.path.getsize(anim)/1048576:.1f} MB webp")
+    if os.path.exists(aud):
+        print(f"  fallback audio   : {os.path.getsize(aud)//1024} KB")
     # ──────────────────────────────────────────────────────────────────────
 
     # nothing external must remain
