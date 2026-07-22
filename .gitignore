@@ -58,3 +58,6 @@ Thumbs.db
 
 # Local Netlify folder
 .netlify
+
+# Pruned per-brand build output
+frontend/dist-porcelain/
