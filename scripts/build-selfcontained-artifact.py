@@ -78,8 +78,13 @@ def main():
     film_cid = os.environ.get("FILM_CID", "")
     if not film_cid:
         die("set FILM_CID to the IPFS CID of the transformation mp4")
+    film_url = os.environ.get("FILM_URL", "")
     html = html.replace("</body>",
-        f'<script>window.__FILM_CID="{film_cid}";</script>\n</body>', 1)
+        f'<script>window.__FILM_CID="{film_cid}";'
+        f'window.__FILM_URL={{}};</script>\n</body>'.format(
+            '"' + film_url + '"' if film_url else 'null'), 1)
+    if film_url:
+        print(f"  film primary source: {film_url}")
     print(f"  film served from IPFS gateways: {film_cid[:20]}…")
 
     # ── Animated-WebP fallback ────────────────────────────────────────────

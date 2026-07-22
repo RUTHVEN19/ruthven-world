@@ -374,12 +374,18 @@
     if(vid.dataset.wired) return;
     vid.dataset.wired='1';
     var cid=window.__FILM_CID;
-    if(!cid) return;
+    if(!cid && !window.__FILM_URL) return;
     vid.preload='auto';
+    // Fast CDN first — this is why the film plays instantly on the artist's own
+    // site and crawled from public gateways. IPFS follows as the permanent
+    // copy, so the work survives the website.
+    var srcs=[];
+    if(window.__FILM_URL) srcs.push(window.__FILM_URL);
     ['https://ipfs.io/ipfs/','https://dweb.link/ipfs/','https://cloudflare-ipfs.com/ipfs/',
-     'https://gateway.pinata.cloud/ipfs/'].forEach(function(g){
+     'https://gateway.pinata.cloud/ipfs/'].forEach(function(g){ srcs.push(g+cid); });
+    srcs.forEach(function(u){
       var so=document.createElement('source');
-      so.src=g+cid; so.type='video/mp4';
+      so.src=u; so.type='video/mp4';
       vid.appendChild(so);
     });
     try{vid.load()}catch(e){}
