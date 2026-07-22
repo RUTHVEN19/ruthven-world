@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
-import { TRANSFORMATIONS, PHASE_TRANSFORMATIONS, STILLS, MINT_LINKS, ANDROIDS_BASE, objktEditionUrl, LIMITED_EDITION_SLUG } from '../../config/androidsContent';
+import { TRANSFORMATIONS, PHASE_TRANSFORMATIONS, STILLS, MINT_LINKS, ANDROIDS_BASE, objktEditionUrl } from '../../config/androidsContent';
 import { PHASE_CONFIG } from '../../config/wagmiConfig';
 
 // ── Room constants ──
@@ -351,6 +351,7 @@ function MachineUI({ activePhase, machineState }) {
   const [state, setState] = useState(STATES.SELECT);
   const [selected, setSelected] = useState(null);
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [showAll, setShowAll] = useState(false);   // expand picker to show every transformation
   const [lightShow, setLightShow] = useState(false);
   const videoRef = useRef(null);
   const scrollRef = useRef(null);
@@ -586,18 +587,35 @@ function MachineUI({ activePhase, machineState }) {
             <div className="mm-ui-controls">
               {state === STATES.SELECT && (
                 <>
+                  <div className="mm-ui-picker-head">
+                    <span className="mm-ui-picker-count" style={{ color: `${visuals.accent}cc` }}>
+                      {selectedIdx + 1} / {phaseTriplets.length}
+                    </span>
+                    <button
+                      className="mm-ui-showall"
+                      style={{ borderColor: `${visuals.accent}55`, color: visuals.accent }}
+                      onClick={() => setShowAll((v) => !v)}
+                    >
+                      {showAll ? '閉じる · CLOSE' : `すべて · SEE ALL ${phaseTriplets.length}`}
+                    </button>
+                  </div>
                   <div className="mm-ui-carousel-wrap">
-                    <button className="mm-ui-arrow" style={{ borderColor: `${visuals.accent}4d`, color: visuals.accent }} onClick={() => scrollToIdx(Math.max(0, selectedIdx - 1))}>&#9664;</button>
-                    <div className="mm-ui-carousel" ref={scrollRef}>
+                    {!showAll && (
+                      <button className="mm-ui-arrow" style={{ borderColor: `${visuals.accent}4d`, color: visuals.accent }} onClick={() => scrollToIdx(Math.max(0, selectedIdx - 1))}>&#9664;</button>
+                    )}
+                    <div className={`mm-ui-carousel${showAll ? ' mm-ui-carousel-grid' : ''}`} ref={scrollRef}>
                       {phaseTriplets.map((t, i) => (
                         <button key={t.id} className={`mm-ui-thumb ${i === selectedIdx ? 'mm-ui-thumb-on' : ''}`}
                           style={i === selectedIdx ? { borderColor: visuals.accent, boxShadow: `0 0 10px ${visuals.accent}60` } : {}}
+                          title={t.label}
                           onClick={() => scrollToIdx(i)}>
                           <img src={t.thumb} alt={t.label} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
                         </button>
                       ))}
                     </div>
-                    <button className="mm-ui-arrow" style={{ borderColor: `${visuals.accent}4d`, color: visuals.accent }} onClick={() => scrollToIdx(Math.min(phaseTriplets.length - 1, selectedIdx + 1))}>&#9654;</button>
+                    {!showAll && (
+                      <button className="mm-ui-arrow" style={{ borderColor: `${visuals.accent}4d`, color: visuals.accent }} onClick={() => scrollToIdx(Math.min(phaseTriplets.length - 1, selectedIdx + 1))}>&#9654;</button>
+                    )}
                   </div>
                   <button className="mm-lever-btn" style={{ borderColor: visuals.accent }} onClick={handlePullLever}>
                     <div className="mm-lever-track" style={{ borderColor: `${visuals.accent}66` }}>
@@ -663,17 +681,6 @@ function MachineUI({ activePhase, machineState }) {
                       <span className="mm-ui-bk" style={{ color: '#00d4ff', textShadow: '0 0 10px #00d4ff' }}>もう一度</span>
                       <span className="mm-ui-be">AGAIN</span>
                     </button>
-                    {/* The limited edition is Objkt-only — no print for it. */}
-                    {selected?.slug !== LIMITED_EDITION_SLUG && (
-                      <a
-                        href={`${ANDROIDS_BASE}/prints?artwork=${selected?.slug || ''}`}
-                        className="mm-ui-transform mm-ui-again"
-                        style={{ flex: 1, textDecoration: 'none', textAlign: 'center', borderColor: '#ffd700' }}
-                      >
-                        <span className="mm-ui-bk" style={{ color: '#ffd700', textShadow: '0 0 10px #ffd700' }}>印刷</span>
-                        <span className="mm-ui-be">BUY PRINT</span>
-                      </a>
-                    )}
                   </div>
                 </div>
               )}
@@ -931,6 +938,25 @@ export default function MangaMachine() {
         .mm-ui-carousel-wrap { display: flex; align-items: center; gap: 6px; width: 100%; }
         .mm-ui-carousel { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; flex: 1; padding: 2px 0; }
         .mm-ui-carousel::-webkit-scrollbar { display: none; }
+        /* Expanded picker: every transformation visible at once */
+        .mm-ui-carousel-grid {
+          flex-wrap: wrap; justify-content: center;
+          overflow-x: hidden; overflow-y: auto;
+          max-height: 236px; gap: 5px;
+        }
+        .mm-ui-carousel-grid .mm-ui-thumb { width: 42px !important; height: 42px !important; }
+        .mm-ui-picker-head {
+          display: flex; align-items: center; justify-content: space-between;
+          width: 100%; margin-bottom: 6px; gap: 8px;
+        }
+        .mm-ui-picker-count { font-size: 10px; letter-spacing: 0.12em; font-family: monospace; }
+        .mm-ui-showall {
+          background: rgba(255,255,255,0.04); border: 1px solid;
+          border-radius: 3px; padding: 4px 10px; cursor: pointer;
+          font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+          text-shadow: 0 0 8px currentColor; transition: all 0.2s;
+        }
+        .mm-ui-showall:hover { background: rgba(255,255,255,0.1); }
         .mm-ui-thumb {
           width: 56px; height: 56px; flex-shrink: 0;
           border: 2px solid rgba(255,255,255,0.1); border-radius: 3px;
