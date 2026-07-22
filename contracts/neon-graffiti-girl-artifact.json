@@ -1,12 +1,13 @@
 {
   "name": "neon-graffiti-girl",
-  "cid": "bafybeig4ehvnrnpwt2utda63acvkww2d3wsu7fql5gums5vltlc5azrj4u",
-  "artifactUri": "ipfs://bafybeig4ehvnrnpwt2utda63acvkww2d3wsu7fql5gums5vltlc5azrj4u/index.html",
+  "cid": "bafybeifiizxnm6vxels7jitaa75dxqkrwqm4ebd5pobc7pxxetddg4ldzu",
+  "artifactUri": "ipfs://bafybeifiizxnm6vxels7jitaa75dxqkrwqm4ebd5pobc7pxxetddg4ldzu/index.html",
   "files": [
     "index.html",
+    "machine-porcelain.png",
     "manga.jpg",
     "still.jpg",
     "transform.mp4"
   ],
-  "bytes": 7045768
+  "bytes": 8210129
 }

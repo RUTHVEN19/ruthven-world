@@ -78,6 +78,7 @@ async function main() {
   const stillUri = `ipfs://${cid}/still.jpg`;
   const mangaUri = `ipfs://${cid}/manga.jpg`;
   const filmUri = `ipfs://${cid}/transform.mp4`;
+  const machineUri = `ipfs://${cid}/machine-porcelain.png`;   // still of the cabinet
 
   const meta = {
     name: `${title} — The Manga Machine`,
@@ -90,13 +91,14 @@ async function main() {
     tags: ["porcelain androids", "the manga machine", "interactive", "manga", "miss al simpson", "tezos"],
     symbol: "MANGA",
     artifactUri,                       // the interactive machine itself
-    // The machine spits out the MANGA — so that is the face of the collector's
-    // NFT (wallets, Objkt grid, everywhere). Open it and you get the machine.
-    displayUri: mangaUri,
-    thumbnailUri: mangaUri,
+    // Thumbnail is a still of the MACHINE (captured from this very artifact),
+    // so the Objkt grid shows the cabinet rather than a flat image.
+    displayUri: machineUri,
+    thumbnailUri: machineUri,
     creators: [ARTIST],
     formats: [
       { uri: artifactUri, mimeType: "text/html" },
+      { uri: machineUri, mimeType: "image/png" },
       { uri: stillUri, mimeType: "image/jpeg" },
       { uri: mangaUri, mimeType: "image/jpeg" },
       { uri: filmUri, mimeType: "video/mp4" },
