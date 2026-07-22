@@ -314,17 +314,44 @@
     rwimg.src=window.__ANIM;   // animated webp loops on its own
   }
 
-  // Best effort music: if the film is blocked its soundtrack is too, so try a
-  // standalone audio track alongside the frames. Silent if the platform
-  // refuses it — never blocks the transformation.
+  // Music without a media element. Objkt's iframe blocks <video> AND <audio>,
+  // so try the Web Audio API too — it's a different API and the lever click
+  // supplies the user gesture it needs. Silent if that's blocked as well;
+  // it never blocks the transformation.
+  var actx=null, abuf=null, asrc=null;
   function playFallbackAudio(){
     if(!window.__AUDIO||!soundOn) return;
     try{
       if(!audio){ audio=new Audio(window.__AUDIO); audio.preload='auto'; }
-      audio.currentTime=0; audio.volume=1; audio.play().catch(function(){});
+      audio.currentTime=0; audio.volume=1;
+      var pr=audio.play();
+      if(pr&&pr.catch) pr.catch(webAudioPlay);   // element blocked -> Web Audio
+    }catch(e){ webAudioPlay(); }
+  }
+  function webAudioPlay(){
+    try{
+      var AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC) return;
+      if(!actx) actx=new AC();
+      if(actx.state==='suspended'){ try{actx.resume()}catch(e){} }
+      if(abuf){ startBuf(); return; }
+      fetch(window.__AUDIO).then(function(r){return r.arrayBuffer()})
+        .then(function(b){ return actx.decodeAudioData(b) })
+        .then(function(buf){ abuf=buf; startBuf(); })
+        .catch(function(){});
     }catch(e){}
   }
-  function stopFallbackAudio(){ try{ if(audio){audio.pause();audio.currentTime=0;} }catch(e){} }
+  function startBuf(){
+    try{
+      stopFallbackAudio();
+      asrc=actx.createBufferSource(); asrc.buffer=abuf;
+      asrc.connect(actx.destination); asrc.start(0);
+    }catch(e){}
+  }
+  function stopFallbackAudio(){
+    try{ if(audio){audio.pause();audio.currentTime=0;} }catch(e){}
+    try{ if(asrc){asrc.stop(0);asrc.disconnect();asrc=null;} }catch(e){}
+  }
 
   // If the film cannot play (Objkt's artifact iframe blocks <video> however the
   // source is supplied), show an ANIMATED WEBP instead — an image the browser
