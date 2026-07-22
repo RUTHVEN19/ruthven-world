@@ -81,7 +81,11 @@ export default async (request, context) => {
     .replace(
       /"description": "A digital diamond house by Miss AL Simpson\. 1000 Diamond Drones, 120 Drone Blondes, and an 11-track album on Ethereum\."/,
       '"description": "The Manga Machine. An immersive cryptoart world by Miss AL Simpson."'
-    );
+    )
+    // Favicon / tab icon — swap the Diamond Drones icons for Porcelain Android ones
+    .replace(/\/favicon-32\.png/g, '/favicon-porcelain-32.png')
+    .replace(/\/favicon-16\.png/g, '/favicon-porcelain-16.png')
+    .replace(/\/apple-touch-icon\.png/g, '/apple-touch-porcelain.png');
 
   return new Response(html, {
     status: response.status,
@@ -91,4 +95,7 @@ export default async (request, context) => {
 
 export const config = {
   path: "/*",
+  // Standalone artwork artifacts must be served EXACTLY as minted — the OG/title
+  // rewrite would hijack their <title> and misrepresent the preview.
+  excludedPath: ["/artifact/*"],
 };

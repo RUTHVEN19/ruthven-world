@@ -36,14 +36,33 @@ def die(msg):
 
 
 def main():
-    if len(sys.argv) < 2:
-        die("usage: build-objkt-artifact.py <slug> [\"Display Title\"]")
-    slug = sys.argv[1].strip().lower()
-    title = sys.argv[2] if len(sys.argv) > 2 else slug.replace("-", " ").upper()
+    argv = sys.argv[1:]
+    if not argv:
+        die('usage: build-objkt-artifact.py <slug> ["Display Title"] '
+            '[--before PATH] [--after PATH] [--video PATH]')
 
-    still_src = os.path.join(PUB, "stills", f"{slug}.png")
-    manga_src = os.path.join(PUB, "manga", f"{slug}.png")
-    vid_src = os.path.join(PUB, "transformations", f"{slug}.mp4")
+    # optional explicit source paths, so this works for ANY artwork —
+    # not only the Manga Machine triplets living in frontend/public/androids
+    overrides = {}
+    positional = []
+    i = 0
+    while i < len(argv):
+        a = argv[i]
+        if a in ("--before", "--still"):
+            overrides["before"] = argv[i + 1]; i += 2
+        elif a in ("--after", "--manga"):
+            overrides["after"] = argv[i + 1]; i += 2
+        elif a == "--video":
+            overrides["video"] = argv[i + 1]; i += 2
+        else:
+            positional.append(a); i += 1
+
+    slug = positional[0].strip().lower()
+    title = positional[1] if len(positional) > 1 else slug.replace("-", " ").upper()
+
+    still_src = overrides.get("before", os.path.join(PUB, "stills", f"{slug}.png"))
+    manga_src = overrides.get("after", os.path.join(PUB, "manga", f"{slug}.png"))
+    vid_src = overrides.get("video", os.path.join(PUB, "transformations", f"{slug}.mp4"))
     for p, what in [(still_src, "still"), (manga_src, "manga"), (vid_src, "transformation")]:
         if not os.path.exists(p):
             die(f"missing {what}: {p}")
