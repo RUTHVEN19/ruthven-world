@@ -5,259 +5,279 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>NEON GRAFFITI GIRL — The Manga Machine</title>
 <style>
-  :root {
-    --pink: #ff2d78;
-    --cyan: #00d4ff;
-    --green: #00e6a7;
-    --ink: #07060a;
+  :root{
+    --pink:#ff2d78; --cyan:#00d4ff; --green:#39ff14; --gold:#ffd700;
+    --body:#150a1e; --body2:#0d0512; --ink:#05040a;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; background: var(--ink); overflow: hidden; }
-  body {
-    display: flex; align-items: center; justify-content: center;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #fff; -webkit-font-smoothing: antialiased;
-    user-select: none; -webkit-user-select: none;
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:var(--ink)}
+  body{
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color:#fff;
+    -webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;
+    padding:2vmin;
   }
 
-  /* ── Stage ─────────────────────────────────────────── */
-  #stage {
-    position: relative; width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-  }
-  .frame {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity .55s ease;
-    pointer-events: none;
-  }
-  .frame.on { opacity: 1; }
-  .frame img, .frame video {
-    max-width: 100%; max-height: 100%;
-    width: auto; height: auto; object-fit: contain;
-    display: block;
-  }
+  /* room glow behind the cabinet */
+  #room{position:fixed;inset:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 42%, rgba(255,45,120,.20), transparent 58%),
+      radial-gradient(ellipse at 18% 88%, rgba(0,212,255,.13), transparent 55%);}
+  #floor{position:fixed;left:0;right:0;bottom:0;height:26%;pointer-events:none;
+    background:linear-gradient(to top, rgba(255,45,120,.10), transparent);}
 
-  /* glow wash behind the art */
-  #glow {
-    position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 55%, rgba(255,45,120,.16), transparent 62%);
-    transition: background .6s ease;
+  /* ── THE CABINET ─────────────────────────────── */
+  #cab{
+    position:relative;z-index:2;
+    width:min(430px, 94vw);
+    max-height:96vh;
+    display:flex;flex-direction:column;
+    background:linear-gradient(180deg, var(--body), var(--body2) 62%, #090410);
+    border:2px solid rgba(255,45,120,.42);
+    border-radius:26px 26px 16px 16px;
+    box-shadow:
+      0 0 42px rgba(255,45,120,.20),
+      0 0 120px rgba(0,0,0,.75),
+      inset 0 1px 0 rgba(255,255,255,.09);
+    padding:10px 10px 12px;
+    animation:float 7s ease-in-out infinite;
   }
-  body[data-state="manga"] #glow {
-    background: radial-gradient(ellipse at 50% 55%, rgba(0,212,255,.14), transparent 62%);
-  }
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
-  /* scanlines — the machine's screen */
-  #scan {
-    position: absolute; inset: 0; pointer-events: none; opacity: .16;
-    background: repeating-linear-gradient(
-      to bottom, rgba(255,255,255,.10) 0 1px, transparent 1px 3px);
-    mix-blend-mode: overlay;
+  /* marquee */
+  #marquee{
+    text-align:center;padding:9px 10px 8px;border-radius:16px 16px 6px 6px;
+    background:linear-gradient(180deg, rgba(255,45,120,.20), rgba(255,45,120,.04));
+    border:1px solid rgba(255,45,120,.34);
+    box-shadow:inset 0 0 22px rgba(255,45,120,.16);
+    flex:none;
   }
-  #vig {
-    position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.72) 100%);
-  }
+  #kanji{font-family:serif;font-weight:900;letter-spacing:.10em;
+    font-size:clamp(17px,4.4vmin,25px);color:var(--pink);
+    text-shadow:0 0 12px var(--pink),0 0 34px rgba(255,45,120,.6);
+    animation:buzz 5s infinite}
+  @keyframes buzz{0%,92%,100%{opacity:1}94%{opacity:.55}96%{opacity:1}97%{opacity:.7}}
+  #sub{margin-top:3px;font-size:clamp(8px,2vmin,11px);letter-spacing:.30em;
+    color:rgba(255,255,255,.82)}
 
-  /* ── Chrome ────────────────────────────────────────── */
-  #title {
-    position: absolute; top: 4.2%; left: 0; right: 0;
-    text-align: center; pointer-events: none; z-index: 5;
-    transition: opacity .4s ease;
+  /* bezel + screen */
+  #bezel{
+    margin:10px 4px 0;padding:8px;border-radius:12px;flex:none;
+    background:linear-gradient(180deg,#241830,#150d1e);
+    border:1px solid rgba(255,255,255,.07);
+    box-shadow:inset 0 2px 10px rgba(0,0,0,.85);
   }
-  #kanji {
-    font-size: clamp(13px, 2.1vw, 20px); letter-spacing: .42em;
-    color: var(--pink); text-shadow: 0 0 12px var(--pink), 0 0 34px rgba(255,45,120,.55);
+  #screen{
+    position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;
+    border-radius:7px;background:#000;border:2px solid #120d1c;
+    box-shadow:inset 0 0 34px rgba(0,0,0,.95);
   }
-  #name {
-    margin-top: .5em;
-    font-size: clamp(11px, 1.5vw, 15px); letter-spacing: .30em;
-    font-weight: 700; color: rgba(255,255,255,.94);
-    text-shadow: 0 0 10px rgba(0,0,0,.9);
-  }
-  #artist {
-    margin-top: .45em;
-    font-size: clamp(8px, 1vw, 10px); letter-spacing: .22em;
-    color: rgba(255,255,255,.42);
-  }
+  .lyr{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    opacity:0;transition:opacity .5s ease}
+  .lyr.on{opacity:1}
+  .lyr img,.lyr video{width:100%;height:100%;object-fit:cover;display:block}
+  #scan{position:absolute;inset:0;pointer-events:none;opacity:.20;
+    background:repeating-linear-gradient(to bottom,rgba(255,255,255,.12) 0 1px,transparent 1px 3px);
+    mix-blend-mode:overlay}
+  #glare{position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(118deg,rgba(255,255,255,.13) 0%,transparent 34%)}
+  #vig{position:absolute;inset:0;pointer-events:none;
+    box-shadow:inset 0 0 46px rgba(0,0,0,.8)}
+  #flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+  #flash.fire{animation:fl .5s ease}
+  @keyframes fl{0%{opacity:.85}100%{opacity:0}}
 
-  #statelabel {
-    position: absolute; bottom: 16.5%; left: 0; right: 0;
-    text-align: center; pointer-events: none; z-index: 5;
-    font-size: clamp(9px, 1.15vw, 12px); letter-spacing: .34em;
-    transition: color .4s ease, opacity .3s ease;
-    text-shadow: 0 0 12px currentColor;
-    color: var(--pink);
+  /* status strip */
+  #status{
+    margin:8px 4px 0;padding:6px 10px;border-radius:7px;flex:none;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.07);
+    font-size:clamp(7.5px,1.85vmin,10px);letter-spacing:.22em;
   }
-  body[data-state="manga"] #statelabel { color: var(--cyan); }
-  body[data-state="transforming"] #statelabel { color: #fff; }
+  #led{width:7px;height:7px;border-radius:50%;flex:none;
+    background:var(--green);box-shadow:0 0 7px var(--green);animation:pulse 1.5s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  #stext{color:var(--pink);text-shadow:0 0 9px currentColor;flex:1;text-align:center}
+  body[data-state="manga"] #stext{color:var(--cyan)}
+  body[data-state="transforming"] #stext{color:#fff}
 
-  /* lever */
-  #lever {
-    position: absolute; bottom: 6.5%; left: 50%; transform: translateX(-50%);
-    z-index: 6; cursor: pointer; background: rgba(10,6,14,.62);
-    border: 1px solid rgba(255,45,120,.55); border-radius: 999px;
-    padding: .78em 2.1em; color: #fff; font: inherit;
-    display: flex; flex-direction: column; align-items: center; gap: .30em;
-    backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px);
-    transition: transform .18s ease, box-shadow .3s ease, border-color .3s ease, opacity .3s ease;
-    box-shadow: 0 0 22px rgba(255,45,120,.24);
+  /* nameplate */
+  #plate{
+    margin:8px 4px 0;text-align:center;padding:6px 8px;border-radius:6px;flex:none;
+    background:linear-gradient(180deg,rgba(255,215,0,.10),transparent);
+    border:1px solid rgba(255,215,0,.26);
   }
-  #lever:hover { transform: translateX(-50%) translateY(-2px); box-shadow: 0 0 32px rgba(255,45,120,.45); }
-  #lever:active { transform: translateX(-50%) translateY(1px); }
-  #lever[disabled] { opacity: .28; pointer-events: none; }
-  #lk { font-size: clamp(11px, 1.5vw, 15px); letter-spacing: .3em; color: var(--pink); text-shadow: 0 0 10px var(--pink); }
-  #le { font-size: clamp(8px, .95vw, 10px); letter-spacing: .26em; color: rgba(255,255,255,.8); }
+  #pname{font-size:clamp(9.5px,2.3vmin,13px);font-weight:700;letter-spacing:.20em;color:#fff}
+  #partist{margin-top:2px;font-size:clamp(6.5px,1.6vmin,8.5px);letter-spacing:.24em;
+    color:rgba(255,215,0,.75)}
 
-  /* sound toggle */
-  #snd {
-    position: absolute; top: 4.4%; right: 4%; z-index: 7;
-    width: 2.5em; height: 2.5em; border-radius: 50%;
-    background: rgba(10,6,14,.6); border: 1px solid rgba(255,255,255,.22);
-    color: #fff; cursor: pointer; font-size: clamp(10px, 1.2vw, 13px);
-    backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px);
-    transition: all .25s ease;
+  /* control deck */
+  #deck{
+    margin:9px 4px 0;padding:9px 11px;border-radius:11px;flex:none;
+    background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.30));
+    border:1px solid rgba(255,255,255,.09);
+    display:flex;align-items:center;gap:11px;
   }
-  #snd:hover { border-color: var(--pink); color: var(--pink); }
-
-  /* edition mark */
-  #ed {
-    position: absolute; bottom: 3.6%; right: 4%; z-index: 5;
-    font-size: clamp(7px, .85vw, 9px); letter-spacing: .24em;
-    color: rgba(255,255,255,.3); pointer-events: none;
+  #lever{
+    display:flex;align-items:center;gap:11px;flex:1;cursor:pointer;
+    background:rgba(26,0,40,.55);border:2px solid var(--pink);border-radius:9px;
+    padding:7px 11px;transition:all .28s;box-shadow:0 0 15px rgba(255,45,120,.18);
   }
-
-  /* transform flash */
-  #flash {
-    position: absolute; inset: 0; z-index: 4; pointer-events: none;
-    background: #fff; opacity: 0;
+  #lever:hover{box-shadow:0 0 32px rgba(255,45,120,.42);transform:scale(1.02)}
+  #lever:hover #knob{transform:translateX(-50%) translateY(9px)}
+  #lever[disabled]{opacity:.35;pointer-events:none}
+  #track{
+    position:relative;width:23px;height:40px;flex:none;border-radius:12px;
+    background:linear-gradient(180deg,rgba(255,45,120,.10),rgba(255,45,120,.32));
+    border:1px solid rgba(255,45,120,.45);
   }
-  #flash.fire { animation: fl .5s ease; }
-  @keyframes fl { 0% { opacity: .82 } 100% { opacity: 0 } }
+  #knob{
+    position:absolute;top:3px;left:50%;transform:translateX(-50%);
+    width:17px;height:17px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ff9ec4,var(--pink));
+    box-shadow:0 0 11px var(--pink);transition:transform .3s ease;
+  }
+  #knob.down{transform:translateX(-50%) translateY(19px)}
+  #tglow{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);
+    width:6px;height:6px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 6px var(--green);animation:pulse 1.5s infinite}
+  #ltxt{flex:1;text-align:center;display:flex;flex-direction:column;gap:2px}
+  #lk{font-size:clamp(11px,2.6vmin,15px);letter-spacing:.20em;color:var(--pink);
+    text-shadow:0 0 10px var(--pink)}
+  #le{font-size:clamp(6.5px,1.6vmin,9px);letter-spacing:.22em;color:rgba(255,255,255,.8)}
 
-  @media (max-width: 640px) {
-    #statelabel { bottom: 19%; }
-    #lever { bottom: 7.5%; padding: .7em 1.6em; }
+  #snd{
+    width:33px;height:33px;flex:none;border-radius:50%;cursor:pointer;
+    background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.22);
+    color:#fff;font-size:12px;transition:all .25s;
+  }
+  #snd:hover{border-color:var(--pink);color:var(--pink)}
+
+  /* cute base details */
+  #base{
+    margin:9px 4px 0;display:flex;align-items:center;justify-content:space-between;
+    gap:8px;flex:none;padding:0 3px;
+  }
+  #grille{display:flex;gap:3px}
+  #grille i{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.16)}
+  #coin{
+    width:26px;height:6px;border-radius:3px;background:rgba(0,0,0,.6);
+    border:1px solid rgba(255,255,255,.18);
+  }
+  #edn{font-size:clamp(6px,1.4vmin,8px);letter-spacing:.2em;color:rgba(255,255,255,.32)}
+
+  @media (max-height:620px){
+    #cab{width:min(380px,92vw)}
+    #marquee{padding:6px 8px}
+    #plate{display:none}
   }
 </style>
 </head>
 <body data-state="porcelain">
 
-<div id="stage">
-  <div id="glow"></div>
+<div id="room"></div>
+<div id="floor"></div>
 
-  <div class="frame on" id="f-still"><img src="still.jpg" alt="Neon Graffiti Girl — porcelain" /></div>
-  <div class="frame" id="f-manga"><img src="manga.jpg" alt="Neon Graffiti Girl — manga" /></div>
-  <div class="frame" id="f-video">
-    <video id="vid" src="transform.mp4" playsinline preload="auto"></video>
-  </div>
+<div id="cab">
 
-  <div id="flash"></div>
-  <div id="scan"></div>
-  <div id="vig"></div>
-
-  <div id="title">
+  <div id="marquee">
     <div id="kanji">漫画マシン</div>
-    <div id="name">NEON GRAFFITI GIRL</div>
-    <div id="artist">MISS AL SIMPSON</div>
+    <div id="sub">THE MANGA MACHINE</div>
   </div>
 
-  <button id="snd" title="Sound">♪</button>
+  <div id="bezel">
+    <div id="screen">
+      <div class="lyr on" id="l-still"><img src="still.jpg" alt="NEON GRAFFITI GIRL — porcelain" /></div>
+      <div class="lyr" id="l-manga"><img src="manga.jpg" alt="NEON GRAFFITI GIRL — manga" /></div>
+      <div class="lyr" id="l-video"><video id="vid" src="transform.mp4" playsinline preload="auto"></video></div>
+      <div id="flash"></div>
+      <div id="scan"></div>
+      <div id="glare"></div>
+      <div id="vig"></div>
+    </div>
+  </div>
 
-  <div id="statelabel">磁器 · PORCELAIN</div>
+  <div id="status">
+    <span id="led"></span>
+    <span id="stext">磁器 · PORCELAIN</span>
+    <span style="width:7px"></span>
+  </div>
 
-  <button id="lever">
-    <span id="lk">変換</span>
-    <span id="le">PULL THE LEVER</span>
-  </button>
+  <div id="plate">
+    <div id="pname">NEON GRAFFITI GIRL</div>
+    <div id="partist">MISS AL SIMPSON</div>
+  </div>
 
-  <div id="ed">THE MANGA MACHINE · LIMITED EDITION</div>
+  <div id="deck">
+    <button id="lever">
+      <span id="track"><span id="knob"></span><span id="tglow"></span></span>
+      <span id="ltxt"><span id="lk">変換</span><span id="le">PULL THE LEVER</span></span>
+    </button>
+    <button id="snd" title="Sound">♫</button>
+  </div>
+
+  <div id="base">
+    <span id="grille"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+    <span id="edn">LIMITED EDITION</span>
+    <span id="coin"></span>
+  </div>
+
 </div>
 
 <script>
-(function () {
-  var body   = document.body;
-  var still  = document.getElementById('f-still');
-  var manga  = document.getElementById('f-manga');
-  var fvideo = document.getElementById('f-video');
-  var vid    = document.getElementById('vid');
-  var lever  = document.getElementById('lever');
-  var lk     = document.getElementById('lk');
-  var le     = document.getElementById('le');
-  var label  = document.getElementById('statelabel');
-  var flash  = document.getElementById('flash');
-  var snd    = document.getElementById('snd');
-  var titleEl= document.getElementById('title');
+(function(){
+  var body=document.body,
+      still=document.getElementById('l-still'),
+      manga=document.getElementById('l-manga'),
+      lvid =document.getElementById('l-video'),
+      vid  =document.getElementById('vid'),
+      lever=document.getElementById('lever'),
+      knob =document.getElementById('knob'),
+      lk=document.getElementById('lk'), le=document.getElementById('le'),
+      stext=document.getElementById('stext'),
+      flash=document.getElementById('flash'),
+      snd=document.getElementById('snd');
 
-  var soundOn = true;   // collector can mute; we try sound first
-  var state   = 'porcelain';
+  var soundOn=true, state='porcelain';
 
-  function show(el) {
-    [still, manga, fvideo].forEach(function (f) { f.classList.toggle('on', f === el); });
+  function show(el){[still,manga,lvid].forEach(function(f){f.classList.toggle('on',f===el)})}
+
+  function toPorcelain(){
+    state='porcelain';body.dataset.state=state;
+    vid.pause();vid.currentTime=0;
+    show(still);stext.textContent='磁器 · PORCELAIN';
+    lk.textContent='変換';le.textContent='PULL THE LEVER';
+    lever.disabled=false;knob.classList.remove('down');
   }
-  function setLabel(t) { label.textContent = t; }
-
-  function toPorcelain() {
-    state = 'porcelain'; body.dataset.state = state;
-    vid.pause(); vid.currentTime = 0;
-    show(still); setLabel('磁器 · PORCELAIN');
-    lk.textContent = '変換'; le.textContent = 'PULL THE LEVER';
-    lever.disabled = false;
-    titleEl.style.opacity = 1;
+  function toManga(){
+    state='manga';body.dataset.state=state;
+    show(manga);stext.textContent='漫画 · MANGA MEMORY';
+    lk.textContent='もう一度';le.textContent='AGAIN';
+    lever.disabled=false;knob.classList.remove('down');
   }
-
-  function toManga() {
-    state = 'manga'; body.dataset.state = state;
-    show(manga); setLabel('漫画 · MANGA MEMORY');
-    lk.textContent = 'もう一度'; le.textContent = 'AGAIN';
-    lever.disabled = false;
-    titleEl.style.opacity = 1;
-  }
-
-  function transform() {
-    state = 'transforming'; body.dataset.state = state;
-    lever.disabled = true;
-    setLabel('変換中 · RECOVERING MEMORY');
-    titleEl.style.opacity = 0.25;
-
-    flash.classList.remove('fire');
-    void flash.offsetWidth;      // restart the animation
-    flash.classList.add('fire');
-
-    show(fvideo);
-    vid.currentTime = 0;
-    vid.muted = !soundOn;
-    var p = vid.play();
-    if (p && p.catch) {
-      p.catch(function () {         // blocked with audio -> retry muted
-        vid.muted = true;
-        soundOn = false; snd.textContent = '♪';
-        vid.play().catch(function () { toManga(); });
-      });
-    }
+  function transform(){
+    state='transforming';body.dataset.state=state;
+    lever.disabled=true;knob.classList.add('down');
+    stext.textContent='変換中 · RECOVERING MEMORY';
+    flash.classList.remove('fire');void flash.offsetWidth;flash.classList.add('fire');
+    show(lvid);vid.currentTime=0;vid.muted=!soundOn;
+    var p=vid.play();
+    if(p&&p.catch){p.catch(function(){
+      vid.muted=true;soundOn=false;snd.textContent='♪';
+      vid.play().catch(toManga);
+    })}
   }
 
-  vid.addEventListener('ended', toManga);
-  // if the file can't play at all, don't strand the collector
-  vid.addEventListener('error', toManga);
-
-  lever.addEventListener('click', function () {
-    if (state === 'porcelain') transform();
-    else if (state === 'manga') toPorcelain();
+  vid.addEventListener('ended',toManga);
+  vid.addEventListener('error',toManga);
+  lever.addEventListener('click',function(){
+    if(state==='porcelain')transform();else if(state==='manga')toPorcelain();
   });
-
-  snd.addEventListener('click', function () {
-    soundOn = !soundOn;
-    vid.muted = !soundOn;
-    snd.textContent = soundOn ? '♫' : '♪';
+  snd.addEventListener('click',function(){
+    soundOn=!soundOn;vid.muted=!soundOn;snd.textContent=soundOn?'♫':'♪';
   });
-  snd.textContent = '♫';
-
-  // Keyboard: space / enter drives the machine too
-  window.addEventListener('keydown', function (e) {
-    if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); lever.click(); }
+  window.addEventListener('keydown',function(e){
+    if(e.code==='Space'||e.code==='Enter'){e.preventDefault();lever.click()}
   });
 
   toPorcelain();
