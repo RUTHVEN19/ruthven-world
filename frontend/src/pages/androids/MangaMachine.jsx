@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
-import { TRANSFORMATIONS, PHASE_TRANSFORMATIONS, STILLS, MINT_LINKS, ANDROIDS_BASE } from '../../config/androidsContent';
+import { TRANSFORMATIONS, PHASE_TRANSFORMATIONS, STILLS, MINT_LINKS, ANDROIDS_BASE, objktEditionUrl } from '../../config/androidsContent';
 import { PHASE_CONFIG } from '../../config/wagmiConfig';
 
 // ── Room constants ──
@@ -634,6 +634,20 @@ function MachineUI({ activePhase, machineState }) {
                       </div>
                     </div>
                   </div>
+
+                  {/* Limited edition on Objkt (Tezos) — the primary CTA after a transformation */}
+                  <a
+                    href={objktEditionUrl()}
+                    target="_blank" rel="noopener noreferrer"
+                    className="mm-ui-transform mm-ui-again"
+                    style={{
+                      width: '100%', textDecoration: 'none', textAlign: 'center',
+                      borderColor: '#00e6a7', marginBottom: '8px',
+                    }}
+                  >
+                    <span className="mm-ui-bk" style={{ color: '#00e6a7', textShadow: '0 0 10px #00e6a7' }}>限定版</span>
+                    <span className="mm-ui-be">COLLECT THE LIMITED EDITION</span>
+                  </a>
 
                   <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
                     <button className="mm-ui-transform mm-ui-again" onClick={handleReset} style={{ flex: 1 }}>

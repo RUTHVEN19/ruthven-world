@@ -133,10 +133,21 @@ export const FILM = {
 };
 
 // ── Mint / Recovery links (update when live) ──
+// ── Tezos / Objkt: THE MANGA MACHINE open collection (70 pieces + limited editions) ──
+export const OBJKT_COLLECTION =
+  'https://objkt.com/collections/KT1CghJjhk5g7cd3kr6E1aY5edL6gChPYFDP';
+
 export const MINT_LINKS = {
   filmEdition: 'https://www.transient.xyz/mint/the-manga-machine',
   mangaMachine: '', // On-chain contract address
+  // Limited edition on Objkt. Paste the token URL here once minted
+  // (e.g. https://objkt.com/tokens/KT1Cgh.../71) — until then it falls
+  // back to the collection page so the button always works.
+  objktEdition: '',
 };
+
+// Always-valid link to the limited edition (token if set, else the collection).
+export const objktEditionUrl = () => MINT_LINKS.objktEdition || OBJKT_COLLECTION;
 
 // ── On-chain collection: THE MANGA MACHINE - PORCELAIN ANDROIDS (Ethereum) ──
 // 116 tokens: 1–50 Porcelain Androids · 51–83 Manga Doubles · 84–116 Transformations.
