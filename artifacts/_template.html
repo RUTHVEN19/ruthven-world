@@ -233,7 +233,7 @@
       <span class="rw-k" style="color:#00d4ff">漫画</span><span class="rw-e">MANGA</span>
     </div>
     <div class="rw">
-      <div class="rw-img"><video id="rwvid" src="transform.mp4" muted loop autoplay playsinline></video></div>
+      <div class="rw-img"><img id="rwimg" alt="Transformation" /></div>
       <span class="rw-k" style="color:#39ff14">変換</span><span class="rw-e">TRANSFORMATION</span>
     </div>
   </div>
@@ -264,13 +264,14 @@
       still=document.getElementById('l-still'), lvid=document.getElementById('l-video'),
       print=document.getElementById('l-print'), edge=document.getElementById('edge'),
       flash=document.getElementById('flash'), vid=document.getElementById('vid'),
-      rewards=document.getElementById('rewards'), rwvid=document.getElementById('rwvid'),
+      rewards=document.getElementById('rewards'),
       lever=document.getElementById('lever'), knob=document.getElementById('knob'),
       lk=document.getElementById('lk'), le=document.getElementById('le'),
       stext=document.getElementById('stext'),
       capk=document.getElementById('capk'), cape=document.getElementById('cape'),
       neon=document.getElementById('neon'), snd=document.getElementById('snd'),
-      lflip=document.getElementById('l-flip'), flipimg=document.getElementById('flipimg');
+      lflip=document.getElementById('l-flip'), flipimg=document.getElementById('flipimg'),
+      rwimg=document.getElementById('rwimg');
 
   var soundOn=true, state='porcelain', timers=[];
   function clear(){timers.forEach(clearTimeout);timers=[]}
@@ -279,7 +280,7 @@
   function show(el){[still,lvid,lflip].forEach(function(f){f.classList.toggle('on',f===el)})}
 
   function toPorcelain(){
-    clear();stopFlip();state='porcelain';body.dataset.state=state;
+    clear();stopFlip();stopReward();stopFallbackAudio();state='porcelain';body.dataset.state=state;
     vid.pause();vid.currentTime=0;
     print.classList.remove('on','go');edge.classList.remove('go');flash.classList.remove('go');
     rewards.classList.remove('on');neon.classList.remove('on');
@@ -302,8 +303,30 @@
     later(transform,3400);
   }
 
-  var flipTimer=null;
+  var flipTimer=null, rwTimer=null, audio=null;
   function stopFlip(){ if(flipTimer){clearInterval(flipTimer);flipTimer=null;} }
+  function stopReward(){ if(rwTimer){clearInterval(rwTimer);rwTimer=null;} }
+
+  // The 変換 card loops the same frames, so it shows the transformation even
+  // where video is blocked.
+  function startRewardLoop(){
+    var F=window.__FRAMES||[]; if(!F.length||!rwimg) return;
+    stopReward(); var i=0;
+    rwimg.src=F[0];
+    rwTimer=setInterval(function(){ i=(i+1)%F.length; rwimg.src=F[i]; }, 1000/(window.__FPS||6));
+  }
+
+  // Best effort music: if the film is blocked its soundtrack is too, so try a
+  // standalone audio track alongside the frames. Silent if the platform
+  // refuses it — never blocks the transformation.
+  function playFallbackAudio(){
+    if(!window.__AUDIO||!soundOn) return;
+    try{
+      if(!audio){ audio=new Audio(window.__AUDIO); audio.preload='auto'; }
+      audio.currentTime=0; audio.volume=1; audio.play().catch(function(){});
+    }catch(e){}
+  }
+  function stopFallbackAudio(){ try{ if(audio){audio.pause();audio.currentTime=0;} }catch(e){} }
 
   // If the film cannot play (codec, autoplay policy, sandbox — it has failed
   // several ways on Objkt), flipbook the frames instead so the transformation
@@ -316,6 +339,7 @@
     var i=0, fps=window.__FPS||6;
     flipimg.src=F[0];
     show(lflip);
+    playFallbackAudio();
     flipTimer=setInterval(function(){
       i++;
       if(i>=F.length){ stopFlip(); reveal(); return; }
@@ -349,7 +373,7 @@
     neon.classList.remove('on');void neon.offsetWidth;neon.classList.add('on');
     later(function(){
       rewards.classList.add('on');
-      if(rwvid){rwvid.muted=true;rwvid.play().catch(function(){})}
+      startRewardLoop();
       lk.textContent='もう一度';le.textContent='AGAIN';
       lever.disabled=false;knob.classList.remove('down');
     },2200);

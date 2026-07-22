@@ -84,7 +84,6 @@ def main():
         "for(var i=0;i<n;i++)u[i]=bin.charCodeAt(i);"
         "var url=URL.createObjectURL(new Blob([u],{type:'video/mp4'}));"
         "document.getElementById('vid').src=url;"
-        "var r=document.getElementById('rwvid'); if(r) r.src=url;"
         "})();</script>"
     )
     html = html.replace("<script>\n(function(){", boot + "\n<script>\n(function(){", 1)
@@ -106,9 +105,21 @@ def main():
     if not frames:
         die("could not extract fallback frames")
     frames_js = ",".join('"' + data_uri(f, "image/jpeg") + '"' for f in frames)
+
+    # standalone soundtrack — the film's audio is unreachable wherever the film
+    # itself is blocked, so carry it separately and try it with the frames
+    aud = os.path.join(fdir, "track.m4a")
+    subprocess.run(["ffmpeg", "-y", "-i", os.path.join(src, "transform.mp4"),
+                    "-vn", "-c:a", "aac", "-b:a", "96k", aud],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    aud_js = '"' + data_uri(aud, "audio/mp4") + '"' if os.path.exists(aud) else "null"
+
     fallback = (
-        "<script>window.__FRAMES=[" + frames_js + "];window.__FPS=6;</script>"
+        "<script>window.__FRAMES=[" + frames_js + "];window.__FPS=6;"
+        "window.__AUDIO=" + aud_js + ";</script>"
     )
+    if os.path.exists(aud):
+        print(f"  fallback audio : {os.path.getsize(aud)//1024} KB")
     html = html.replace("</body>", fallback + "\n</body>", 1)
     print(f"  fallback frames: {len(frames)} @6fps")
     # ──────────────────────────────────────────────────────────────────────
