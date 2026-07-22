@@ -212,7 +212,7 @@
   <div id="bezel">
     <div id="screen">
       <div class="lyr on" id="l-still"><img src="still.jpg" alt="{{TITLE}} — porcelain" /></div>
-      <div class="lyr" id="l-video"><video id="vid" src="transform.mp4" playsinline preload="auto"></video></div>
+      <div class="lyr" id="l-video"><video id="vid" playsinline preload="auto" crossorigin="anonymous"></video></div>
       <div class="lyr" id="l-flip"><img id="flipimg" alt="" /></div>
       <div id="l-print"><img src="manga.jpg" alt="{{TITLE}} — manga" /></div>
       <div id="edge"></div>
@@ -366,7 +366,26 @@
     flipTimer=setTimeout(reveal, window.__ANIM_MS||15000);
   }
 
+  // Objkt's artifact CSP is: media-src *  — any HOST is allowed, but the `*`
+  // wildcard does NOT cover data: or blob: schemes. So the film must be loaded
+  // over https. Several gateways are tried in turn; if all fail the animated
+  // webp takes over, so the transformation always happens.
+  function attachFilm(){
+    if(vid.dataset.wired) return;
+    vid.dataset.wired='1';
+    var cid=window.__FILM_CID;
+    if(!cid) return;
+    ['https://ipfs.io/ipfs/','https://dweb.link/ipfs/','https://cloudflare-ipfs.com/ipfs/',
+     'https://gateway.pinata.cloud/ipfs/'].forEach(function(g){
+      var so=document.createElement('source');
+      so.src=g+cid; so.type='video/mp4';
+      vid.appendChild(so);
+    });
+    try{vid.load()}catch(e){}
+  }
+
   function transform(){
+    attachFilm();
     state='transforming';body.dataset.state=state;
     cap('変換中','RECOVERING MEMORY');stext.textContent='変換中 · RECOVERING MEMORY';
     show(lvid);vid.currentTime=0;vid.muted=!soundOn;
@@ -410,6 +429,7 @@
     if(e.code==='Space'||e.code==='Enter'){e.preventDefault();lever.click()}
   });
 
+  setTimeout(attachFilm,0);   // __FILM_CID is defined in a later script
   toPorcelain();
 })();
 </script>

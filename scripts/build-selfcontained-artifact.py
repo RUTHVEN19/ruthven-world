@@ -71,24 +71,16 @@ def main():
     for name, mime in (("still.jpg", "image/jpeg"), ("manga.jpg", "image/jpeg")):
         html = html.replace(f'src="{name}"', f'src="{data_uri(os.path.join(src, name), mime)}"')
 
-    # The VIDEO must NOT be a data: URI — Safari won't reliably play those, which
-    # is how the minted machine ended up silent with no transformation. Carry the
-    # bytes as base64 and convert to a Blob URL at runtime instead; that works
-    # everywhere, including inside Objkt's sandboxed iframe.
-    with open(small, "rb") as f:
-        vid_b64 = base64.b64encode(f.read()).decode("ascii")
-    html = html.replace('src="transform.mp4"', "")          # set by script below
-    boot = (
-        "<script>(function(){var b64=\"" + vid_b64 + "\";"
-        "var bin=atob(b64),n=bin.length,u=new Uint8Array(n);"
-        "for(var i=0;i<n;i++)u[i]=bin.charCodeAt(i);"
-        "var url=URL.createObjectURL(new Blob([u],{type:'video/mp4'}));"
-        "document.getElementById('vid').src=url;"
-        "})();</script>"
-    )
-    html = html.replace("<script>\n(function(){", boot + "\n<script>\n(function(){", 1)
-    if boot not in html:
-        html = html.replace("</body>", boot + "\n</body>", 1)
+    # The film is NOT embedded. Objkt's artifact CSP is `media-src *`, and the
+    # `*` wildcard does not cover data: or blob: — which is why every embedded
+    # attempt was silently blocked. Media must be fetched over https, so the
+    # page loads the film by CID from public gateways instead.
+    film_cid = os.environ.get("FILM_CID", "")
+    if not film_cid:
+        die("set FILM_CID to the IPFS CID of the transformation mp4")
+    html = html.replace("</body>",
+        f'<script>window.__FILM_CID="{film_cid}";</script>\n</body>', 1)
+    print(f"  film served from IPFS gateways: {film_cid[:20]}…")
 
     # ── Animated-WebP fallback ────────────────────────────────────────────
     # Objkt's artifact iframe blocks <video> (tried as a sibling file, a data:
