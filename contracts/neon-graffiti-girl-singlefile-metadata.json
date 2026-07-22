@@ -11,7 +11,7 @@
     "tezos"
   ],
   "symbol": "MANGA",
-  "artifactUri": "ipfs://bafybeiaf2h3x6jingpujl3zjga724tkxebhkoy7siqmmdu36q6qvhmtrsq",
+  "artifactUri": "ipfs://bafybeibdeohkfbi73x6qquicwelfosgqmjubwy3uvbrrphpqgml7fj7z2i",
   "displayUri": "ipfs://bafybeibtcugy4avqar6ne7wihjkv4csfhr7zbzvoxpp5dhigrtitz3fmwy",
   "thumbnailUri": "ipfs://bafybeibtcugy4avqar6ne7wihjkv4csfhr7zbzvoxpp5dhigrtitz3fmwy",
   "creators": [
@@ -19,7 +19,7 @@
   ],
   "formats": [
     {
-      "uri": "ipfs://bafybeiaf2h3x6jingpujl3zjga724tkxebhkoy7siqmmdu36q6qvhmtrsq",
+      "uri": "ipfs://bafybeibdeohkfbi73x6qquicwelfosgqmjubwy3uvbrrphpqgml7fj7z2i",
       "mimeType": "text/html"
     },
     {
